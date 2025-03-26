@@ -1,7 +1,7 @@
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- Airports (formerly Destination)
+-- Airports
 CREATE TABLE airport (
     airport_code VARCHAR(3) PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -36,11 +36,10 @@ CREATE TABLE customer (
     phone VARCHAR(30)
 );
 
--- Bookings
+-- Bookings (no longer store flight_seat_id here)
 CREATE TABLE bookings (
     booking_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     customer_id UUID REFERENCES customer(customer_id),
-    flight_seat_id UUID REFERENCES flight_seats(flight_seat_id),
     booking_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     status VARCHAR(20) DEFAULT 'Confirmed'
 );
@@ -60,13 +59,14 @@ CREATE TABLE seat (
     class VARCHAR(20) NOT NULL
 );
 
--- Flight Seats (junction table)
+-- Flight Seats: now references booking_id directly, removing the cycle.
 CREATE TABLE flight_seats (
     flight_seat_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     flight_id UUID REFERENCES flights(flight_id),
     seat_number VARCHAR(5) REFERENCES seat(seat_number),
-    availability BOOLEAN DEFAULT TRUE,
-    passenger_id UUID REFERENCES passenger(passenger_id) -- optional, assigned when booked
+    booking_id UUID REFERENCES bookings(booking_id),  -- indicates seat is booked
+    passenger_id UUID REFERENCES passenger(passenger_id), -- optional assignment
+    availability BOOLEAN DEFAULT TRUE
 );
 
 -- Inflight Services
@@ -78,4 +78,5 @@ CREATE TABLE inflight_services (
     description VARCHAR(100)
 );
 
-create index ROUTEDATE_IDX on flights(route_id, flight_date)
+-- Index
+CREATE INDEX ROUTEDATE_IDX ON flights(route_id, flight_date);
