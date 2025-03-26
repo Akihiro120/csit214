@@ -24,3 +24,18 @@ python3 seed_script.py
 
 Then what ever else is required for the frontend/backend experience!
 
+---
+Backend Node Dependencies
+
+- knexjs
+- express
+- pg
+- pg-native
+
+installation
+```
+npm install knex --save
+npm install express --save
+npm install pg --save
+npm install pg-native --save
+```
