@@ -40,7 +40,7 @@ CREATE TABLE customer (
 CREATE TABLE bookings (
     booking_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     customer_id UUID REFERENCES customer(customer_id),
-    flight_id UUID REFERENCES flights(flight_id),
+    flight_seat_id UUID REFERENCES flight_seats(flight_seat_id),
     booking_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     status VARCHAR(20) DEFAULT 'Confirmed'
 );
