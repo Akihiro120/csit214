@@ -10,21 +10,21 @@ CREATE TABLE airport (
     local_timezone VARCHAR(50)
 );
 
--- Routes
+-- Routes (now includes flight_time)
 CREATE TABLE route (
     route_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     origin_airport_code VARCHAR(3) REFERENCES airport(airport_code),
-    destination_airport_code VARCHAR(3) REFERENCES airport(airport_code)
+    destination_airport_code VARCHAR(3) REFERENCES airport(airport_code),
+    flight_time INTERVAL NOT NULL
 );
 
--- Flights
+-- Flights (arrival_time removed; calculate it when needed using departure_time and flight_time)
 CREATE TABLE flights (
     flight_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     flight_number VARCHAR(10) NOT NULL,
     route_id UUID REFERENCES route(route_id),
     flight_date DATE NOT NULL,
     departure_time TIME NOT NULL,
-    arrival_time TIME NOT NULL,
     UNIQUE (flight_number, flight_date)
 );
 
