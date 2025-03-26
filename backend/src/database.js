@@ -21,4 +21,30 @@ function query_airports() {
 	);
 }
 
-module.exports = {check_connection};
+// query flights
+function query_flights(to, from, date, flex) {
+
+	// if (flex) {
+		// return knex.raw(`
+		// 	SELECT flight_id, flight_number
+		// 	FROM flights
+		// 	WHERE route_id = (
+		// 		SELECT route_id
+		// 		FROM route
+		// 	) AND flight_date = ${date};
+		// `);
+
+	// } else {
+		return knex.raw(`
+			SELECT flight_id, flight_number
+			FROM flights
+			WHERE route_id = (
+				SELECT route_id
+				FROM route
+				WHERE origin_airport_code = '${to}' AND destination_airport_code = '${from}'
+			) AND flight_date = '${date}';
+		`);
+	// }
+}
+
+module.exports = {check_connection, query_flights};
