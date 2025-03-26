@@ -16,7 +16,9 @@ Then, seed the database by running the python seed script, (which requires venv,
 ```
 cat seedtable.sql | docker exec -i flight_app_postgres psql -U postgres -d flight_app
 
-
+python3 -m venv venv
+source venv/bin/acitvate
+pip3 install psycopg2-binary
 python3 seed_script.py
 ```
 
