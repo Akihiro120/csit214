@@ -25,6 +25,11 @@ airport_cities = {"SYD": "Sydney", "MEL": "Melbourne", "BNE": "Brisbane", "PER":
 airports = []
 for code in airport_codes:
     airports.append((code, airport_cities.get(code) + " Airport", airport_cities.get(code), "Australia", "Australia/" + airport_cities.get(code)))
+intl_airport_codes = ['LAX', 'NYC', 'LDN', 'BER', 'PAR']
+intl_airport_cities = {"LAX": "Los Angeles", "NYC": "New York City", "LDN": "London", "BER": "Berlin", "PAR": "Paris"}
+intl_airport_countries = {"LAX": "United States of America", "NYC": "United States of America", "LDN": "United Kingdom", "BER": "Germany", "PAR": "France"}
+for code in intl_airport_codes:
+    airports.append((code, intl_airport_cities.get(code) + " Airport", intl_airport_cities.get(code), intl_airport_countries.get(code), intl_airport_countries.get(code) + "/" + intl_airport_cities.get(code)))
 cursor.executemany("""
     INSERT INTO airport (airport_code, name, city, country, local_timezone)
     VALUES (%s, %s, %s, %s, %s)
@@ -32,22 +37,42 @@ cursor.executemany("""
 
 # Seed Routes with a random flight_time between 1 and 5 hours
 routes = []
+
 for i in range(0, len(airport_codes)):
     for j in range(0, len(airport_codes)):
         if i != j:
             flight_duration = timedelta(hours=random.randint(1, 5))
             routes.append((airport_codes[i], airport_codes[j], flight_duration))
+
+
+# specific case for sydney, and Perth to all international airports and return
+for i in range(0, len(intl_airport_codes)):
+    flight_duration = timedelta(hours=random.randint(4, 13))
+    routes.append(("SYD", intl_airport_codes[i], flight_duration))
+for i in range(0, len(intl_airport_codes)):
+    flight_duration = timedelta(hours=random.randint(4, 13))
+    routes.append((intl_airport_codes[i], "SYD", flight_duration))
+for i in range(0, len(intl_airport_codes)):
+    flight_duration = timedelta(hours=random.randint(4, 13))
+    routes.append(("PER", intl_airport_codes[i], flight_duration))
+for i in range(0, len(intl_airport_codes)):
+    flight_duration = timedelta(hours=random.randint(4, 13))
+    routes.append((intl_airport_codes[i], "PER", flight_duration))
+
 cursor.executemany("""
     INSERT INTO route (origin_airport_code, destination_airport_code, flight_time)
     VALUES ( %s, %s, %s)
 """, routes)
 
+
+
 # Build a mapping of route_id to (origin, destination)
 cursor.execute("SELECT route_id, origin_airport_code, destination_airport_code FROM route")
 route_info = {r[0]: (r[1], r[2]) for r in cursor.fetchall()}
 
+
 # Seed Flights
-cursor.execute("SELECT route_id FROM route")
+cursor.execute("SELECT route_id FROM route where origin_airport_code in ('SYD', 'MEL', 'BNE', 'PER', 'ADL') and destination_airport_code in ('SYD', 'MEL', 'BNE', 'PER', 'ADL')")
 route_ids = [r[0] for r in cursor.fetchall()]
 flights = []
 
@@ -77,6 +102,27 @@ while current_date <= end_date:
             flight_number = flight_numbers[(route_id, base_hour)]
             flights.append((flight_number, route_id, current_date, dep_time))
     current_date += timedelta(days=1)
+
+cursor.execute("Select route_id, origin_airport_code, destination_airport_code from route where origin_airport_code not in ('SYD', 'MEL', 'BNE', 'PER', 'ADL') or destination_airport_code not in ('SYD', 'MEL', 'BNE', 'PER', 'ADL')")
+route_ids = [r[0] for r in cursor.fetchall()]
+base_hours = [8, 19]
+for route_id in route_ids:
+    for base_hour in base_hours:
+        flight_numbers[(route_id, base_hour)] = f"FDR{unique_counter}"
+        unique_counter += 1
+current_date = today
+
+while current_date <= end_date:
+    for route_id in route_ids:
+        for base_hour in base_hours:
+            base_dep = datetime.combine(current_date, datetime.min.time()).replace(hour=base_hour)
+            offset = timedelta(minutes=random.randint(-15, 15))
+            dep_time_dt = base_dep + offset
+            dep_time = dep_time_dt.time()
+            flight_number = flight_numbers[(route_id, base_hour)]
+            flights.append((flight_number, route_id, current_date, dep_time))
+    current_date += timedelta(days=1)
+
 
 cursor.executemany("""
     INSERT INTO flights (flight_number, route_id, flight_date, departure_time)
