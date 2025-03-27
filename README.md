@@ -39,3 +39,9 @@ npm install express --save
 npm install pg --save
 npm install pg-native --save
 ```
+
+or 
+
+```
+npm install --save
+```
