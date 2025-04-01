@@ -24,10 +24,6 @@ const float mie_g = 0.76;
 
 vec3 airglow = vec3(0.015, 0.025, 0.030);
 
-// tone mapping
-float exposure = 1.0f;
-float gamma = 2.2f;
-
 // simple exponent function
 float get_density(float height, float scale_height) {
 	height = max(height, 0.0);
@@ -137,9 +133,6 @@ void main() {
 	float view_zenith = dot(view_dir, vec3(0.0, 1.0, 0.0));
    float airglow_factor = smoothstep(-0.1, 0.2, view_zenith); // more pronounced at zenith
    accumulated_light += airglow * airglow_factor;
-
-	accumulated_light = vec3(1.0) - exp(-accumulated_light * exposure);
-	// accumulated_light = tonemapACES(accumulated_light);
-	gl_FragColor = vec4(pow(accumulated_light, vec3(1.0 / 2.2)), 1.0);
+	gl_FragColor = vec4(accumulated_light, 1.0);
 }
 
