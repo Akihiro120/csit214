@@ -1,116 +1,77 @@
 import * as THREE from 'three';
-import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
-
-// create scene objects
-const clock = new THREE.Clock();
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-
-// begin scene
-
-// load shader
-async function load_shaders(vert_file, frag_file) {
-	const [vertex_src, fragment_src] = await Promise.all([
-		fetch(vert_file).then(res => res.text()),
-		fetch(frag_file).then(res => res.text())
-	]);
-
-	// create material
-	const material = new THREE.ShaderMaterial({
-		vertexShader: vertex_src,
-		fragmentShader: fragment_src,
-		uniforms: {
-			light_direction: { value: new THREE.Vector3(1.5, 3.4, 0) },
-			camera_position: { value: new THREE.Vector3(0, 0, 0) },
-		}
-	})
-
-	return material;
-}
-
-const skybox_shader = await load_shaders("resources/shaders/skybox/skybox.vert", "resources/shaders/skybox/skybox.frag");
-const default_shader = await load_shaders("resources/shaders/default.vert", "resources/shaders/default.frag");
-
-const obj_loader = new OBJLoader();
-let plane = new THREE.Object3D();
-obj_loader.load("resources/plane.obj", (object) => {
-	plane = object;
-	scene.add(plane);
-	plane.position.set(0, 0, -5);
-	plane.traverse((child) => {
-		if (child.isMesh) {
-			child.material = default_shader;
-		}
-
-		const textureLoader = new THREE.TextureLoader();
-		const texture = textureLoader.load("resources/plane.tga.png", (texture) => {
-			texture.wrapS = THREE.RepeatWrapping;
-			texture.wrapT = THREE.RepeatWrapping;
-			texture.repeat.set(5, 5);
-		});
-
-		default_shader.uniforms.albedo_texture = { value: texture };
-	});
-});
-
-const geometry = new THREE.BoxGeometry(200, 200, 200);
-const cube = new THREE.Mesh(geometry, skybox_shader);
-
-// add all objects to scene
-scene.add(cube);
+import {Camera} from './camera.js';
+import {Skybox, capture_skybox} from './skybox.js';
+import {shaders} from './shaders.js';
+import {Plane} from './plane.js';
+import {ShadowPass} from './shadows.js'
+import {PostProcessPass} from './postprocess.js'
 
 // prepare renderer
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-// controls
-camera.position.set(-1.25, 1.25, -9.5);
-const angle = THREE.MathUtils.degToRad(150);
-camera.rotateOnAxis(new THREE.Vector3(0, 1, 0), -angle);
-const angle1 = THREE.MathUtils.degToRad(10);
-camera.rotateOnAxis(new THREE.Vector3(1, 0, 0), -angle1);
+// create scene objects
+const clock = new THREE.Clock();
+const scene = new THREE.Scene();
+const screen_scene = new THREE.Scene();
+const shadow_scene = new THREE.Scene();
+const camera = new Camera();
+const skybox = new Skybox(scene);
+const plane = new Plane(scene, shaders.shaded);
+const shadow_plane = new Plane(shadow_scene, shaders.depth);
 
-function calculateSunDirection(dayandnight) {
-	const theta = ((dayandnight - 6) / 24) * 2 * Math.PI;
-  
-  	// Calculate the sun's direction components.
-  	const x = Math.cos(theta);   
-  	const y = Math.sin(theta); 
-	const z = Math.sin(theta);
+// passes
+const final_pass = new PostProcessPass(screen_scene);
+const shadow_pass = new ShadowPass();
 
-  	// Construct and normalise the vector.
-  	// In this model, the sun moves in the X-Y plane.
-  	const sunDirection = new THREE.Vector3(x, y, 0).normalize();
-  
-  	return sunDirection;
+// capture skybox
+skybox.calculateSunDirection(7);
+const skybox_capture = capture_skybox(renderer, skybox.light_direction);
+
+// update uniforms
+function update_uniforms() {
+	// update skybox uniforms
+
+	// update shaded uniforms
+	shaders.shaded.uniforms.camera_position.value.copy(camera.camera.position);
+	shaders.shaded.uniforms.light_direction.value.copy(skybox.light_direction);
+	shaders.shaded.uniforms.cube_map.value = skybox_capture;
+	shaders.shaded.uniforms.shadow_map.value = shadow_pass.render_target.depthTexture;
+	shaders.shaded.uniforms.light_matrix.value.copy(shadow_pass.light_matrix);
+
+	// update skybox display
+	shaders.cubemap.uniforms.cube_map.value = skybox_capture;
+	shaders.cubemap.side = THREE.BackSide;
+	shaders.cubemap.depthWrite = false;
+
+	// scene texture
+	shaders.postprocess.uniforms.scene_texture.value = final_pass.scene_texture.texture;
+	//shaders.postprocess.uniforms.scene_texture.value = shadow_pass.render_target.depthTexture;
+
+	// update
+	//shaders.skybox.needsUpdate = true;
+	//shaders.shaded.needsUpdate = true;
+	//shaders.cubemap.needsUpdate = true;
+	//shaders.postprocess.needsUpdate = true;
 }
 
 // render
-let cycle = 6;
-function render_loop() {
-	cycle += 0.5 * clock.getDelta();
-	const light_direction = calculateSunDirection(cycle);
-	camera.updateMatrixWorld(true);
+	final_pass.render_final_pass(renderer, scene, camera.camera);
+function render_loop() { 
+	// provide skybox data
+	update_uniforms();
+	plane.animate(clock.getElapsedTime());
+	shadow_plane.animate(clock.getElapsedTime());
 
-	// update uniforms
-	skybox_shader.uniforms.camera_position.value = camera.position; 
-	skybox_shader.uniforms.light_direction.value = light_direction;
+	// shadow pass
+	shadow_pass.capture_shadow_map(renderer, shadow_scene, skybox.light_direction);
 
-	default_shader.uniforms.camera_position.value = camera.position;
-	default_shader.uniforms.light_direction.value = light_direction;
+	// render scene to display
+	renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
+	final_pass.render_final_pass(renderer, scene, camera.camera);
 
-	const time = clock.getElapsedTime();
-	const pitchAmplitude = 0.05; // maximum pitch oscillation in radians
-	const rollAmplitude  = 0.05; // maximum roll oscillation in radians
-	const speed = 0.3;
-	plane.rotation.x = pitchAmplitude * Math.sin(speed * time);
-   plane.rotation.z = rollAmplitude * Math.sin(speed * time + Math.PI / 2); // phase offset for variation
-
-	// render
-	skybox_shader.depthWrite = false;
-	skybox_shader.depthTest = false;
-	skybox_shader.side = THREE.BackSide;
-	renderer.render(scene, camera);
+	// display the final render texture
+	renderer.render(screen_scene, camera.camera);
 }
 renderer.setAnimationLoop(render_loop);
