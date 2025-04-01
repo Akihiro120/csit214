@@ -1,9 +1,9 @@
 in vec2 vertex_texcoords;
 uniform sampler2D scene_texture;
 
-float exposure = 1.5f;
+float exposure = 2.0f;
 float gamma = 2.2f;
-float constrast = 1.25f;
+float constrast = 1.5f;
 float temperature = 1.0f;
 
 float aces(float x) {

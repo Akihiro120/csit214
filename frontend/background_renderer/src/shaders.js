@@ -21,11 +21,24 @@ const shaded = await resources.load_shaders("resources/shaders/default.vert", "r
 		cube_map: {value: new THREE.Texture()},
 		shadow_map: {value: new THREE.Texture()},
 		light_matrix: {value: new THREE.Matrix4()},
+		irradiance_map: {value: new THREE.Texture()},
 	}
 );
 
 // cubemap
 const cubemap = await resources.load_shaders("resources/shaders/cubemap/cubemap.vert", "resources/shaders/cubemap/cubemap.frag", 
+	{
+		cube_map: {value: new THREE.Texture()},
+	}
+);
+
+const irradiance = await resources.load_shaders("resources/shaders/cubemap/cubemap.vert", "resources/shaders/pbr/irradiance.frag", 
+	{
+		cube_map: {value: new THREE.Texture()},
+	}
+);
+
+const prefilter = await resources.load_shaders("resources/shaders/cubemap/cubemap.vert", "resources/shaders/pbr/prefilter.frag", 
 	{
 		cube_map: {value: new THREE.Texture()},
 	}
@@ -50,5 +63,7 @@ export const shaders = {
 	shaded,
 	cubemap,
 	postprocess,
-	depth
+	depth,
+	irradiance,
+	prefilter
 }

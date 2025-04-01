@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import {Camera} from './camera.js';
-import {Skybox, capture_skybox} from './skybox.js';
+import {Skybox, capture_skybox, capture_irradiance, capture_prefilter} from './skybox.js';
 import {shaders} from './shaders.js';
 import {Plane} from './plane.js';
 import {ShadowPass} from './shadows.js'
@@ -26,8 +26,10 @@ const final_pass = new PostProcessPass(screen_scene);
 const shadow_pass = new ShadowPass();
 
 // capture skybox
-skybox.calculateSunDirection(7);
+skybox.calculateSunDirection(10);
 const skybox_capture = capture_skybox(renderer, skybox.light_direction);
+const irradiance_capture = capture_irradiance(renderer, skybox_capture);
+//const prefilter_capture = capture_prefilter(renderer, skybox_capture);
 
 // update uniforms
 function update_uniforms() {
@@ -39,9 +41,10 @@ function update_uniforms() {
 	shaders.shaded.uniforms.cube_map.value = skybox_capture;
 	shaders.shaded.uniforms.shadow_map.value = shadow_pass.render_target.depthTexture;
 	shaders.shaded.uniforms.light_matrix.value.copy(shadow_pass.light_matrix);
+	shaders.shaded.uniforms.irradiance_map.value = irradiance_capture;
 
 	// update skybox display
-	shaders.cubemap.uniforms.cube_map.value = skybox_capture;
+	shaders.cubemap.uniforms.cube_map.value = skybox_capture;//irradiance_capture;
 	shaders.cubemap.side = THREE.BackSide;
 	shaders.cubemap.depthWrite = false;
 

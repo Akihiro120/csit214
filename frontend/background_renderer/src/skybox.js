@@ -36,21 +36,68 @@ function capture_skybox(renderer, light_direction) {
 	});
 
 	const scene = new THREE.Scene();
-	const geometry = new THREE.BoxGeometry(100, 100, 100);
+	const geometry = new THREE.BoxGeometry(2, 2, 2);
 	const material = shaders.skybox;
 	const skybox = new THREE.Mesh(geometry, material);
 	scene.add(skybox);
 
-	const camera = new THREE.CubeCamera(1, 1000, skybox_capture);
+	const camera = new THREE.CubeCamera(1, 10, skybox_capture);
 
 	shaders.skybox.uniforms.camera_position.value.copy(new THREE.Vector3(0, 0, 0));
 	shaders.skybox.uniforms.light_direction.value.copy(light_direction);
 	shaders.skybox.side = THREE.BackSide;
-	shaders.skybox.depthTest = false;
 	camera.update(renderer, scene);
 
 	// return texture
 	return skybox_capture.texture;
 }
 
-export { Skybox, capture_skybox };
+function capture_irradiance(renderer, cube_map) {
+	const skybox_capture = new THREE.WebGLCubeRenderTarget(512, {
+		format: THREE.RGBAFormat,
+		magFilter: THREE.LinearFilter,
+		minFilter: THREE.LinearMipMapLinearFilter,
+		generateMipmaps: true
+	});
+
+	const scene = new THREE.Scene();
+	const geometry = new THREE.BoxGeometry(2, 2, 2);
+	const material = shaders.irradiance;
+	const skybox = new THREE.Mesh(geometry, material);
+	scene.add(skybox);
+
+	const camera = new THREE.CubeCamera(1, 10, skybox_capture);
+	shaders.irradiance.side = THREE.BackSide;
+	shaders.irradiance.uniforms.cube_map.value = cube_map;
+
+	camera.update(renderer, scene);
+
+	// return texture
+	return skybox_capture.texture;
+}
+
+function capture_prefilter(renderer, cube_map) {
+	const skybox_capture = new THREE.WebGLCubeRenderTarget(512, {
+		format: THREE.RGBAFormat,
+		magFilter: THREE.LinearFilter,
+		minFilter: THREE.LinearMipMapLinearFilter,
+		generateMipmaps: true
+	});
+
+	const scene = new THREE.Scene();
+	const geometry = new THREE.BoxGeometry(2, 2, 2);
+	const material = shaders.prefilter;
+	const skybox = new THREE.Mesh(geometry, material);
+	scene.add(skybox);
+
+	const camera = new THREE.CubeCamera(1, 10, skybox_capture);
+	shaders.prefilter.side = THREE.BackSide;
+	shaders.prefilter.uniforms.cube_map.value = cube_map;
+
+	camera.update(renderer, scene);
+
+	// return texture
+	return skybox_capture.texture;
+}
+
+export { Skybox, capture_skybox, capture_irradiance, capture_prefilter};

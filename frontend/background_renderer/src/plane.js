@@ -32,7 +32,7 @@ class Plane {
 			//this.plane_object.position.copy(new THREE.Vector3(120, -40.5, -40));
 			this.plane_object.position.copy(new THREE.Vector3(0, 0, 0));
 			this.plane_object.rotateOnAxis(new THREE.Vector3(0, 1, 0), THREE.MathUtils.degToRad(-35));
-			this.plane_object.scale.set(50.0, 50.0, 50.0);
+			this.plane_object.scale.set(1.0, 1.0, 1.0);
 
 			// add to scene
 			this.plane_object.layers.set(1);
