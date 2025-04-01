@@ -24,7 +24,7 @@ class ShadowPass {
 		});
 
 		// camera
-		this.light_camera = new THREE.OrthographicCamera(-75.0, 75.0, 75.0, -75.0, 1.0, 200.0);	
+		this.light_camera = new THREE.OrthographicCamera(-1.50, 1.50, -1.50, 1.50, 0.1, 10.0);	
 		this.light_matrix = new THREE.Matrix4();
 		this.depth_material = shaders.depth;
 	}

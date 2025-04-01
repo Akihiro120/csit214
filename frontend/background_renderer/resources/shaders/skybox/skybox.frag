@@ -1,4 +1,3 @@
-precision highp float;
 const float PI = 3.14159265359;
 const float E = 2.71828182845904523536;
 in vec3 vertex_position;
@@ -7,16 +6,16 @@ uniform vec3 light_direction;
 uniform vec3 camera_position;
 
 // atmosphere geometry
-const float earth_radius = 4371e3;
-const float atmosphere_radius = 4471e3;
+const float earth_radius = 6371e3;
+const float atmosphere_radius = 6471e3;
 
 // atmospheric scale heights
 const float rayleigh_scale_height = 8e3;
 const float mie_scale_height = 1.2e3;
 
 // scattering strengths
-const float rayleigh_strength = 1e-5;
-const float mie_strength = 21e-6;
+const float rayleigh_strength = 1.33e-5;
+const float mie_strength = 2e-5;
 const float sun_intensity = 5.0;
 
 // mie phase asymmetry
@@ -42,15 +41,12 @@ float mie_phase(float cos_theta) {
 	return (3.0 / (8.0 * PI)) * num / denom;
 }
 
-vec3 tonemapACES(vec3 x) {
-    return (x * (2.51 * x + 0.03)) / (x * (2.43 * x + 0.59) + 0.14);
-}
 
 void main() {
 	// compute view direction
 	vec3 view_dir = normalize(vertex_position);
 	vec3 sun_dir = normalize(light_direction);
-	vec3 camera_pos = camera_position + vec3(0.0, earth_radius, 0.0);
+	vec3 camera_pos = camera_position + vec3(0.0, earth_radius + 2e3, 0.0);
 
 	float solar_elevation = dot(sun_dir, vec3(0.0, 1.0, 0.0));
 	float effective_sun_intensity = (solar_elevation > 0.0)
@@ -81,7 +77,7 @@ void main() {
 	}
 
 	// raymarch
-	const int STEPS = 16;
+	const int STEPS = 24;
 	float step_size = segment_length / float(STEPS);
 	vec3 accumulated_light = vec3(0.0f);
 	float accumulated_rayleigh_depth = 0.0;
@@ -95,6 +91,7 @@ void main() {
 		// altitude
 		float height = length(sample_pos) - earth_radius;
 		height = max(height, 0.0);
+
 
 		// compute density
 		float rayleigh_density = get_density(height, rayleigh_scale_height);
@@ -130,9 +127,17 @@ void main() {
 		accumulated_light += scatter_at_step * extinction;
 	}
 
-	float view_zenith = dot(view_dir, vec3(0.0, 1.0, 0.0));
-   float airglow_factor = smoothstep(-0.1, 0.2, view_zenith); // more pronounced at zenith
-   accumulated_light += airglow * airglow_factor;
+	// water
+	vec3 water_normal = vec3(0.0, 1.0, 0.0);
+	vec3 ocean_colour = vec3(0.0, 0.2, 0.4);
+
+	// Compute the view angle factor (Fresnel term) so that reflection increases at grazing angles
+	float view_dot = clamp(dot(view_dir, water_normal), 0.0, 1.0);
+	float light_dot = clamp(dot(sun_dir, water_normal), 0.0, 1.0);
+
+	float horizon_blend = smoothstep(-0.05, 0.05, view_dot);
+	accumulated_light = mix(ocean_colour, accumulated_light, horizon_blend);
+
 	gl_FragColor = vec4(accumulated_light, 1.0);
 }
 
