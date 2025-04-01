@@ -1,6 +1,4 @@
-#version 330 core
-layout (location = 0) out vec4 frag_color;
-
+precision highp float;
 const float PI = 3.14159265359;
 const float E = 2.71828182845904523536;
 in vec3 vertex_position;
@@ -9,8 +7,8 @@ uniform vec3 light_direction;
 uniform vec3 camera_position;
 
 // atmosphere geometry
-const float earth_radius = 6371e3;
-const float atmosphere_radius = 6471e3;
+const float earth_radius = 4371e3;
+const float atmosphere_radius = 4471e3;
 
 // atmospheric scale heights
 const float rayleigh_scale_height = 8e3;
@@ -23,6 +21,8 @@ const float sun_intensity = 5.0;
 
 // mie phase asymmetry
 const float mie_g = 0.76;
+
+vec3 airglow = vec3(0.015, 0.025, 0.030);
 
 // tone mapping
 float exposure = 1.0f;
@@ -54,14 +54,21 @@ void main() {
 	// compute view direction
 	vec3 view_dir = normalize(vertex_position);
 	vec3 sun_dir = normalize(light_direction);
-	vec3 camera_pos = camera_position + vec3(0.0f, 6371e3, 0.0);
+	vec3 camera_pos = camera_position + vec3(0.0, earth_radius, 0.0);
+
+	float solar_elevation = dot(sun_dir, vec3(0.0, 1.0, 0.0));
+	float effective_sun_intensity = (solar_elevation > 0.0)
+    ? sun_intensity
+    : sun_intensity * exp(10.0 * solar_elevation);
+
+	effective_sun_intensity = clamp(effective_sun_intensity, 0.0, sun_intensity);
 
 	// ray sphere intersection
 	float b = 2.0 * dot(camera_pos, view_dir);
 	float c = dot(camera_pos, camera_pos) - atmosphere_radius * atmosphere_radius;
 	float discriminant = b * b - 4.0 * c;
 	if (discriminant < 0.0) {
-		frag_color = vec4(0.0);
+		gl_FragColor = vec4(0.0);
 		return;
 	}
 
@@ -73,7 +80,7 @@ void main() {
 
 	float segment_length = t_max - t_min;
 	if (segment_length <= 0.0) {
-		frag_color = vec4(0.0);
+		gl_FragColor = vec4(0.0);
 		return;
 	}
 
@@ -116,7 +123,7 @@ void main() {
 		vec3 beta_m = mie_strength * pow(lambda / reference, vec3(-0.84));
 
 		// accumulate
-		vec3 scatter_at_step = vec3(sun_intensity * 
+		vec3 scatter_at_step = vec3(effective_sun_intensity * 
 		(beta_r * phase_r * delta_rayleigh +
 		beta_m * phase_m * delta_mie));
 
@@ -127,8 +134,12 @@ void main() {
 		accumulated_light += scatter_at_step * extinction;
 	}
 
+	float view_zenith = dot(view_dir, vec3(0.0, 1.0, 0.0));
+   float airglow_factor = smoothstep(-0.1, 0.2, view_zenith); // more pronounced at zenith
+   accumulated_light += airglow * airglow_factor;
+
 	accumulated_light = vec3(1.0) - exp(-accumulated_light * exposure);
 	// accumulated_light = tonemapACES(accumulated_light);
-	frag_color = vec4(pow(accumulated_light, vec3(1.0 / 2.2)), 1.0);
+	gl_FragColor = vec4(pow(accumulated_light, vec3(1.0 / 2.2)), 1.0);
 }
 
