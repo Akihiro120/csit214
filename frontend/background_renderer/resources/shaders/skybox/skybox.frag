@@ -14,7 +14,7 @@ const float rayleigh_scale_height = 8e3;
 const float mie_scale_height = 1.2e3;
 
 // scattering strengths
-const float rayleigh_strength = 1.33e-5;
+const float rayleigh_strength = 1.2e-5;
 const float mie_strength = 2e-5;
 const float sun_intensity = 5.0;
 
@@ -35,12 +35,19 @@ float rayleigh_phase(float cos_theta) {
 }
 
 float mie_phase(float cos_theta) {
-	float g2 = mie_g * mie_g;
-	float num = (1.0 - g2) * (1.0 + cos_theta * cos_theta);
-	float denom = (2.0 + g2) * pow(1.0 + g2 - 2.0 * mie_g * cos_theta, 1.5);
-	return (3.0 / (8.0 * PI)) * num / denom;
+	float g = mie_g; // mieG is typically 0.76
+   float g2 = g * g;
+   return (1.0 / (4.0 * PI)) * ((1.0 - g2) / pow(1.0 + g2 - 2.0 * g * cos_theta, 1.5));
 }
 
+float TwoTermMiePhase(float cosTheta, float g) {
+    // A mixture of forward and backward scattering
+    float phaseForward = (1.0 - g * g) / pow(1.0 + g * g - 2.0 * g * cosTheta, 1.5);
+    float phaseBackward = (1.0 - g * g) / pow(1.0 + g * g + 2.0 * g * cosTheta, 1.5);
+    // Weighting factor; adjust as necessary for the desired balance
+    float f = 0.8;  // emphasises forward scattering
+    return (f * phaseForward + (1.0 - f) * phaseBackward) / (8.0 * PI);
+}
 
 void main() {
 	// compute view direction
@@ -77,7 +84,7 @@ void main() {
 	}
 
 	// raymarch
-	const int STEPS = 24;
+	const int STEPS = 64;
 	float step_size = segment_length / float(STEPS);
 	vec3 accumulated_light = vec3(0.0f);
 	float accumulated_rayleigh_depth = 0.0;
@@ -91,7 +98,6 @@ void main() {
 		// altitude
 		float height = length(sample_pos) - earth_radius;
 		height = max(height, 0.0);
-
 
 		// compute density
 		float rayleigh_density = get_density(height, rayleigh_scale_height);
@@ -108,7 +114,7 @@ void main() {
 		// calcualate phase
 		float cos_theta = dot(view_dir, sun_dir);
 		float phase_r = rayleigh_phase(cos_theta);
-		float phase_m = mie_phase(cos_theta);
+		float phase_m = TwoTermMiePhase(cos_theta, mie_g);//mie_phase(cos_theta);
 
 		vec3 lambda = vec3(680.0, 550.0, 440.0);
 		float reference = 550.0;
@@ -126,17 +132,6 @@ void main() {
 
 		accumulated_light += scatter_at_step * extinction;
 	}
-
-	// water
-	vec3 water_normal = vec3(0.0, 1.0, 0.0);
-	vec3 ocean_colour = vec3(0.0, 0.2, 0.4);
-
-	// Compute the view angle factor (Fresnel term) so that reflection increases at grazing angles
-	float view_dot = clamp(dot(view_dir, water_normal), 0.0, 1.0);
-	float light_dot = clamp(dot(sun_dir, water_normal), 0.0, 1.0);
-
-	float horizon_blend = smoothstep(-0.05, 0.05, view_dot);
-	accumulated_light = mix(ocean_colour, accumulated_light, horizon_blend);
 
 	gl_FragColor = vec4(accumulated_light, 1.0);
 }
