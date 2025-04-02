@@ -26,7 +26,8 @@ const final_pass = new PostProcessPass(screen_scene);
 const shadow_pass = new ShadowPass();
 
 // capture skybox
-skybox.calculateSunDirection(10);
+//skybox.calculateSunDirection(10);
+skybox.calculateSunDirection(7);
 const skybox_capture = capture_skybox(renderer, skybox.light_direction);
 const irradiance_capture = capture_irradiance(renderer, skybox_capture);
 //const prefilter_capture = capture_prefilter(renderer, skybox_capture);
@@ -49,7 +50,9 @@ function update_uniforms() {
 	shaders.cubemap.depthWrite = false;
 
 	// scene texture
-	shaders.postprocess.uniforms.scene_texture.value = final_pass.scene_texture.texture;
+	shaders.bright_filter.uniforms.scene_texture.value = final_pass.scene_texture_plane.texture;
+	shaders.postprocess.uniforms.scene_texture.value = final_pass.scene_texture_plane.texture;
+	shaders.postprocess.uniforms.bloom_texture.value = final_pass.vblur_texture.texture;
 	//shaders.postprocess.uniforms.scene_texture.value = shadow_pass.render_target.depthTexture;
 
 	// update
@@ -72,6 +75,7 @@ function render_loop() {
 
 	// render scene to display
 	renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
+	final_pass.render_bloom_pass(renderer, scene, camera.camera);
 	final_pass.render_final_pass(renderer, scene, camera.camera);
 
 	// display the final render texture

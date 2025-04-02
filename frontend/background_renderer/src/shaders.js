@@ -48,12 +48,33 @@ const prefilter = await resources.load_shaders("resources/shaders/cubemap/cubema
 const postprocess = await resources.load_shaders("resources/shaders/postprocessing/final.vert", "resources/shaders/postprocessing/final.frag",
 	{
 		scene_texture: {value: new THREE.Texture()},
+		bloom_texture: {value: new THREE.Texture()},
 	}
 );
 
 // depth
 const depth = await resources.load_shaders("resources/shaders/shadow/depth.vert", "resources/shaders/shadow/depth.frag",
 	{
+	}
+);
+
+const bright_filter = await resources.load_shaders("resources/shaders/postprocessing/final.vert", "resources/shaders/postprocessing/bright_filter.frag",
+	{
+		scene_texture: {value: new THREE.Texture()},
+	}
+);
+
+const horizontal_blur = await resources.load_shaders("resources/shaders/postprocessing/hblur.vert", "resources/shaders/postprocessing/hblur.frag",
+	{
+		scene_texture: {value: new THREE.Texture()},
+		target_height: {value: 0},
+	}
+);
+
+const vertical_blur = await resources.load_shaders("resources/shaders/postprocessing/vblur.vert", "resources/shaders/postprocessing/vblur.frag",
+	{
+		scene_texture: {value: new THREE.Texture()},
+		target_height: {value: 0},
 	}
 );
 
@@ -65,5 +86,8 @@ export const shaders = {
 	postprocess,
 	depth,
 	irradiance,
-	prefilter
+	prefilter,
+	bright_filter,
+	horizontal_blur,
+	vertical_blur,
 }
