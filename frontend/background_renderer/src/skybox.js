@@ -53,7 +53,7 @@ function capture_skybox(renderer, light_direction) {
 }
 
 function capture_irradiance(renderer, cube_map) {
-	const skybox_capture = new THREE.WebGLCubeRenderTarget(512, {
+	const skybox_capture = new THREE.WebGLCubeRenderTarget(128, {
 		format: THREE.RGBAFormat,
 		magFilter: THREE.LinearFilter,
 		minFilter: THREE.LinearMipMapLinearFilter,
