@@ -27,6 +27,9 @@ class Plane {
 			resources.texture_loader.load("resources/plane/plane_AO.png", (texture) => {
 				shaders.shaded.uniforms.ao_texture.value = texture;
 			});
+			resources.texture_loader.load("resources/noise.png", (texture) => {
+				shaders.shaded.uniforms.noise_map.value = texture;
+			});
 
 			// set the position
 			//this.plane_object.position.copy(new THREE.Vector3(120, -40.5, -40));
@@ -41,6 +44,7 @@ class Plane {
 	}
 
 	animate(time) {
+		shaders.shaded.uniforms.time.value = time;
 		const pitchAmplitude = 0.05; // maximum pitch oscillation in radians
 		const rollAmplitude  = 0.05; // maximum roll oscillation in radians
 		const speed = 0.3;

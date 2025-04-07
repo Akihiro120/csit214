@@ -22,6 +22,8 @@ const shaded = await resources.load_shaders("resources/shaders/default.vert", "r
 		shadow_map: {value: new THREE.Texture()},
 		light_matrix: {value: new THREE.Matrix4()},
 		irradiance_map: {value: new THREE.Texture()},
+		noise_map: {value: new THREE.Texture()},
+		time: {value: 0.0},
 	}
 );
 
