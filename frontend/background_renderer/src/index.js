@@ -27,7 +27,7 @@ const shadow_pass = new ShadowPass();
 
 // capture skybox
 //skybox.calculateSunDirection(10);
-skybox.calculateSunDirection(7);
+skybox.calculateSunDirection(8);
 const skybox_capture = capture_skybox(renderer, skybox.light_direction);
 const irradiance_capture = capture_irradiance(renderer, skybox_capture);
 //const prefilter_capture = capture_prefilter(renderer, skybox_capture);
