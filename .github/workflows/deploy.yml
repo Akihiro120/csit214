@@ -24,7 +24,7 @@ jobs:
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          branch: gh-pages
+          branch: production
           folder: frontend/flydreamair/dist/
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
