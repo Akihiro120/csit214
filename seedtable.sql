@@ -41,6 +41,7 @@ CREATE TABLE bookings (
     booking_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     customer_id UUID REFERENCES customer(customer_id),
     booking_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    booking_hash TEXT GENERATED ALWAYS AS (md5(booking_id::text)) STORED,
     status VARCHAR(20) DEFAULT 'Confirmed'
 );
 
