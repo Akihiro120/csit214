@@ -1,0 +1,8 @@
+@import "tailwindcss";
+:root {
+	--primary: #232554;
+}
+
+body {
+	@apply overscroll-none;
+}
