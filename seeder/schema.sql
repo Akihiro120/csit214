@@ -1,3 +1,5 @@
+
+\echo '>>> Running schema.sql...'
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
@@ -15,7 +17,9 @@ CREATE TABLE route (
     route_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     origin_airport_code VARCHAR(3) REFERENCES airport(airport_code),
     destination_airport_code VARCHAR(3) REFERENCES airport(airport_code),
-    flight_time INTERVAL NOT NULL
+    flight_time INTERVAL NOT NULL,
+    distance INT NOT NULL,
+    base_fare DECIMAL(10, 2) NOT NULL
 );
 
 -- Flights (arrival_time removed; calculate it when needed using departure_time and flight_time)
@@ -25,6 +29,7 @@ CREATE TABLE flights (
     route_id UUID REFERENCES route(route_id),
     flight_date DATE NOT NULL,
     departure_time TIME NOT NULL,
+    available_seats INT NOT NULL,
     UNIQUE (flight_number, flight_date)
 );
 
@@ -41,6 +46,7 @@ CREATE TABLE bookings (
     booking_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     customer_id UUID REFERENCES customer(customer_id),
     booking_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    booking_hash TEXT GENERATED ALWAYS AS (md5(booking_id::text)) STORED,
     status VARCHAR(20) DEFAULT 'Confirmed'
 );
 
@@ -66,7 +72,7 @@ CREATE TABLE flight_seats (
     seat_number VARCHAR(5) REFERENCES seat(seat_number),
     booking_id UUID REFERENCES bookings(booking_id),  -- indicates seat is booked
     passenger_id UUID REFERENCES passenger(passenger_id), -- optional assignment
-    availability BOOLEAN DEFAULT TRUE
+    UNIQUE (flight_id, seat_number) -- Ensures each seat on a specific flight is unique
 );
 
 -- Inflight Services
@@ -80,3 +86,19 @@ CREATE TABLE inflight_services (
 
 -- Index
 CREATE INDEX ROUTEDATE_IDX ON flights(route_id, flight_date);
+CREATE INDEX SEATS_IDX ON flight_seats(flight_id);
+CREATE INDEX BOOKING_IDX ON flight_seats(booking_id);
+
+
+
+INSERT INTO airport (airport_code, name, city, country, local_timezone) VALUES
+('SYD', 'Sydney Airport', 'Sydney', 'Australia', 'Australia/Sydney'),
+('MEL', 'Melbourne Tullamarine Airport', 'Melbourne', 'Australia', 'Australia/Melbourne'),
+('ADL', 'Adelaide Airport', 'Adelaide', 'Australia', 'Australia/Adelaide'),
+('DRW', 'Darwin Airport', 'Darwin', 'Australia', 'Australia/Darwin'),
+('HBA', 'Hobart Airport', 'Hobart', 'Australia', 'Australia/Hobart'),
+('PER', 'Perth Airport', 'Perth', 'Australia', 'Australia/Perth'),
+('BNE', 'Brisbane Airport', 'Brisbane', 'Australia', 'Australia/Brisbane'),
+('WOL', 'Shellharbour Airport', 'Albion Park Rail', 'Australia', 'Australia/Sydney');
+
+
