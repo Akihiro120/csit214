@@ -1,14 +1,38 @@
+const environment_path = require('path');
+const dotenv = require('dotenv');
+
+// load envonrment vairbales
+const env_path = environment_path.resolve(__dirname, '../../.env');
+dotenv.config({path: env_path});
+
+console.log("Environment Variables Loaded: ", process.env);
+
+// database knex
+console.log("Environment Loaded from: ", env_path);
+// const knex = require('knex')({
+// 	client: 'pg',
+// 	connection: {
+// 		host: 'localhost',
+// 		port: process.env.POSTGRES_PORT,
+// 		user: process.env.POSTGRES_USER,
+// 		password: process.env.POSTGRES_PASSWORD,
+// 		database: process.env.POSTGRES_DB,
+// 		ssl: false,
+// 	}
+// });
 const knex = require('knex')({
 	client: 'pg',
 	connection: {
-		host: "localhost",
-		port: 5432,
-		user: "postgres",
-		password: "1234",
-		database: "flight_app",
+		host: 'localhost',
+		port: process.env.POSTGRES_PORT,
+		user: process.env.POSTGRES_USER,
+		password: process.env.POSTGRES_PASSWORD,
+		database: process.env.POSTGRES_DB,
 		ssl: false,
 	}
 });
+
+console.log('Database configuration loaded successfully');
 
 function check_connection() {
 	return knex.raw('SELECT * FROM airport');
