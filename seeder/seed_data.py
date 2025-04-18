@@ -178,7 +178,7 @@ try: # Wrap the rest of the script in a try block for proper cleanup
                 flight_num = fixed_flight_nums_for_slots[i]
                 # Get the departure time for this slot (earliest, second earliest, etc.)
                 dep_time = departure_times_list[i]
-                dummy_available_seats = 166 # Assuming an empty flight for simplicity
+                dummy_available_seats = 170 # Assuming an empty flight for simplicity
 
                 cursor.execute("""
                     INSERT INTO flights (flight_number, route_id, flight_date, departure_time, available_seats)
