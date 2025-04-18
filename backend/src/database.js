@@ -1,5 +1,6 @@
 const environment_path = require('path');
 const dotenv = require('dotenv');
+const seats_status = require('./seats')
 
 // load envonrment vairbales
 const env_path = environment_path.resolve(__dirname, '../../.env');
@@ -58,4 +59,29 @@ function query_flights(to, from, date, flex) {
 	`);
 }
 
-module.exports = {check_connection, query_flights};
+// query seats
+async function query_seats(flight_id) {
+  try {
+   	const booked_seats_result = await knex.raw(`
+   		SELECT seat_number
+      	FROM flight_seats
+      	WHERE flight_id = ${flight_id};
+   	`);
+		const seats = seats_status;//{...seats_status};
+    
+		for (var i = 0; i < booked_seats_result.rows.length; i++) {
+			const number = booked_seats_result.rows[i].seat_number;
+			const seat = seats.find(seat => seat.seat_number == number);
+			if (seat) {
+				seat.status = true;
+			}
+		}
+
+   	return seats;
+  	} 	catch (err) {
+    	console.log("Failed to obtain seats:", err);
+    	throw err;
+  	}
+}
+
+module.exports = {check_connection, query_flights, query_seats};
