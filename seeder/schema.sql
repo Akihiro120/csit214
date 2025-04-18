@@ -1,4 +1,3 @@
-
 \echo '>>> Running schema.sql...'
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -38,7 +37,7 @@ CREATE TABLE customer (
     customer_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
-    phone VARCHAR(30)
+    phone VARCHAR(30) NOT NULL
 );
 
 -- Bookings (no longer store flight_seat_id here)
@@ -55,8 +54,9 @@ CREATE TABLE passenger (
     passenger_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     booking_id UUID REFERENCES bookings(booking_id),
     first_name VARCHAR(50) NOT NULL,
-    last_name VARCHAR(50) NOT NULL,
-    date_of_birth DATE
+    last_name VARCHAR(60) NOT NULL,
+    email VARCHAR(100) NULL,
+    phone VARCHAR(30) NULL
 );
 
 -- Seats
@@ -89,8 +89,6 @@ CREATE INDEX ROUTEDATE_IDX ON flights(route_id, flight_date);
 CREATE INDEX SEATS_IDX ON flight_seats(flight_id);
 CREATE INDEX BOOKING_IDX ON flight_seats(booking_id);
 
-
-
 INSERT INTO airport (airport_code, name, city, country, local_timezone) VALUES
 ('SYD', 'Sydney Airport', 'Sydney', 'Australia', 'Australia/Sydney'),
 ('MEL', 'Melbourne Tullamarine Airport', 'Melbourne', 'Australia', 'Australia/Melbourne'),
@@ -100,5 +98,35 @@ INSERT INTO airport (airport_code, name, city, country, local_timezone) VALUES
 ('PER', 'Perth Airport', 'Perth', 'Australia', 'Australia/Perth'),
 ('BNE', 'Brisbane Airport', 'Brisbane', 'Australia', 'Australia/Brisbane'),
 ('WOL', 'Shellharbour Airport', 'Albion Park Rail', 'Australia', 'Australia/Sydney');
+
+\echo '>>> Creating function and trigger for available seats...'
+
+-- Function to update available_seats in flights table
+CREATE OR REPLACE FUNCTION update_flight_availability()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF (TG_OP = 'INSERT') THEN
+        -- Decrease available_seats when a seat is booked
+        UPDATE flights
+        SET available_seats = available_seats - 1
+        WHERE flight_id = NEW.flight_id;
+        RETURN NEW;
+    ELSIF (TG_OP = 'DELETE') THEN
+        -- Increase available_seats when a booking is cancelled (seat deleted)
+        UPDATE flights
+        SET available_seats = available_seats + 1
+        WHERE flight_id = OLD.flight_id;
+        RETURN OLD;
+    END IF;
+    RETURN NULL; -- result is ignored since this is an AFTER trigger
+END;
+$$ LANGUAGE plpgsql;
+
+-- Trigger to call the function after insert or delete on flight_seats
+CREATE TRIGGER trg_update_flight_availability
+AFTER INSERT OR DELETE ON flight_seats
+FOR EACH ROW EXECUTE FUNCTION update_flight_availability();
+
+\echo '>>> Finished schema.sql.'
 
 
