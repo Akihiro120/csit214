@@ -4,8 +4,8 @@ const router = express.Router();
 // import the database query functions
 const {
 	check_connection,
-	query_flights
-
+	query_flights,
+	query_seats
 } = require('./database');
 
 // confirm base connection
@@ -39,6 +39,24 @@ router.get('/api/flights', (req, res) => {
 			res.send(err);
 		});
 });
+
+router.get('/api/booking/seats', (req, res) => {
+	var query_params = req.query;
+
+	// testing
+	// 0003baf6-27d5-4fe1-a014-d9e923583987
+	var flight_id = query_params.flightid;
+
+	var seats = query_seats(flight_id)
+		.then((seats) => {
+			res.send(seats);
+		})
+		.catch(() => {
+			res.send("failed to fetch seats");
+		});
+});
+
+// posts session data
 
 // export the router
 module.exports = router;
