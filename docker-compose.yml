@@ -1,0 +1,112 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: flight_app_postgres
+    restart: always
+    environment:
+      # Use variables from .env file
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./seeder/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      # Mount the persistent data volume
+      - pgdata:/var/lib/postgresql/data
+    # Optional: Add a healthcheck to ensure Postgres is ready before other services depend on it,
+    # just reads stdout for pg_isready
+    # healthcheck:
+    #   test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+    #   interval: 5s
+    #   timeout: 5s
+    #   retries: 5
+    networks:
+      - myapp_network
+
+
+  #Redis service:
+  redis:
+    image: redis:latest
+    container_name: flight_app_redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data # Persist Redis data
+    networks:
+      - myapp_network
+
+  # --- Your Express Backend (if dockerized) ---
+  backend: # This is the 'express-service-name' potentially used in Nginx upstream
+    build: ./backend # Or specify image
+    ports:
+      - "5000:5000" # Expose to host so Nginx (if running on host) can reach it via localhost:5000
+                    # OR if Nginx is ALSO in docker, this isn't strictly needed for Nginx-backend comms over docker network
+    environment:
+      # Your backend env vars
+      REDIS_HOST: redis # Connect via service name if on same docker network
+      DATABASE_URL: postgresql://user:password@postgres:5432/mydatabase # Connect via service name
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - myapp_network
+    
+  
+  seeder:
+    build:
+      context: . # Build from the current directory
+      dockerfile: ./seeder/Dockerfile # Specify the Dockerfile location
+    environment:
+      # Pass database credentials from .env to the seeder container
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+    depends_on:
+      # Ensures postgres is started before the seeder attempts to run,
+      # but doesn't guarantee postgres is ready to accept connections (hence wait-for-it.sh)
+      postgres:
+        condition: service_started # waits for the postgres healthcheck to pass, so the tables are made before it tries to seed
+    networks:
+      - myapp_network
+    # No 'restart' policy needed, it's a one-off job.
+    # No 'ports' needed.
+
+  # --- Nginx Reverse Proxy ---
+  nginx:
+    image: nginx:stable-alpine # Use official Nginx image
+    ports:
+      # Map host ports 80 and 443 to container ports 80 and 443
+      - "80:80"
+      - "443:443"
+    volumes:
+      # Mount your custom config OVER the default or into conf.d
+      # This mounts myapp.conf into the standard include directory
+      - ./nginx/myapp.conf:/etc/nginx/conf.d/default.conf:ro
+      # Mount your generated certificates
+      - ./nginx/certs:/etc/nginx/ssl:ro # Mount the certs folder
+      # Optional: Mount logs directory
+      # - ./nginx/logs:/var/log/nginx
+    depends_on:
+      - backend # Optional, ensures backend starts before nginx tries proxying
+      # No dependency on frontend needed as Vite runs separately on host
+    networks:
+      - myapp_network
+
+# --- React Frontend ---
+# Your React/Vite app typically runs OUTSIDE this docker-compose setup
+# using `npm run dev` or `npx vite` directly on your host machine.
+# Nginx (running on host OR in docker mapping ports) proxies to localhost:5173
+
+volumes:
+  pgdata:
+  redisdata: # Declare the volume for Redis
+
+
+
+networks:
+  myapp_network:
+    driver: bridge
