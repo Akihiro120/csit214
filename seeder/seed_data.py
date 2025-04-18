@@ -50,6 +50,11 @@ if not conn or not cursor:
 
 # --- Start of your data seeding logic ---
 try: # Wrap the rest of the script in a try block for proper cleanup
+    check_empty_tables = cursor.execute("""SELECT UNIQUE * FROM flights""")
+    if check_empty_tables:
+        print("The flights table is not empty. Exiting.")
+        sys.exit(0)
+        
     cursor.execute("SELECT airport_code FROM airport")
     airport_codes = [row[0] for row in cursor.fetchall()]
 
