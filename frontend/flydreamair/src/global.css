@@ -1,0 +1,10 @@
+@import "tailwindcss";
+:root {
+	--primary: #232554;
+	--accent: #4c3eac;
+	--hover-button: #6050c0;
+}
+
+body {
+	@apply overscroll-none;
+}
