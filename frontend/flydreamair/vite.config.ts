@@ -6,5 +6,5 @@ import { defineConfig } from "vite";
 // https://vite.dev/config/
 export default defineConfig({
 	plugins: [tailwindcss(), TanStackRouterVite({ target: "react", autoCodeSplitting: true }), react()],
-	base: process.env.NODE_ENV === "development" ? "/" : "https://akihiro120.github.io/csit214/",
+	base: "/",
 });
