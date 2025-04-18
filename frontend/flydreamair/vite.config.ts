@@ -7,4 +7,7 @@ import { defineConfig } from "vite";
 export default defineConfig({
 	plugins: [tailwindcss(), TanStackRouterVite({ target: "react", autoCodeSplitting: true }), react()],
 	base: "/",
+	server: { // Add this server configuration block
+        host: true // This makes Vite listen on all public IPs, including 127.0.0.1
+    }
 });
