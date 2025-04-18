@@ -31,7 +31,7 @@ services:
     container_name: flight_app_redis
     restart: always
     ports:
-      - "3000:3000"
+      - "6379:6379"
     volumes:
       - redisdata:/data # Persist Redis data
     networks:
@@ -41,7 +41,7 @@ services:
   backend: # This is the 'express-service-name' potentially used in Nginx upstream
     build: ./backend # Or specify image
     ports:
-      - "5000:5000" # Expose to host so Nginx (if running on host) can reach it via localhost:5000
+      - "3000:3000" # Expose to host so Nginx (if running on host) can reach it via localhost:5000
                     # OR if Nginx is ALSO in docker, this isn't strictly needed for Nginx-backend comms over docker network
     environment:
       # Your backend env vars
