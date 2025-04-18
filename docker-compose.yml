@@ -57,7 +57,7 @@ services:
     # --- END DEVELOPMENT ONLY SETTINGS ---
     restart: unless-stopped # Restart policy for general resilience
     ports:
-      - "5000:5000" # Expose port if needed
+      - "3000:3000" # Expose port if needed
     environment:
       # Your regular environment variables
       NODE_ENV: development # Explicitly set NODE_ENV for dev
