@@ -31,7 +31,7 @@ services:
     container_name: flight_app_redis
     restart: always
     ports:
-      - "3000:3000"
+      - "6379:6379"
     volumes:
       - redisdata:/data # Persist Redis data
     networks:
