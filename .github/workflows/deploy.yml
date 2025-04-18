@@ -1,8 +1,9 @@
 name: Build and Deploy
 on: 
   push:
-    branches:
-      - main
+    branches: [main]
+    paths:
+      - 'frontend/flydreamair/'
 permissions:
   contents: write
 jobs:
