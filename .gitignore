@@ -3,3 +3,4 @@ venv/
 backend/node_modules/
 frontend/background_renderer/node_modules/
 frontend/flydreamair/node_modules/
+.env
