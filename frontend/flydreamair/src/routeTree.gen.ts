@@ -11,14 +11,35 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as RouteImport } from './routes/route'
+import { Route as BookingRouteImport } from './routes/booking/route'
+import { Route as IndexImport } from './routes/index'
+import { Route as BookingIndexImport } from './routes/booking/index'
+import { Route as BookingSearchIndexImport } from './routes/booking/search/index'
 
 // Create/Update Routes
 
-const RouteRoute = RouteImport.update({
+const BookingRouteRoute = BookingRouteImport.update({
+  id: '/booking',
+  path: '/booking',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRoute,
+} as any)
+
+const BookingIndexRoute = BookingIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => BookingRouteRoute,
+} as any)
+
+const BookingSearchIndexRoute = BookingSearchIndexImport.update({
+  id: '/search/',
+  path: '/search/',
+  getParentRoute: () => BookingRouteRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -29,42 +50,87 @@ declare module '@tanstack/react-router' {
       id: '/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof RouteImport
+      preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
+    }
+    '/booking': {
+      id: '/booking'
+      path: '/booking'
+      fullPath: '/booking'
+      preLoaderRoute: typeof BookingRouteImport
+      parentRoute: typeof rootRoute
+    }
+    '/booking/': {
+      id: '/booking/'
+      path: '/'
+      fullPath: '/booking/'
+      preLoaderRoute: typeof BookingIndexImport
+      parentRoute: typeof BookingRouteImport
+    }
+    '/booking/search/': {
+      id: '/booking/search/'
+      path: '/search'
+      fullPath: '/booking/search'
+      preLoaderRoute: typeof BookingSearchIndexImport
+      parentRoute: typeof BookingRouteImport
     }
   }
 }
 
 // Create and export the route tree
 
+interface BookingRouteRouteChildren {
+  BookingIndexRoute: typeof BookingIndexRoute
+  BookingSearchIndexRoute: typeof BookingSearchIndexRoute
+}
+
+const BookingRouteRouteChildren: BookingRouteRouteChildren = {
+  BookingIndexRoute: BookingIndexRoute,
+  BookingSearchIndexRoute: BookingSearchIndexRoute,
+}
+
+const BookingRouteRouteWithChildren = BookingRouteRoute._addFileChildren(
+  BookingRouteRouteChildren,
+)
+
 export interface FileRoutesByFullPath {
-  '/': typeof RouteRoute
+  '/': typeof IndexRoute
+  '/booking': typeof BookingRouteRouteWithChildren
+  '/booking/': typeof BookingIndexRoute
+  '/booking/search': typeof BookingSearchIndexRoute
 }
 
 export interface FileRoutesByTo {
-  '/': typeof RouteRoute
+  '/': typeof IndexRoute
+  '/booking': typeof BookingIndexRoute
+  '/booking/search': typeof BookingSearchIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
-  '/': typeof RouteRoute
+  '/': typeof IndexRoute
+  '/booking': typeof BookingRouteRouteWithChildren
+  '/booking/': typeof BookingIndexRoute
+  '/booking/search/': typeof BookingSearchIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/booking' | '/booking/' | '/booking/search'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/booking' | '/booking/search'
+  id: '__root__' | '/' | '/booking' | '/booking/' | '/booking/search/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
-  RouteRoute: typeof RouteRoute
+  IndexRoute: typeof IndexRoute
+  BookingRouteRoute: typeof BookingRouteRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  RouteRoute: RouteRoute,
+  IndexRoute: IndexRoute,
+  BookingRouteRoute: BookingRouteRouteWithChildren,
 }
 
 export const routeTree = rootRoute
@@ -77,11 +143,27 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/"
+        "/",
+        "/booking"
       ]
     },
     "/": {
-      "filePath": "route.tsx"
+      "filePath": "index.tsx"
+    },
+    "/booking": {
+      "filePath": "booking/route.tsx",
+      "children": [
+        "/booking/",
+        "/booking/search/"
+      ]
+    },
+    "/booking/": {
+      "filePath": "booking/index.tsx",
+      "parent": "/booking"
+    },
+    "/booking/search/": {
+      "filePath": "booking/search/index.tsx",
+      "parent": "/booking"
     }
   }
 }

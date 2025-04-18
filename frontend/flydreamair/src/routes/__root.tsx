@@ -10,7 +10,9 @@ function RootComponent() {
 		<>
 			<div className="h-full grid grid-rows-[auto_1fr]">
 				<Navbar />
-				<Outlet />
+				<div>
+					<Outlet />
+				</div>
 			</div>
 		</>
 	);
