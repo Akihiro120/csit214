@@ -11,3 +11,4 @@ export default defineConfig({
         host: true // This makes Vite listen on all public IPs, including 127.0.0.1
     }
 });
+ 

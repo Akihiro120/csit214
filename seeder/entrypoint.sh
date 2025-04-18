@@ -18,6 +18,7 @@ echo "Waiting for database at $DB_HOST:$DB_PORT..."
 # Check if the wait-for-it script succeeded (exit code 0)
 if [ $? -eq 0 ]; then
   echo "Database is up!"
+  sleep 5 # Waits for 5 seconds
 else
   echo "Database did not become available in time. Exiting."
   exit 1
