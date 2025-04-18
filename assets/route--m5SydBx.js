@@ -1,0 +1,1 @@
+import{j as e,O as n}from"./index-Z60BboaH.js";const s=function(){return e.jsxs(e.Fragment,{children:[e.jsx("h1",{className:"mb-10",children:"Common elements for booking sub pages, header is currently not include as it's a common element for ALL pages, can be changed"}),e.jsx(n,{})]})};export{s as component};
