@@ -9,15 +9,20 @@ const {
 } = require('./database');
 
 // confirm base connection
-router.get('/', (_, res) => {
+router.get('/api/', (_, res) => {
 	// determine connection status
 	check_connection()
+		.then(() => {
+			console.log("Database connection successful");
+			res.send("8==D");
+		})
 		.catch((err) => {
+			console.log("Error connecting to database: ", err);
 			res.send(err);
 		});	
 });
 
-router.get('/flights', (req, res) => {
+router.get('/api/flights', (req, res) => {
 	var flight_params = req.query;
 
 	var flight_from = flight_params.from;
