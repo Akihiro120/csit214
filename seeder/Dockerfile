@@ -1,5 +1,6 @@
-# ./seeder/Dockerfile
 FROM python:latest
+
+RUN echo "Building seeder image"
 
 
 WORKDIR /app
@@ -22,3 +23,5 @@ RUN chmod +x /app/entrypoint.sh && \
 # No need to install requirements here, entrypoint.sh does it
 
 ENTRYPOINT ["/app/entrypoint.sh"]
+
+RUN echo "Building seeder image"
