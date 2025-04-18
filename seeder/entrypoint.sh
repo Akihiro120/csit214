@@ -13,11 +13,11 @@ echo "Waiting for database at $DB_HOST:$DB_PORT..."
 
 # Use wait-for-it.sh to wait for the database service to be available
 # Timeout after 60 seconds. Execute the command after '--' only on success.
-/app/wait-for-it.sh "$DB_HOST:$DB_PORT" -t 60 --true # Use full path, --true does nothing but satisfies command requirement
+/app/wait-for-it.sh "$DB_HOST:$DB_PORT" -t 60 -- true
 
 # Check if the wait-for-it script succeeded (exit code 0)
 if [ $? -eq 0 ]; then
-  echo "Database is up!" # Moved success message here
+  echo "Database is up!"
 else
   echo "Database did not become available in time. Exiting."
   exit 1
