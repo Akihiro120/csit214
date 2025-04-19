@@ -12,7 +12,6 @@ const routes = require('./routes');
 const redis_client = require('./redis_client');
 const cors = require('cors'); // Import the cors middleware
 
-
 const app = express();
 app.use(express.json());
 
