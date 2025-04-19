@@ -27,30 +27,66 @@ interface AuthProviderProps {
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const [user, setUser] = useState<User | null>(null); // Use the User type
-  const [isLoading, setIsLoading] = useState(true); // Track initial load
+  const [user, setUser] = useState<User | null>(null); 
+  const [isLoading, setIsLoading] = useState(true); 
 
-  // Check session on initial load
   useEffect(() => {
+    let ignore = false; // Flag to handle StrictMode double invocation
     setIsLoading(true);
-    apiClient.get<{ user?: User }>('/api/booking/session') // Add type hint for response data
+    let sessionFoundOnGet = false; 
+
+    // 1. Try GET first
+    apiClient.get<{ user?: User; data?: any }>('/api/booking/session')
       .then(response => {
-        // Backend should ideally return session info, including user data if logged in
-        setUser(response.data.user || null); 
+        if (ignore) return; // Check flag
+        if (response.data && (response.data.user || response.data.data)) {
+          console.log("Existing session found via GET:", response.data);
+          setUser(response.data.user || null); 
+          sessionFoundOnGet = true; 
+        } else {
+          console.log("GET /api/booking/session returned empty data.");
+          setUser(null);
+        }
       })
       .catch(error => {
-        if (error.response?.status !== 401) {
-            console.error("Error fetching session:", error);
+        if (ignore) return; // Check flag
+        if (error.response?.status !== 404 && !(error.response?.status === 200 && Object.keys(error.response.data || {}).length === 0)) {
+           console.error("Error during initial GET /api/booking/session:", error);
+        } else {
+           console.log("Initial GET indicates no active session or session is empty.");
         }
         setUser(null);
       })
       .finally(() => {
-        setIsLoading(false);
-      });
-  },
-  []);
+        if (ignore) return; // Check flag
 
-  // Define the value provided by the context, matching AuthContextType
+        // 2. Conditionally POST
+        if (!sessionFoundOnGet) {
+          console.log("Attempting POST /api/booking/session to initialize session.");
+          apiClient.post('/api/booking/session', { initialized: Date.now() })
+            .then(postResponse => {
+              if (ignore) return; // Check flag
+              console.log("Session initialized via POST, response:", postResponse.data);
+            })
+            .catch(postError => {
+              if (ignore) return; // Check flag
+              console.error("Error initializing session via POST:", postError);
+            })
+            .finally(() => {
+              if (ignore) return; // Check flag
+              setIsLoading(false); 
+            });
+        } else {
+          setIsLoading(false);
+        }
+      });
+
+    // Cleanup function: sets the ignore flag when the effect is cleaned up
+    return () => {
+      ignore = true;
+    };
+  }, []); // Empty dependency array ensures this runs only once on mount (per StrictMode cycle)
+
   const value: AuthContextType = {
     user,
     setUser,
