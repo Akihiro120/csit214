@@ -2,6 +2,7 @@ import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query' // Import QueryClient and Provider
+import { apiClient } from "./utils/axios";
 import "./global.css";
 
 // Import the generated route tree
@@ -28,6 +29,7 @@ if (!rootElement.innerHTML) {
 	const root = ReactDOM.createRoot(rootElement);
 	root.render(
 		<StrictMode>
+			<
 			<QueryClientProvider client={queryClient}>
 				<RouterProvider router={router} />
 				<TanStackRouterDevtools router={router} />
