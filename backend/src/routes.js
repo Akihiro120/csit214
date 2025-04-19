@@ -57,6 +57,20 @@ router.get('/api/booking/seats', (req, res) => {
 });
 
 // posts session data
+router.post('/api/booking/session', (req, res) => {
+	console.log("Session Last: ", req.session);
+	req.session.data = req.body['data'];
+
+	req.session.save((err) => {
+		if (err) {
+			console.log("Error saving session: ", err);
+			res.status(500).send("Error saving session");
+			return;
+		}
+	});
+
+	res.send("Session data received");
+});
 
 // export the router
 module.exports = router;
