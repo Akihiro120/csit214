@@ -1,4 +1,5 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { FlightSearcher } from "../components/FlightSearcher";
 
 export const Route = createFileRoute("/")({
 	component: Home,
@@ -7,8 +8,10 @@ export const Route = createFileRoute("/")({
 function Home() {
 	return (
 		<>
-			Content in the root route goes here
+			Content in the root route goes here test
 			<Outlet />
+			<FlightSearcher />
+			
 		</>
 	);
 }

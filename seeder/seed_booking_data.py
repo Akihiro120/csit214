@@ -103,7 +103,7 @@ try:
         while seats_booked_on_this_flight < target_booked_seats and seats_available_for_this_flight:
             # 1. Create Customer - Loop to handle potential duplicate emails
             customer_id = None
-            max_customer_retries = 5 # Limit attempts to find a unique email
+            max_customer_retries = 8 # Limit attempts to find a unique email
             for attempt in range(max_customer_retries):
                 customer_name = fake.name()
                 # Generate email - Faker's unique might still collide if script runs multiple times

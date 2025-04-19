@@ -1,4 +1,5 @@
 const seats_status = require('./seats')
+
 const knex = require('knex')({
 	client: 'pg',
 	connection: {
