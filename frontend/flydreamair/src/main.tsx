@@ -1,13 +1,13 @@
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query' // Import QueryClient and Provider
-import { apiClient } from "./utils/axios";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import "./global.css";
 
 // Import the generated route tree
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { routeTree } from "./routeTree.gen";
+import { AuthProvider } from "./utils/useAuth"; // Import the AuthProvider
 
 const basepath = process.env.NODE_ENV === "development" ? "/" : "https://akihiro120.github.io/csit214/";
 
@@ -29,10 +29,11 @@ if (!rootElement.innerHTML) {
 	const root = ReactDOM.createRoot(rootElement);
 	root.render(
 		<StrictMode>
-			<
 			<QueryClientProvider client={queryClient}>
-				<RouterProvider router={router} />
-				<TanStackRouterDevtools router={router} />
+				<AuthProvider>
+					<RouterProvider router={router} />
+					<TanStackRouterDevtools router={router} />
+				</AuthProvider>
 			</QueryClientProvider>
 		</StrictMode>
 	);
