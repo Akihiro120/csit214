@@ -7,7 +7,7 @@ export const Route = createFileRoute("/")({
 function Home() {
 	return (
 		<>
-			Content in the root route goes here
+			Content in the root route goes here test
 			<Outlet />
 		</>
 	);
