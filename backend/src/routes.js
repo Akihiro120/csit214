@@ -56,20 +56,44 @@ router.get('/api/booking/seats', (req, res) => {
 		});
 });
 
+// GET route to check current session status
+router.get('/api/booking/session', (req, res) => {
+	// express-session automatically loads session data based on the cookie
+	if (req.session && req.session.user) { 
+		// If you store user data in req.session.user upon login
+		res.send({ user: req.session.user });
+	} else if (req.session && req.session.data) {
+		// Or if you are storing generic data like in your POST example
+		res.send({ data: req.session.data }); // Send back whatever data is relevant
+	} else {
+		// No active session or no relevant data in session
+		res.send({}); // Send an empty object or appropriate status
+	}
+});
+
 // posts session data
 router.post('/api/booking/session', (req, res) => {
-	console.log("Session Last: ", req.session);
-	req.session.data = req.body['data'];
+	console.log("Session Before POST: ", req.session);
+	// Store the actual body sent by the frontend, or a specific part of it
+	// Option 1: Store the whole body (e.g., { initialized: 17... })
+	req.session.data = req.body; 
+	// Option 2: Store just a flag indicating initialization
+	// req.session.initialized = true;
+
+	// IMPORTANT: If this is the *first* time data is saved to the session,
+	// express-session will now generate the Session ID and send the Set-Cookie header.
 
 	req.session.save((err) => {
 		if (err) {
 			console.log("Error saving session: ", err);
-			res.status(500).send("Error saving session");
-			return;
+			return res.status(500).send("Error saving session");
 		}
+		console.log(`Session saved successfully. Cookie should be set now. Session ID: ${req.sessionID}`); 
+		console.log("Session After POST & Save: ", req.session);
+		// Send back the data that was actually saved
+		res.send({ message: "Session data received", data: req.session.data }); 
 	});
 
-	res.send("Session data received");
 });
 
 // export the router
