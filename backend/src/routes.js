@@ -27,11 +27,10 @@ router.get('/api/flights', (req, res) => {
 
 	var flight_from = flight_params.from;
 	var flight_to = flight_params.to;
-	var flight_date = flight_params.date;
-	var flight_flex = flight_params.flex;
+	var date = flight_params.date;
 
 	// return response in JSON from database
-	query_flights(flight_to, flight_from, flight_date, flight_flex)
+	query_flights(flight_from, flight_to, date)
 		.then((result) => {
 			res.send(result.rows);
 		})
@@ -47,7 +46,7 @@ router.get('/api/booking/seats', (req, res) => {
 	// 0003baf6-27d5-4fe1-a014-d9e923583987
 	var flight_id = query_params.flightid;
 
-	var seats = query_seats(flight_id)
+	query_seats(flight_id)
 		.then((seats) => {
 			res.send(seats);
 		})
