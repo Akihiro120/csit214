@@ -1,11 +1,9 @@
 const seats_status = require('./seats')
-console.log("Environment Variables Loaded: ", process.env);
-
 
 const knex = require('knex')({
 	client: 'pg',
 	connection: {
-		host: process.env.POSTGRES_HOST,
+		host: process.env.POSTGRES_HOST || 'localhost',
 		port: process.env.POSTGRES_PORT,
 		user: process.env.POSTGRES_USER,
 		password: process.env.POSTGRES_PASSWORD,
@@ -37,7 +35,7 @@ function query_flights(to, from, date, flex) {
 			FROM route
 			WHERE origin_airport_code = '${to}' AND destination_airport_code = '${from}'
 		) AND flight_date = '${date}';
-	`);
+	`)
 }
 
 // query seats
