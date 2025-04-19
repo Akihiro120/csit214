@@ -57,7 +57,7 @@ services:
     # --- END DEVELOPMENT ONLY SETTINGS ---
     restart: unless-stopped # Restart policy for general resilience
     ports:
-      - "5000:5000" # Expose port if needed
+      - "3000:3000" # Expose port if needed
     environment:
       # Your regular environment variables
       NODE_ENV: development # Explicitly set NODE_ENV for dev
@@ -103,6 +103,7 @@ services:
   # --- Nginx Reverse Proxy ---
   nginx:
     image: nginx:stable-alpine # Use official Nginx image
+    restart: always
     ports:
       # Map host ports 80 and 443 to container ports 80 and 443
       - "80:80"
