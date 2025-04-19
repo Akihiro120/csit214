@@ -51,7 +51,9 @@ function RouteComponent() {
     if (isLoading) return <div>Loading flights...</div>;
     if (error) return <div>Error fetching flights: {error.message}</div>;
     if (!data || data.length === 0) return <div>No flights found.</div>;
+    if (data.code === "ECONNREFUSED") return <div>Connection refused. Please try again later.</div>;
 
+    console.log(data);
     // Render the flight data
 
     return (
