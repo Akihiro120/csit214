@@ -3,17 +3,19 @@
 
 Welcome!
 
-To run this project, a few pieces are required:
-first: a https ssl certs:
+To run this project, a few (less) pieces are required:
 
+First: Make sure you have the correct .env file setup
+
+Second: a https ssl certs:
 ```
 ./generate_certs.sh
 ```
 
-Then to run everything else, run:
+Third: to run everything else, run:
 ```
-docker-compose up
+docker-compose up -d
 ```
 
-Currently front end is hosted seperately, so you will need to hsot that youself on port 5173.
-And update the vite.config.ts to include 0.0.0.0 for server.host
+Currently front end is hosted seperately, so you will need to hsot that youself on port 5173
+just cd to that folder and `npm run dev`
