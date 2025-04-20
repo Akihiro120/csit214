@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { SearchResult, FlightSearchResult } from "../../../components/SearchResult";
 
 
 
@@ -13,6 +14,19 @@ export const Route = createFileRoute("/booking/search/")({
 });
 
 
+// function handleFlightClick(flight: FlightSearchResult) {
+//     console.log("Flight selected:", flight.flight_id);
+//     // Handle post request with session, then redirect to booking/seats
+//     const request = fetch("/api/booking", {
+//         method: "POST",
+//         headers: {
+//             "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify({
+//             flight_id: flight.flight_id
+//         }),
+//         }
+//     )};
 function RouteComponent() {
     // Get query parameters from the route
     const { from = "", to = "", date= "" } = Route.useSearch();
@@ -56,20 +70,18 @@ function RouteComponent() {
     console.log(data);
     // Render the flight data
 
+
     return (
         <div>
             <h1>Flight Search Results</h1>
-            <ul>
-                {data.map((flight: any) => ( // Using any here, please forgive me, until we define a full type Interfaces and shit. Need to get kevin to sort that before we do.
-                    <li key={flight.flight_id}>
-                        Flight Number: {flight.flight_number}
-                        Flight Time: {flight.dept_time}
-                        Departure: {flight.from}
-                        Arrival: {flight.to}
-
-                    </li>
+                {data.map((flight: FlightSearchResult) => (
+                     <SearchResult
+                            onclick={() => {
+                                console.log("Flight selected:", flight.flight_id);
+                            }}
+                        flight={flight}
+                    />
                 ))}
-            </ul>
         </div>
     );
 }
