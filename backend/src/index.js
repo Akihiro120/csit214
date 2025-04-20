@@ -1,4 +1,3 @@
-const env = require('./environment')
 const ExpressService = require('./services/express_service');
 const RoutingService = require('./services/routes_service');
 const RedisService = require('./services/redis_service');

@@ -1,18 +1,12 @@
 const express = require('express');
 const router = express.Router();
 
-// get the current session data
+// get for a user session
 router.get('/api/booking/session', (req, res) => {
     
     // get the session if applicable
     const session = req.session;
 
-    // get the session user
-    if (session?.user) {
-        return res.status(200).json({ user: session.user });
-    }
-
-    // get the session use
     if (session?.data) {
 		return res.status(200).json({ data: session.data });
 	}
@@ -21,10 +15,10 @@ router.get('/api/booking/session', (req, res) => {
 	return res.status(204).send();
 });
 
-// posts session data
-// NOTE: i got zero fucking clue on what is happening here, posssible skill issue
+
+//handle post request for creation of a session
 router.post('/api/booking/session', (req, res) => {
-    // get the session and data
+    // get the session (key) and data (value)
     const session = req.session;
     const data = req.body; 
 
@@ -34,12 +28,20 @@ router.post('/api/booking/session', (req, res) => {
 		return res.status(400).json({ message: "No session data provided" });
     }
 
-    console.log("Session before Save: ", session);
+    // if the session is empty
+    // this could be from a 1 in 2^128 chance of key collison
+    if (!session) {
+        console.log('Session not initialized');
+        return res.status(500).json({ message: "Session not initialized" });
+    }
 
-    // set the session data to the newer data
+    // on this route, a session should only contain a timestamp, and numPassangers
+    if (data.length > 2) {
+        console.log('hand written session overloading');
+        return res.status(400).json({ message: "Session data is too large" });
+    }
+
     session.data = data;
-
-    // save the session
     session.save(err => {
         if (err) {
 			console.error("Error saving session:", err);
