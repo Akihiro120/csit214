@@ -11,6 +11,8 @@ db_name = os.environ.get("POSTGRES_DB")
 db_user = os.environ.get("POSTGRES_USER")
 db_password = os.environ.get("POSTGRES_PASSWORD")
 
+FLIGHT_TIMES = {('ADL', 'BNE'): 123, ('ADL', 'DRW'): 211, ('ADL', 'HBA'): 95, ('ADL', 'MEL'): 58, ('ADL', 'PER'): 184, ('ADL', 'SYD'): 92, ('ADL', 'WOL'): 171, ('BNE', 'ADL'): 142, ('BNE', 'DRW'): 240, ('BNE', 'HBA'): 148, ('BNE', 'MEL'): 120, ('BNE', 'PER'): 302, ('BNE', 'SYD'): 71, ('BNE', 'WOL'): 166, ('DRW', 'ADL'): 200, ('DRW', 'BNE'): 207, ('DRW', 'HBA'): 276, ('DRW', 'MEL'): 233, ('DRW', 'PER'): 217, ('DRW', 'SYD'): 230, ('DRW', 'WOL'): 496, ('HBA', 'ADL'): 106, ('HBA', 'BNE'): 141, ('HBA', 'DRW'): 299, ('HBA', 'MEL'): 61, ('HBA', 'PER'): 256, ('HBA', 'SYD'): 88, ('HBA', 'WOL'): 169, ('MEL', 'ADL'): 66, ('MEL', 'BNE'): 109, ('MEL', 'DRW'): 253, ('MEL', 'HBA'): 58, ('MEL', 'PER'): 231, ('MEL', 'SYD'): 62, ('MEL', 'WOL'): 106, ('PER', 'ADL'): 155, ('PER', 'BNE'): 253, ('PER', 'DRW'): 196, ('PER', 'HBA'): 217, ('PER', 'MEL'): 195, ('PER', 'SYD'): 232, ('PER', 'WOL'): 469, ('SYD', 'ADL'): 108, ('SYD', 'BNE'): 68, ('SYD', 'DRW'): 260, ('SYD', 'HBA'): 92, ('SYD', 'MEL'): 70, ('SYD', 'PER'): 277, ('SYD', 'WOL'): 30, ('WOL', 'ADL'): 264, ('WOL', 'BNE'): 149, ('WOL', 'DRW'): 663, ('WOL', 'HBA'): 191, ('WOL', 'MEL'): 148, ('WOL', 'PER'): 733, ('WOL', 'SYD'): 27}
+AIRPORT_DISTANCES = {('ADL', 'BNE'): 1620, ('ADL', 'DRW'): 2622, ('ADL', 'HBA'): 1171, ('ADL', 'MEL'): 646, ('ADL', 'PER'): 2115, ('ADL', 'SYD'): 1164, ('ADL', 'WOL'): 1120, ('BNE', 'ADL'): 1620, ('BNE', 'DRW'): 2852, ('BNE', 'HBA'): 1791, ('BNE', 'MEL'): 1377, ('BNE', 'PER'): 3608, ('BNE', 'SYD'): 752, ('BNE', 'WOL'): 828, ('DRW', 'ADL'): 2622, ('DRW', 'BNE'): 2852, ('DRW', 'HBA'): 3743, ('DRW', 'MEL'): 3135, ('DRW', 'PER'): 2653, ('DRW', 'SYD'): 3155, ('DRW', 'WOL'): 3179, ('HBA', 'ADL'): 1171, ('HBA', 'BNE'): 1791, ('HBA', 'DRW'): 3743, ('HBA', 'MEL'): 616, ('HBA', 'PER'): 3016, ('HBA', 'SYD'): 1039, ('HBA', 'WOL'): 963, ('MEL', 'ADL'): 646, ('MEL', 'BNE'): 1377, ('MEL', 'DRW'): 3135, ('MEL', 'HBA'): 616, ('MEL', 'PER'): 2706, ('MEL', 'SYD'): 701, ('MEL', 'WOL'): 631, ('PER', 'ADL'): 2115, ('PER', 'BNE'): 3608, ('PER', 'DRW'): 2653, ('PER', 'HBA'): 3016, ('PER', 'MEL'): 2706, ('PER', 'SYD'): 3277, ('PER', 'WOL'): 3235, ('SYD', 'ADL'): 1164, ('SYD', 'BNE'): 752, ('SYD', 'DRW'): 3155, ('SYD', 'HBA'): 1039, ('SYD', 'MEL'): 701, ('SYD', 'PER'): 3277, ('SYD', 'WOL'): 78, ('WOL', 'ADL'): 1120, ('WOL', 'BNE'): 828, ('WOL', 'DRW'): 3179, ('WOL', 'HBA'): 963, ('WOL', 'MEL'): 631, ('WOL', 'PER'): 3235, ('WOL', 'SYD'): 78}
 
 conn = None
 cursor = None # Initialize cursor to None
@@ -124,15 +126,24 @@ try: # Wrap the rest of the script in a try block for proper cleanup
     flight_number_counter = 100 # Start assigning flight numbers from FD100
 
     for origin, destination in routes:
-        dummy_flight_time = timedelta(hours=random.randint(1, 15), minutes=random.choice([0, 15, 30, 45]))
-        dummy_distance = random.randint(300, 8000)
-        dummy_base_fare = round(random.uniform(100.00, 1500.00), 2)
+        flight_time = FLIGHT_TIMES.get((origin, destination), None)
+        # need to convert flighttime minites to time interval
+        if flight_time is not None:
+            flight_time = time(hour=flight_time // 60, minute=flight_time % 60)
+        else:
+            flight_time = time(hour=random.randint(1, 4), minute=random.randint(0, 59))
+        distance = AIRPORT_DISTANCES.get((origin, destination), None)
+        if distance is not None:
+            distance = distance
+        else:
+            distance = random.randint(100, 2000)
+        dummy_base_fare = 90
 
         cursor.execute("""
             INSERT INTO route (origin_airport_code, destination_airport_code, flight_time, distance, base_fare)
             VALUES (%s, %s, %s, %s, %s)
             RETURNING route_id
-        """, (origin, destination, dummy_flight_time, dummy_distance, dummy_base_fare))
+        """, (origin, destination, flight_time, distance, dummy_base_fare))
         route_id = cursor.fetchone()[0]
 
         # --- Assign Fixed Flight Numbers per Route Slot ---
@@ -159,7 +170,7 @@ try: # Wrap the rest of the script in a try block for proper cleanup
         fixed_flight_nums_for_slots = details['flight_numbers_by_slot']
         flights_per_day = len(fixed_flight_nums_for_slots)
 
-        for day_offset in range(30):  # Generate flights for one month
+        for day_offset in range(90):  # Generate flights for Three months
             flight_date = start_date + timedelta(days=day_offset)
 
             # Generate distinct departure times for the day
