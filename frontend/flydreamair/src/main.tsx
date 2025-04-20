@@ -7,7 +7,7 @@ import "./global.css";
 // Import the generated route tree
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { routeTree } from "./routeTree.gen";
-import { AuthProvider } from "./utils/useAuth"; // Import the AuthProvider
+import { AuthProvider } from "./utils/AuthProvider"; // Import the AuthProvider
 
 const basepath = process.env.NODE_ENV === "development" ? "/" : "https://akihiro120.github.io/csit214/";
 
