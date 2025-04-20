@@ -72,7 +72,7 @@ function RouteComponent() {
 
 
     return (
-        <div>
+        <div className="flex flex-col gap-4" id="result">
             <h1>Flight Search Results</h1>
                 {data.map((flight: FlightSearchResult) => (
                      <SearchResult
