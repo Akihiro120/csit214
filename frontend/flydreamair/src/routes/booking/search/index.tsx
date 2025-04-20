@@ -14,19 +14,19 @@ export const Route = createFileRoute("/booking/search/")({
 });
 
 
-function handleFlightClick(flight: FlightSearchResult) {
-    console.log("Flight selected:", flight.flight_id);
-    // Handle post request with session, then redirect to booking/seats
-    const request = fetch("/api/booking", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            flight_id: flight.flight_id
-        }),
-        }
-    )};
+// function handleFlightClick(flight: FlightSearchResult) {
+//     console.log("Flight selected:", flight.flight_id);
+//     // Handle post request with session, then redirect to booking/seats
+//     const request = fetch("/api/booking", {
+//         method: "POST",
+//         headers: {
+//             "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify({
+//             flight_id: flight.flight_id
+//         }),
+//         }
+//     )};
 function RouteComponent() {
     // Get query parameters from the route
     const { from = "", to = "", date= "" } = Route.useSearch();
