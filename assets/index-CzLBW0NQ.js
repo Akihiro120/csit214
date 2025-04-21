@@ -1,0 +1,1 @@
+import{j as e}from"./index-rilr9HwR.js";const n=function(){return e.jsxs(e.Fragment,{children:[e.jsx("h1",{className:"text-4xl text-red-500",children:"Ghost Page"}),e.jsx("div",{children:"Should this page redirect to the home page?"})]})};export{n as component};
