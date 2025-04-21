@@ -1,6 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router"; // Import useNavigate
 import { useQuery } from "@tanstack/react-query";
 import { SearchResult, FlightSearchResult } from "../../../components/SearchResult";
+// import { Navigate } from "@tanstack/react-router"; 
+import apiClient from "../../../utils/axios";
+import { AxiosError } from "axios";
 
 
 
@@ -14,72 +17,77 @@ export const Route = createFileRoute("/booking/search/")({
 });
 
 
-// function handleFlightClick(flight: FlightSearchResult) {
-//     console.log("Flight selected:", flight.flight_id);
-//     // Handle post request with session, then redirect to booking/seats
-//     const request = fetch("/api/booking", {
-//         method: "POST",
-//         headers: {
-//             "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify({
-//             flight_id: flight.flight_id
-//         }),
-//         }
-//     )};
 function RouteComponent() {
-    // Get query parameters from the route
     const { from = "", to = "", date= "" } = Route.useSearch();
+    const navigate = useNavigate();
 
-    // Fetch flights using TanStack Query
     const { data, isLoading, error } = useQuery({
-        
-        // Query key ensures caching and refetching when params change
         queryKey: ["flights", { from, to, date }],
-        
-        
-        // Fetch function
         queryFn: async () => {
-            // Construct the API URL with query parame∏ters
+
             const apiUrl = new URL("/api/flights", window.location.origin);
             if (from) apiUrl.searchParams.append("from", from);
             if (to) apiUrl.searchParams.append("to", to);
             if (date) apiUrl.searchParams.append("date", date);
-            apiUrl.searchParams.append("flex", "true"); // Example limit
+            apiUrl.searchParams.append("flex", "true");
 
-            // Fetch the data
             const response = await fetch(apiUrl.toString());
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            return response.json(); // Parse JSON response
+            return response.json();
         },
-        // Only fetch if required parameters are present
         enabled: !!from && !!to && !!date,
+        
         // No Refetching required
         refetchOnWindowFocus: false,
-
     });
-
     // Render loading, error, or data
     if (isLoading) return <div>Loading flights...</div>;
     if (error) return <div>Error fetching flights: {error.message}</div>;
     if (!data || data.length === 0) return <div>No flights found.</div>;
-    if (data.code === "ECONNREFUSED") return <div>Connection refused. Please try again later.</div>;
-
+    
+    if (data && typeof data === 'object' && data.code === "ECONNREFUSED") { 
+        return <div>Connection refused. Please try again later.</div>;
+    }
+    
     console.log(data);
-    // Render the flight data
+    
+    const submitRequest = async (flightId: string) => {
+        try {
+            const postResponse = await apiClient.post("/api/booking/search", 
+                { flight_id: flightId } 
+            );
+            
+            if (postResponse.status >= 200 && postResponse.status < 300) {
+                console.log("Session data saved successfully:", postResponse.data);
+                navigate({ to: "/booking/seats"}); 
+            } else {
+                alert(`Failed to save search details. Server responded with status: ${postResponse.status}`);
+                return;
+            }
 
 
+        } catch (error) {
+            console.error("Error saving session data via POST:", error);
+            let errorMessage = "An error occurred while saving search details.";
+            if (error instanceof AxiosError && error.response?.data?.error) {
+                errorMessage = `Error: ${error.response.data.error}`;
+            } else if (error instanceof Error) {
+                errorMessage = `Error: ${error.message}`;
+            }
+            console.log(errorMessage) // console.log might be redundant if alerting
+        }
+        
+    }
     return (
         <div className="flex flex-col gap-4" id="result">
             <h1>Flight Search Results</h1>
                 {data.map((flight: FlightSearchResult) => (
-                     <SearchResult
-                            onclick={() => {
-                                console.log("Flight selected:", flight.flight_id);
-                            }}
+                    <SearchResult
+                        key={flight.flight_id}
                         flight={flight}
+                        onclick={() => submitRequest(flight.flight_id) }
                     />
                 ))}
         </div>
