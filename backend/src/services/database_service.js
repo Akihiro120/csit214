@@ -65,21 +65,19 @@ class DatabaseService {
 
     // query seats
     async query_seats(flight_id) {
-    try { 
-        // get the currently booked seats
-        const booked_seats_result = await this.database.raw(`
-            SELECT seat_number
-            FROM flight_seats
-            WHERE flight_id = ${flight_id};
-        `);
-            // map a new set of seats
-            const seats = seats_status.map(seat => ({ ...seat }));
-        
-            // update 
-            for (const row of booked_seats_result.rows) {
-                // check if the seat matches
-                const seat = seats.find(seat => seat.seat_number == row.seat_number);
-                if (seat) {
+        try {
+            const booked_seats_result = await this.database.raw(`
+                SELECT seat_number
+                FROM flight_seats
+                WHERE flight_id = '${flight_id}'`
+            );
+
+            const seats = seats_status.map(seat => 
+                ({ ...seat, status: false }));
+
+            const bookedSet = new Set(booked_seats_result.rows.map(row => row.seat_number));
+            for (const seat of seats) {
+                if (bookedSet.has(seat.seat_number)) {
                     seat.status = true;
                 }
             }
@@ -87,9 +85,8 @@ class DatabaseService {
             return seats;
 
         } catch (err) {
-
-            // a query error has been found, throw the error
-            throw new Error(`Seats Query failed: ${query_err}`)
+            console.error(`Seats Query failed for flight_id ${flight_id}:`, err);
+            throw new Error(`Seats Query failed: ${err.message}`);
         }
     }
 }
