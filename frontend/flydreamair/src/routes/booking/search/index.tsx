@@ -5,8 +5,6 @@ import { SearchResult, FlightSearchResult } from "../../../components/SearchResu
 import apiClient from "../../../utils/axios";
 import { AxiosError } from "axios";
 
-
-
 export const Route = createFileRoute("/booking/search/")({
     validateSearch: (search) => ({
         from: String(search.from || ""),
@@ -15,7 +13,6 @@ export const Route = createFileRoute("/booking/search/")({
     }),
     component: RouteComponent,
 });
-
 
 function RouteComponent() {
     const { from = "", to = "", date= "" } = Route.useSearch();
@@ -42,16 +39,13 @@ function RouteComponent() {
         // No Refetching required
         refetchOnWindowFocus: false,
     });
-    // Render loading, error, or data
+
+
     if (isLoading) return <div>Loading flights...</div>;
     if (error) return <div>Error fetching flights: {error.message}</div>;
-    if (!data || data.length === 0) return <div>No flights found.</div>;
-    
-    if (data && typeof data === 'object' && data.code === "ECONNREFUSED") { 
-        return <div>Connection refused. Please try again later.</div>;
-    }
-    
-    console.log(data);
+    if (data && data.code === "ECONNREFUSED") return <div>Connection refused. Please try again.</div>;
+    if (data.flights.length === 0) return <div>No flights found.</div>;
+
     
     const submitRequest = async (flightId: string) => {
         try {
@@ -60,13 +54,10 @@ function RouteComponent() {
             );
             
             if (postResponse.status >= 200 && postResponse.status < 300) {
-                console.log("Session data saved successfully:", postResponse.data);
                 navigate({ to: "/booking/seats"}); 
             } else {
                 alert(`Failed to save search details. Server responded with status: ${postResponse.status}`);
-                return;
             }
-
 
         } catch (error) {
             console.error("Error saving session data via POST:", error);
@@ -76,14 +67,15 @@ function RouteComponent() {
             } else if (error instanceof Error) {
                 errorMessage = `Error: ${error.message}`;
             }
-            console.log(errorMessage) // console.log might be redundant if alerting
+            console.log(errorMessage); 
         }
-        
     }
+
+
     return (
         <div className="flex flex-col gap-4" id="result">
             <h1>Flight Search Results</h1>
-                {data.map((flight: FlightSearchResult) => (
+                {data.flights.map((flight: FlightSearchResult) => (
                     <SearchResult
                         key={flight.flight_id}
                         flight={flight}
