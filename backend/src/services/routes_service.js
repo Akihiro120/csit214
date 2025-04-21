@@ -9,6 +9,7 @@ class RouterService {
 		this.router.use(require('../routes/flights'));
 		this.router.use(require('../routes/booking/seats'))
 		this.router.use(require('../routes/booking/session'))
+		this.router.use(require('../routes/booking/search'))
 	}
 
 	// returns the router
