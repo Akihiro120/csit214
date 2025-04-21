@@ -43,6 +43,7 @@ class DatabaseService {
                     o_airport.name AS dept_city,
                     d_airport.name AS arr_city,
                     r.base_fare,
+                    r.distance AS distance,
                     f.departure_time AS dept_time,
                     (r.flight_time + f.departure_time) AS arr_time,
                     COUNT(flight_seats.seat_number) AS booked_seats
@@ -59,6 +60,7 @@ class DatabaseService {
                     o_airport.name,
                     d_airport.name,
                     r.base_fare,
+                    r.distance,
                     f.departure_time,
                     r.flight_time
                 ORDER BY f.departure_time ASC;
