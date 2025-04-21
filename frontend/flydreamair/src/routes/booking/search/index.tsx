@@ -1,7 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router"; // Import useNavigate
 import { useQuery } from "@tanstack/react-query";
 import { SearchResult, FlightSearchResult } from "../../../components/SearchResult";
-import { Navigate } from "@tanstack/react-router";
+// import { Navigate } from "@tanstack/react-router"; 
 import apiClient from "../../../utils/axios";
 import { AxiosError } from "axios";
 
@@ -19,6 +19,7 @@ export const Route = createFileRoute("/booking/search/")({
 
 function RouteComponent() {
     const { from = "", to = "", date= "" } = Route.useSearch();
+    const navigate = useNavigate();
 
     const { data, isLoading, error } = useQuery({
         queryKey: ["flights", { from, to, date }],
@@ -40,29 +41,33 @@ function RouteComponent() {
         
         // No Refetching required
         refetchOnWindowFocus: false,
-
     });
     // Render loading, error, or data
     if (isLoading) return <div>Loading flights...</div>;
     if (error) return <div>Error fetching flights: {error.message}</div>;
     if (!data || data.length === 0) return <div>No flights found.</div>;
-    if (data.code === "ECONNREFUSED") return <div>Connection refused. Please try again later.</div>;
+    
+    if (data && typeof data === 'object' && data.code === "ECONNREFUSED") { 
+        return <div>Connection refused. Please try again later.</div>;
+    }
     
     console.log(data);
     
     const submitRequest = async (flightId: string) => {
         try {
-            const postResponse = await apiClient.post("/api/booking/search",
-                { flight_id: flightId }
+            const postResponse = await apiClient.post("/api/booking/search", 
+                { flight_id: flightId } 
             );
             
             if (postResponse.status >= 200 && postResponse.status < 300) {
                 console.log("Session data saved successfully:", postResponse.data);
-                Navigate({ to: "/booking/seats"});
+                navigate({ to: "/booking/seats"}); 
             } else {
                 alert(`Failed to save search details. Server responded with status: ${postResponse.status}`);
-                console.log(`bad response from post, ${postResponse}`)
+                return;
             }
+
+
         } catch (error) {
             console.error("Error saving session data via POST:", error);
             let errorMessage = "An error occurred while saving search details.";
@@ -71,7 +76,7 @@ function RouteComponent() {
             } else if (error instanceof Error) {
                 errorMessage = `Error: ${error.message}`;
             }
-            console.log(errorMessage)
+            console.log(errorMessage) // console.log might be redundant if alerting
         }
         
     }
