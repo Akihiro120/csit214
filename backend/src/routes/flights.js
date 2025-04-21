@@ -42,7 +42,7 @@ function calculate_total_fare(base_fare, date, available_seats) {
     return base_fare + (numerator / denom);
 }
 
-// example Post request body: {"numPassengers":1,"isRoundTrip":false}
+
 // creates the flights route
 router.get('/api/flights', async (req, res) => {
     try {
@@ -66,7 +66,7 @@ router.get('/api/flights', async (req, res) => {
         });
 
         // send the response
-        res.send(new_response_w_price_calculation);
+        res.send({flights: new_response_w_price_calculation});
     } catch (err) {
         // response failed
         console.log(err);
