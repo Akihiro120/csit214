@@ -1,9 +1,11 @@
 name: Build and Deploy
 on: 
-  push:
-    branches: [main]
-    paths:
-      - 'frontend/flydreamair/**'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment'
+        required: true
+        default: 'production'
 permissions:
   contents: write
 jobs:
