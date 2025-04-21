@@ -44,14 +44,23 @@ class DatabaseService {
                     d_airport.name AS arr_city,
                     r.base_fare,
                     f.departure_time AS dept_time,
-                    (r.flight_time + f.departure_time) AS arr_time
+                    (r.flight_time + f.departure_time) AS arr_time,
+                    COUNT(flight_seats.seat_number) AS booked_seats
                 FROM flights f
                 INNER JOIN route r ON r.route_id = f.route_id
                 INNER JOIN airport o_airport ON r.origin_airport_code = o_airport.airport_code
                 INNER JOIN airport d_airport ON r.destination_airport_code = d_airport.airport_code
+                LEFT JOIN flight_seats ON flight_seats.flight_id = f.flight_id
                 WHERE r.origin_airport_code = '${from}'
                 AND r.destination_airport_code = '${to}'
                 AND f.flight_date = '${date}'
+                GROUP BY
+                    f.flight_id,
+                    o_airport.name,
+                    d_airport.name,
+                    r.base_fare,
+                    f.departure_time,
+                    r.flight_time
                 ORDER BY f.departure_time ASC;
             `);
 
