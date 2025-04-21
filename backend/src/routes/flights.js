@@ -61,7 +61,7 @@ router.get('/api/flights', async (req, res) => {
 
             return {
                 ...flight,
-                base_fare: calculate_total_fare(base_price, day_of_departure, available_seats),
+                base_fare: calculate_total_fare(base_price, day_of_departure, available_seats).toFixed(2),
             };
         });
 
