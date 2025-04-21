@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const {GlobalDatabaseService} = require('../services/database_service');
 
+
+// example Post request body: {"numPassengers":1,"isRoundTrip":false}
 // creates the flights route
 router.get('/api/flights', async (req, res) => {
     try {
@@ -19,16 +21,29 @@ router.get('/api/flights', async (req, res) => {
 
 router.post('/api/flights', async (req, res) => {
     try {
-        const { flightID, numPassengers } = req.body;
-        if (!flightID || !numPassengers) {
-            return res.status(400).json({ error: 'Missing flightID or numPassengers' });
+        const { isRoundTrip, numPassengers } = req.body;
+        // Validate input
+        if (typeof isRoundTrip !== 'boolean') {
+            return res.status(400).json({ error: 'Invalid value for isRoundTrip' });
         }
+        if (typeof numPassengers !== 'number' || numPassengers <= 0) {
+            return res.status(400).json({ error: 'Invalid value for numPassengers' });
+        }
+        if (numPassengers > 6) {
+            return res.status(400).json({ error: 'Too many passengers' });
+        }
+
+        // Check if session exists
+        if (!req.session.currentBooking) {
+            req.session.currentBooking = {};
+        }
+        
 
         req.session.currentBooking = {
             // this means not overwriting the old data object, just appending
             ...req.session.currentBooking,
-            flightID: flightID,
-            passengers: numPassengers,
+            numPassengers: numPassengers,
+            isRoundTrip: isRoundTrip,
             timestamp: Date.now()
         };
 
@@ -46,6 +61,7 @@ router.post('/api/flights', async (req, res) => {
     catch (err) {
         // response failed
         res.status(500).json({ error: 'Failed to process flight selection', details: err.message });
+        console.log(err);
     }
 });
 

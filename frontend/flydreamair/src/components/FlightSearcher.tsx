@@ -1,78 +1,112 @@
 import { JSX, useState } from "react";
 import { useNavigate } from '@tanstack/react-router';
+import { AxiosError } from "axios";
+import apiClient from '../utils/axios';
 
 
+// using lots of useStates so less re-renders
 export function FlightSearcher(): JSX.Element {
     const locations = ["ADL", "BNE", "DRW", "HBA", "MEL", "PER", "SYD", "WOL"];
-    const [from, setFrom] = useState<string>("WOL"); // Default From: WOL
-    const [to, setTo] = useState<string>("MEL");   // Default To: MEL
     const [date, setDate] = useState<string>("");
-    // Initialize lists excluding the default selection of the *other* dropdown
-    const [fromList, setFromList] = useState<string[]>([...locations.filter(loc => loc !== "MEL")]);
-    const [toList, setToList] = useState<string[]>([...locations.filter(loc => loc !== "WOL")]);
-    const navigate = useNavigate(); // Hook for navigation
+    const [toLocation, setTo] = useState<string>("");
+    const [fromLocation, setFrom] = useState<string>("");
+    const [numPassengers, setNumPassengers] = useState<number>(1);
+    const [isRoundTrip, setIsRoundTrip] = useState<boolean>(false);
+    const navigate = useNavigate();
 
-    const handleFromChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const newFrom = event.target.value;
-        setFrom(newFrom);
-        // Update the 'To' list to exclude the newly selected 'From' location
-        setToList(locations.filter(loc => loc !== newFrom));
-    };
-
-    const handleToChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const newTo = event.target.value;
-        setTo(newTo);
-        // Update the 'From' list to exclude the newly selected 'To' location
-        setFromList(locations.filter(loc => loc !== newTo));
-    };
-
-    //date select is text input
-    const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setDate(event.target.value);
-    };
-
-    // Submit handler
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault(); // Prevent default form submission
-        if (!from || !to || !date) {
-            // Optional: Add some user feedback if fields are missing
-            console.error("Please select departure, arrival, and date.");
+    // should all this logic be passed in to to this component from the index.tsx???? @Cyclone170
+    const handleSearch = async () => {
+        if (!date || !toLocation || !fromLocation || fromLocation === toLocation) {
             return;
         }
-        // Construct the search query parameters
-        const searchParams = new URLSearchParams({
-            from,
-            to,
-            date,
-            flex: 'true' // Add flex=true as requested
-        });
-        // Navigate to the search results page
-        // Pass search parameters as an object literal
-        navigate({ to: '/booking/search', search: { from, to, date, flex: 'true' } });
+
+        const sessionData = {
+            numPassengers,
+            isRoundTrip
+
+        };
+        const searchParams = {
+            from: fromLocation,
+            to: toLocation,
+            date: date
+        };
+
+
+        try {
+            const response = await apiClient.post("/api/flights", sessionData);
+            if (response.status >= 200 && response.status < 300) {
+                console.log("Session data saved successfully:", response.data);
+                navigate({ to: "/booking/search", search: searchParams });
+            } else {
+                alert(`Failed to save search details. Server responded with status: ${response.status}`);
+            }
+        } catch (error) {
+            console.error("Error saving session data via POST:", error);
+            let errorMessage = "An error occurred while saving search details.";
+            if (error instanceof AxiosError && error.response?.data?.error) {
+                errorMessage = `Error: ${error.response.data.error}`;
+            } else if (error instanceof Error) {
+                errorMessage = `Error: ${error.message}`;
+            }
+            alert(errorMessage);
+        }
     };
 
     return (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4 p-4 bg-gray-100 rounded-md shadow-md w-1/2 align-middle">
-            <div className="flex flex-row gap-4">
-                <select value={from} onChange={handleFromChange} className="border border-gray-300 rounded-md p-2">
-                    {/* No default "From" option needed as state has a default */}
-                    {fromList.map((location) => (
-                        <option key={location} value={location}>
-                            {location}
-                        </option>
-                    ))}
-                </select>
-                <select value={to} onChange={handleToChange} className="border border-gray-300 rounded-md p-2">
-                    {/* No default "To" option needed as state has a default */}
-                    {toList.map((location) => (
-                        <option key={location} value={location}>
-                            {location}
-                        </option>
-                    ))}
-                </select>
-            </div>
-            <input type="date" value={date} onChange={handleDateChange} className="border border-gray-300 rounded-md p-2" required />
-            <button type="submit" className="bg-blue-500 text-white rounded-md p-2">Search</button>
-        </form>
-    )
+        <div>
+            <h1>Flight Search</h1>
+            <form onSubmit={(e) => { e.preventDefault(); handleSearch(); }}>
+                <label>
+                    From:
+                    <select value={fromLocation} onChange={(e) => setFrom(e.target.value)}>
+                        <option value="">Select a location</option>
+                        {locations.map((location) => (
+                            <option key={location} value={location}>
+                                {location}
+                            </option>
+                        ))}
+                    </select>
+                </label>
+                <label>
+                    To:
+                    <select value={toLocation} onChange={(e) => setTo(e.target.value)}>
+                        <option value="">Select a location</option>
+                        {locations.map((location) => (
+                            <option key={location} value={location}>
+                                {location}
+                            </option>
+                        ))}
+                    </select>
+                </label>
+                <label>
+                    Date:
+                    <input
+                        type="date"
+                        value={date}
+                        onChange={(e) => setDate(e.target.value)}
+                    />
+                </label>
+                <label>
+                    Number of Passengers:
+                    <input
+                        type="number"
+                        value={numPassengers}
+                        onChange={(e) => setNumPassengers(Number(e.target.value))}
+                        min={1}
+                        max={6}
+                    />
+                </label>
+                <label>
+                    Round Trip:
+                    <input
+                        type="checkbox"
+                        checked={isRoundTrip}
+                        onChange={(e) => setIsRoundTrip(e.target.checked)}
+                    />
+                </label>
+                <button type="submit">Search</button>
+            </form>
+            <button onClick={handleSearch}>Search Flights</button>
+        </div>
+    );
 }
