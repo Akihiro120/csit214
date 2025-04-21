@@ -2,6 +2,12 @@ const express = require('express');
 const router = express.Router();
 const {GlobalDatabaseService} = require('../services/database_service');
 
+// constants for the price calculation
+const YEAR_DAYS = 365.0;
+const MONTH_DAYS = 31.0;
+const T = YEAR_DAYS / MONTH_DAYS; // number of months in a year
+const PRICE_PER_KILOMETER = 0.40; // base price per kilometer
+
 // price calculation, thanks copilot
 function get_day_of_year(date) {
     const start = new Date(date.getFullYear(), 0, 1);
@@ -17,31 +23,33 @@ function calculate_variation(seats, departure) {
     const S = (1/3) * Math.log(1 + seats);
 
     // calculate seasons
-    const P = (3/2) * Math.sin(((2 * Math.PI)/365.0) * departure) * 2.5;
-
-    // fancy as fuck constant
-    const T = 365 / 31;
+    const P = (3/2) * Math.sin(((2 * Math.PI)/YEAR_DAYS) * departure) * 2.5;
 
     // get the possible variations
-    return (S * P * T) / 365.0
+    return (S * P * T) / YEAR_DAYS;
+}
+
+function calculate_price_per_kilometer(distance) {
+    // calculate the price per kilometer
+    return PRICE_PER_KILOMETER * distance; 
 }
 
 // calculate the total price with the variations and base price
 // thanks desmos
-function calculate_total_fare(base_fare, date, available_seats) {
+function calculate_total_fare(base_fare, date, available_seats, distance) {
     // get the current date
     const x = get_day_of_year(new Date());
     const t = get_day_of_year(new Date(date)); 
     
-    const r = calculate_variation(available_seats, t); 
+    const distance_km = parseFloat(calculate_price_per_kilometer(distance));
+    const r = parseFloat(calculate_variation(available_seats, t));;
 
     // total fare calculation
     const exponent = -(r * (x - t));
-    const numerator = 365.0;
+    const numerator = YEAR_DAYS;
     const denom = 1 + Math.exp(exponent);
-    return base_fare + (numerator / denom);
+    return base_fare + (numerator / denom) + distance_km;
 }
-
 
 // creates the flights route
 router.get('/api/flights', async (req, res) => {
@@ -58,10 +66,11 @@ router.get('/api/flights', async (req, res) => {
             const base_price = parseFloat(flight.base_fare);
             const day_of_departure = date;
             const available_seats = 170 - flight.booked_seats;
+            const distance = parseFloat(flight.distance);
 
             return {
                 ...flight,
-                base_fare: calculate_total_fare(base_price, day_of_departure, available_seats).toFixed(2),
+                base_fare: calculate_total_fare(base_price, day_of_departure, available_seats, distance).toFixed(2),
             };
         });
 
