@@ -3,7 +3,7 @@ const router = express.Router();
 const {GlobalDatabaseService} = require('../services/database_service');
 
 
-// example Post request body: {"numPassengers":1,"isRoundTrip":false}
+
 // creates the flights route
 router.get('/api/flights', async (req, res) => {
     try {
@@ -12,7 +12,7 @@ router.get('/api/flights', async (req, res) => {
 
         // return the response
         const response = await GlobalDatabaseService.query_flights(from, to, date);
-        res.send(response);
+        res.send({flights: response});
     } catch (err) {
         // response failed
         res.status(500).json({ error: 'Failed to fetch flights', details: err.message });
