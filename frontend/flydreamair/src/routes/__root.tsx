@@ -10,7 +10,7 @@ function RootComponent() {
 		<>
 			<div className="h-full grid grid-rows-[auto_1fr]">
 				<Navbar />
-				<div>
+				<div className="flex justify-center items-center">
 					<Outlet />
 				</div>
 			</div>
