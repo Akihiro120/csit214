@@ -9,10 +9,11 @@ RUN apt-get update && apt-get install -y bash && rm -rf /var/lib/apt/lists/*
 
 
 # Copy requirements first for better layer caching
-COPY ./requirements.txt /app/requirements.txt
+COPY ./seeder/requirements.txt /app/requirements.txt
 
 # Copy the Python script and the entrypoint/wait scripts
 COPY ./seeder/seed_data.py /app/seed_data.py
+COPY ./seeder/seed_booking_data.py /app/seed_booking_data.py
 COPY ./seeder/entrypoint.sh /app/entrypoint.sh
 COPY ./seeder/wait-for-it.sh /app/wait-for-it.sh
 

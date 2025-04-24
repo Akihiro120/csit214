@@ -27,8 +27,11 @@ fi
 echo "Installing Python dependencies..."
 pip3 install --no-cache-dir -r /app/requirements.txt
 
-echo "Running Python seed script..."
+echo "Running Python flight seed script..."
 python3 /app/seed_data.py
+
+echo "Running Python booking seed script..."
+python3 /app/seed_booking_data.py
 
 echo "Seeding process finished."
 # Container will exit after this script finishes

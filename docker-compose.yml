@@ -3,6 +3,7 @@ services:
     image: postgres:latest
     container_name: flight_app_postgres
     restart: always
+    command: postgres -c log_statement=ddl
     environment:
       # Use variables from .env file
       POSTGRES_USER: ${POSTGRES_USER}
@@ -31,27 +32,51 @@ services:
     container_name: flight_app_redis
     restart: always
     ports:
-      - "3000:3000"
+      - "6379:6379"
     volumes:
       - redisdata:/data # Persist Redis data
     networks:
       - myapp_network
 
   # --- Your Express Backend (if dockerized) ---
-  backend: # This is the 'express-service-name' potentially used in Nginx upstream
-    build: ./backend # Or specify image
+  backend:
+    build:
+      context: ./backend # Path to your backend code and Dockerfile
+      dockerfile: Dockerfile # Optional: specify if not named Dockerfile
+    # --- DEVELOPMENT ONLY SETTINGS ---
+    command: npm run dev # Override the default CMD/ENTRYPOINT to run the dev script
+    volumes:
+      # Mount your host backend code into the container's working directory
+      # Replace './backend' with the actual path to your backend code on the host
+      # Replace '/app' with the WORKDIR specified in your backend's Dockerfile
+      - ./backend:/app
+      # Crucial: Prevent host node_modules from overwriting container node_modules
+      # This uses an anonymous volume inside the container for node_modules
+      # Ensures modules installed during 'docker build' are used.
+      - /app/node_modules
+    # --- END DEVELOPMENT ONLY SETTINGS ---
+    restart: unless-stopped # Restart policy for general resilience
     ports:
-      - "5000:5000" # Expose to host so Nginx (if running on host) can reach it via localhost:5000
-                    # OR if Nginx is ALSO in docker, this isn't strictly needed for Nginx-backend comms over docker network
+      - "3000:3000" # Expose port if needed
     environment:
-      # Your backend env vars
-      REDIS_HOST: redis # Connect via service name if on same docker network
-      DATABASE_URL: postgresql://user:password@postgres:5432/mydatabase # Connect via service name
+      # Your regular environment variables
+      NODE_ENV: development # Explicitly set NODE_ENV for dev
+      SESSION_SECRET: ${SESSION_SECRET}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      # Pass other DB variables from .env
+      POSTGRES_HOST: postgres # Use the service name directly
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      # ... other env vars ...
     depends_on:
       - postgres
       - redis
     networks:
       - myapp_network
+
     
   
   seeder:
@@ -78,6 +103,7 @@ services:
   # --- Nginx Reverse Proxy ---
   nginx:
     image: nginx:stable-alpine # Use official Nginx image
+    restart: always
     ports:
       # Map host ports 80 and 443 to container ports 80 and 443
       - "80:80"
