@@ -1,4 +1,4 @@
-import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "motion/react";
 import React, { useState } from "react";
 import { ActionButton } from "../components/ActionButton";
@@ -6,7 +6,6 @@ import { DateInputBox } from "../components/DateInputBox";
 import { DropdownButton } from "../components/DropdownButton";
 import { DropdownInputBox } from "../components/DropdownInputBox";
 import { DropdownProvider } from "../components/DropdownProvider";
-import { FlightSearcher } from "../components/FlightSearcher";
 import { PassengersInputBox } from "../components/PassengerInputBox";
 import { useDropdownContext } from "../context/dropdownContext";
 import Calendar from "../resource/Calendar.svg?react";
@@ -35,9 +34,6 @@ function Home() {
 
 	return (
 		<DropdownProvider>
-			<Outlet />
-			<FlightSearcher />
-
 			<form
 				onSubmit={(e) => {
 					e.preventDefault();
