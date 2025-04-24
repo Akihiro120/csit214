@@ -17,7 +17,7 @@ COPY package*.json ./
 # Using 'npm ci' is generally recommended for CI/CD and production builds
 # as it installs exact versions from package-lock.json and is faster.
 # Use '--only=production' if you don't need devDependencies in the final image.
-RUN npm ci
+RUN npm install
 
 # Optional: Remove build dependencies after installation to keep image smaller
 # RUN apk del python3 make g++ postgresql-dev
@@ -30,4 +30,4 @@ COPY . .
 EXPOSE 3000
 
 # Define the command to run your app
-CMD [ "node", "src/index.js" ]
+CMD [ "npm", "start" ]
