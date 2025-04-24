@@ -2,9 +2,23 @@
 :root {
 	--primary: #232554;
 	--accent: #4c3eac;
-	--hover-button: #6050c0;
+	--light-accent: #9747ff;
 }
 
 body {
 	@apply overscroll-none;
+}
+/* disable arrows on input */
+input[type="number"] {
+	-webkit-appearance: textfield;
+	-moz-appearance: textfield;
+	appearance: textfield;
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+	-webkit-appearance: none;
+}
+input {
+	min-width: 0;
+	outline: none;
 }
