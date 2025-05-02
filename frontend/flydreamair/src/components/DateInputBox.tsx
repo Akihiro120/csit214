@@ -14,7 +14,7 @@ export function DateInputBox({ className, svg, label, value, onClick }: Props) {
 				{svg}
 			</div>
 			<div className="text-sm text-[#ffffff99]">{label}</div>
-			<input onClick={onClick} readOnly className="text-xl row-start-2" name="date" value={value}></input>
+			<input onClick={onClick} readOnly className="w-full text-xl row-start-2" name="date" value={value}></input>
 		</label>
 	);
 }
