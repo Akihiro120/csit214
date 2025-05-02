@@ -11,6 +11,7 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as TestImport } from './routes/test'
 import { Route as BookingRouteImport } from './routes/booking/route'
 import { Route as IndexImport } from './routes/index'
 import { Route as BookingIndexImport } from './routes/booking/index'
@@ -18,6 +19,12 @@ import { Route as BookingSeatsIndexImport } from './routes/booking/seats/index'
 import { Route as BookingSearchIndexImport } from './routes/booking/search/index'
 
 // Create/Update Routes
+
+const TestRoute = TestImport.update({
+  id: '/test',
+  path: '/test',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const BookingRouteRoute = BookingRouteImport.update({
   id: '/booking',
@@ -67,6 +74,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BookingRouteImport
       parentRoute: typeof rootRoute
     }
+    '/test': {
+      id: '/test'
+      path: '/test'
+      fullPath: '/test'
+      preLoaderRoute: typeof TestImport
+      parentRoute: typeof rootRoute
+    }
     '/booking/': {
       id: '/booking/'
       path: '/'
@@ -112,6 +126,7 @@ const BookingRouteRouteWithChildren = BookingRouteRoute._addFileChildren(
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/booking': typeof BookingRouteRouteWithChildren
+  '/test': typeof TestRoute
   '/booking/': typeof BookingIndexRoute
   '/booking/search': typeof BookingSearchIndexRoute
   '/booking/seats': typeof BookingSeatsIndexRoute
@@ -119,6 +134,7 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/test': typeof TestRoute
   '/booking': typeof BookingIndexRoute
   '/booking/search': typeof BookingSearchIndexRoute
   '/booking/seats': typeof BookingSeatsIndexRoute
@@ -128,6 +144,7 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/booking': typeof BookingRouteRouteWithChildren
+  '/test': typeof TestRoute
   '/booking/': typeof BookingIndexRoute
   '/booking/search/': typeof BookingSearchIndexRoute
   '/booking/seats/': typeof BookingSeatsIndexRoute
@@ -138,15 +155,17 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/booking'
+    | '/test'
     | '/booking/'
     | '/booking/search'
     | '/booking/seats'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/booking' | '/booking/search' | '/booking/seats'
+  to: '/' | '/test' | '/booking' | '/booking/search' | '/booking/seats'
   id:
     | '__root__'
     | '/'
     | '/booking'
+    | '/test'
     | '/booking/'
     | '/booking/search/'
     | '/booking/seats/'
@@ -156,11 +175,13 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BookingRouteRoute: typeof BookingRouteRouteWithChildren
+  TestRoute: typeof TestRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BookingRouteRoute: BookingRouteRouteWithChildren,
+  TestRoute: TestRoute,
 }
 
 export const routeTree = rootRoute
@@ -174,7 +195,8 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/booking"
+        "/booking",
+        "/test"
       ]
     },
     "/": {
@@ -187,6 +209,9 @@ export const routeTree = rootRoute
         "/booking/search/",
         "/booking/seats/"
       ]
+    },
+    "/test": {
+      "filePath": "test.tsx"
     },
     "/booking/": {
       "filePath": "booking/index.tsx",
