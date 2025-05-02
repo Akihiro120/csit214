@@ -13,6 +13,7 @@ import Calendar from "../resource/Calendar.svg?react";
 import Landing from "../resource/Landing.svg?react";
 import Passenger from "../resource/Passenger.svg?react";
 import Takeoff from "../resource/Takeoff.svg?react";
+import { PlaneBackground } from "../components/background/background";
 
 export const Route = createFileRoute("/")({
     component: Home,
@@ -35,6 +36,8 @@ function Home() {
     const [toLocation, setToLocation] = useState("Brisbane (BNE)");
 
     return (
+    <div>
+        <PlaneBackground />  
         <DropdownProvider>
             <form
                 onSubmit={(e) => {
@@ -42,7 +45,7 @@ function Home() {
                     const formdata = new FormData(e.currentTarget);
                     console.log(Object.fromEntries(formdata.entries()));
                 }}
-                className="grid grid-cols-2 min-w-[780px] grid-rows-3 gap-6 text-white min-w-870px bg-(--primary) w-[70%] p-6 rounded-3xl shadow-md/25"
+                className="grid grid-cols-2  grid-rows-3 gap-6 text-white min-w-870px bg-(--primary) w-[70%] p-6 rounded-3xl shadow-md/25"
             >
                 {/* first row */}
                 <DropdownButton
@@ -105,7 +108,9 @@ function Home() {
                 </div>
             </form>
         </DropdownProvider>
+    </div>
     );
+
 }
 
 function MenuItem({
