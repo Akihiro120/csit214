@@ -21,9 +21,9 @@ export function PassengersInputBox({ className, svg, label }: Props) {
 
 	return (
 		<label
-			className={`${className} cursor-text grid grid-cols-[3rem_1fr_3rem_3rem] grid-rows-[auto_auto] justify-items-start rounded-sm border border-white p-1 gap-x-1 text-white`}
+			className={`${className} cursor-text min-w-80 grid grid-cols-[3rem_1fr_3rem_3rem] grid-rows-[auto_auto] justify-items-start rounded-sm border border-white p-1 gap-x-1 text-white`}
 		>
-			<div className="w-[2.5rem] h-[2.5rem] col-start-1 row-start-1 row-span-2 self-center justify-self-center">
+			<div className="w-[2.5rem] h-[2.5rem] min-w-80 col-start-1 row-start-1 row-span-2 self-center justify-self-center">
 				{svg}
 			</div>
 			<div className="text-sm text-[#ffffff99]">{label}</div>

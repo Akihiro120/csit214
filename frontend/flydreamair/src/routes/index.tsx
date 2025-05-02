@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "motion/react";
 import React, { useState } from "react";
+// import { useRoute } from "@tanstack/react-router";
 import { ActionButton } from "../components/ActionButton";
 import { DateInputBox } from "../components/DateInputBox";
 import { DropdownButton } from "../components/DropdownButton";
@@ -20,6 +21,7 @@ export const Route = createFileRoute("/")({
 function Home() {
     const destinations = [
         "Sydney (SYD)",
+        "Wollongong (WOL)",
         "Melbourne (MEL)",
         "Adelaide (ADL)",
         "Darwin (DRW)",
@@ -40,7 +42,7 @@ function Home() {
                     const formdata = new FormData(e.currentTarget);
                     console.log(Object.fromEntries(formdata.entries()));
                 }}
-                className="grid grid-cols-2 grid-rows-3 gap-6 text-white bg-(--primary) w-[70%] p-6 rounded-3xl shadow-md/25"
+                className="grid grid-cols-2 min-w-[780px] grid-rows-3 gap-6 text-white min-w-870px bg-(--primary) w-[70%] p-6 rounded-3xl shadow-md/25"
             >
                 {/* first row */}
                 <DropdownButton
@@ -95,7 +97,9 @@ function Home() {
 
                     <ToggleButton className="flex-2" />
 
-                    <ActionButton className="self-center flex-1" hoverOverlayTheme="light">
+                    <ActionButton className="self-center flex-1" hoverOverlayTheme="light" onClick={() => {
+                        console.log(toLocation, fromLocation);
+                    }}>
                         Search
                     </ActionButton>
                 </div>
@@ -125,6 +129,8 @@ function MenuItem({
         </div>
     );
 }
+
+
 
 function ToggleButton({ className }: { className?: string }) {
     const [isReturn, setIsReturn] = useState(false);
