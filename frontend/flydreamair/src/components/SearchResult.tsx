@@ -13,11 +13,11 @@ export interface FlightSearchResult {
 
 interface Props {
 	className?: string;
-	onclick: () => void;
+	onclick?: () => void;
 	flight?: FlightSearchResult;
+	lite?: boolean;
 }
-
-export function SearchResult({ className, onclick, flight }: Props): JSX.Element | null {
+export function SearchResult({ className, onclick, flight, lite }: Props): JSX.Element | null {
 	if (!flight) {
 		return null; // Or return some placeholder content
 	}
@@ -25,16 +25,17 @@ export function SearchResult({ className, onclick, flight }: Props): JSX.Element
 	return (
 		<div
 			onClick={onclick}
-			className={`${className} flex outline-(--accent) bg-white hover:outline shadow-md/25 p-2 rounded-xl`}
+			className={`${className} bg-white flex ${lite ? "" : "outline-(--accent) hover:outline shadow-md/25 p-2 rounded-xl"}`}
 		>
 			<FlightLocation
 				city={flight.dept_city}
 				time={flight.dept_time}
 				icon={<Takeoff className="w-10 h-10 text-(--accent)" />}
+				lite={lite}
 			/>
-			<div className="flex-1 flex flex-col w-[100px]">
+			<div className="flex-1 flex flex-col">
 				{/* duration */}
-				<div className="self-center">{calculateDuration(flight.dept_time, flight.arr_time)}</div>
+				{!lite && <div className="self-center">{calculateDuration(flight.dept_time, flight.arr_time)}</div>}
 				{/* arrow */}
 				<div className="flex-1 flex items-center justify-center">
 					<div className="h-0.5 bg-(--accent) w-full relative">
@@ -47,22 +48,33 @@ export function SearchResult({ className, onclick, flight }: Props): JSX.Element
 					</div>
 				</div>
 				{/* price */}
-				<div className="self-center">{flight.base_fare}</div>
+				{!lite && <div className="self-center">{flight.base_fare}</div>}
 			</div>
 			<FlightLocation
 				city={flight.arr_city}
 				time={flight.arr_time}
 				icon={<Landing className="w-10 h-10 text-(--accent)" />}
+				lite={lite}
 			/>
 		</div>
 	);
 }
-function FlightLocation({ city, time, icon }: { city: string; time: string; icon: React.ReactNode }): JSX.Element {
+function FlightLocation({
+	city,
+	time,
+	icon,
+	lite,
+}: {
+	city: string;
+	time: string;
+	icon: React.ReactNode;
+	lite?: boolean;
+}): JSX.Element {
 	return (
-		<div className="flex flex-col items-center px-4">
-			<div className="text-center p-2 w-[10rem]">{city}</div>
+		<div className="flex flex-col items-center px-2">
+			<div className={lite ? "p-1" : "p-2"}>{city}</div>
 			{icon}
-			<div className="p-2">{time}</div>
+			<div className={lite ? "p-1" : "p-2"}>{time}</div>
 		</div>
 	);
 }
