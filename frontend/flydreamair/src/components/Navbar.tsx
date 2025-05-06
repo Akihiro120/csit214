@@ -12,7 +12,15 @@ export function Navbar({ children }: Props): JSX.Element {
 			<div>
 				<Burger className="w-6 h-6" />
 			</div>
-			<div className="grow">Fly Dream Air</div>
+			<button
+				onClick={() => {
+					window.location.replace("/");
+				}}
+				className="cursor-pointer"
+			>
+				Fly Dream Air
+			</button>
+			<div className="grow"></div>
 			{children}
 			<ActionButton onClick={signIn} hoverOverlayTheme="light">
 				Sign in
