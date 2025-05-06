@@ -1,12 +1,13 @@
-import { JSX } from "react";
-import Burger from "../resource/Burger.svg?react";
-import { ActionButton } from "./ActionButton";
+import { JSX } from 'react';
+import Burger from '../resource/Burger.svg?react';
+import { ActionButton } from './ActionButton';
 
 interface Props {
-	children?: React.ReactNode;
+    children?: React.ReactNode;
 }
 
 export function Navbar({ children }: Props): JSX.Element {
+
 	return (
 		<div className="w-full h-full bg-(--primary) text-white flex items-center p-4 gap-4 rounded-b-xl shadow-md/25 ">
 			<div>
@@ -29,5 +30,5 @@ export function Navbar({ children }: Props): JSX.Element {
 	);
 }
 function signIn() {
-	alert("Sign in function will be implemented soon!");
+    alert('Sign in function will be implemented soon!');
 }

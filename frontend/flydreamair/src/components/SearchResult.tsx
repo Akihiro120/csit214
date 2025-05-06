@@ -3,12 +3,12 @@ import Landing from "../resource/Landing.svg?react";
 import Takeoff from "../resource/Takeoff.svg?react";
 
 export interface FlightSearchResult {
-	flight_id: string;
-	dept_city: string;
-	arr_city: string;
-	base_fare: string;
-	dept_time: string;
-	arr_time: string;
+    flight_id: string;
+    dept_city: string;
+    arr_city: string;
+    base_fare: string;
+    dept_time: string;
+    arr_time: string;
 }
 
 interface Props {

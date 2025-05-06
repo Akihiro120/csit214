@@ -4,14 +4,13 @@ import { Camera } from './camera.js';
 import { Skybox, capture_skybox, capture_irradiance, capture_prefilter } from './skybox.js';
 import { shaders } from './shaders.js';
 import { Plane } from './plane.js';
-import { ShadowPass } from './shadows.js'
-import { PostProcessPass } from './postprocess.js'
+import { ShadowPass } from './shadows.js';
+import { PostProcessPass } from './postprocess.js';
 
 // react stuff
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react';
 
 export function PlaneBackground() {
-
     const mountRef = useRef(null);
     const requestRef = useRef();
     const rendererRef = useRef();
@@ -70,16 +69,18 @@ export function PlaneBackground() {
             shaders.shaded.uniforms.irradiance_map.value = irradiance_capture;
 
             // update skybox display
-            shaders.cubemap.uniforms.cube_map.value = skybox_capture;//irradiance_capture;
+            shaders.cubemap.uniforms.cube_map.value = skybox_capture; //irradiance_capture;
             shaders.cubemap.side = THREE.BackSide;
             shaders.cubemap.depthWrite = false;
 
             // scene texture
-            shaders.bright_filter.uniforms.scene_texture.value = final_pass.scene_texture_plane.texture;
-            shaders.postprocess.uniforms.scene_texture.value = final_pass.scene_texture_plane.texture;
+            shaders.bright_filter.uniforms.scene_texture.value =
+                final_pass.scene_texture_plane.texture;
+            shaders.postprocess.uniforms.scene_texture.value =
+                final_pass.scene_texture_plane.texture;
             shaders.postprocess.uniforms.bloom_texture.value = final_pass.vblur_texture.texture;
             //shaders.postprocess.uniforms.scene_texture.value = shadow_pass.render_target.depthTexture;
-        }
+        };
 
         final_pass.render_final_pass(renderer, scene, camera.camera);
         const render_loop = () => {
@@ -100,21 +101,18 @@ export function PlaneBackground() {
 
             // display the final render texture
             renderer.render(screen_scene, camera.camera);
-        }
+        };
 
         render_loop();
 
         // dispose of it, dont need it no mo'
-        return () => {
-
-        };
-    })
+        return () => {};
+    });
 
     return (
         <div
             ref={mountRef}
             className="fixed inset-0 -z-10 w-screen h-screen overflow-hidden bg-black"
-
         />
-    )
+    );
 }
