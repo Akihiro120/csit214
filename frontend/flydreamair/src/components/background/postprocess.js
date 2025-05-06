@@ -1,5 +1,5 @@
-import * as THREE from 'three';
-import { shaders } from './shaders';
+import * as THREE from "three";
+import { shaders } from "./shaders";
 
 class PostProcessPass {
     constructor(scene) {
