@@ -10,7 +10,6 @@ function RootComponent() {
 		<>
 			<div className="h-full grid grid-rows-[auto_1fr]">
 				<Navbar />
-				{/*                 <PlaneBackground /> */}
 				<div className="flex justify-center items-center">
 					<Outlet />
 				</div>
