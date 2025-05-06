@@ -34,6 +34,17 @@ export function PlaneBackground() {
         const plane = new Plane(scene, shaders.shaded);
         const shadow_plane = new Plane(shadow_scene, shaders.depth);
 
+        window.addEventListener('resize', onWindowResize, false);
+
+        function onWindowResize() {
+
+            camera.camera.aspect = window.innerWidth / window.innerHeight;
+            camera.camera.updateProjectionMatrix();
+
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+        }
+
         // passes
         const final_pass = new PostProcessPass(screen_scene);
         const shadow_pass = new ShadowPass();
