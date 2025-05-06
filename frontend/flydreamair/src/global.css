@@ -3,6 +3,9 @@
 	--primary: #232554;
 	--accent: #4c3eac;
 	--light-accent: #9747ff;
+	--calendarUnselected: #f4f4f4;
+	--calendarSelected: #4c3eac;
+	--calendarBetween: #DBD5FF;
 }
 
 body {
