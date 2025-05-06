@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 
 interface Props {
     className?: string;
@@ -89,10 +89,13 @@ export function DateRange({ className, label, selectedDates, setDateSelect }: Pr
             className={`${className} flex flex-col gap-2 p-4 rounded-md text-black bg-white`}
             onMouseLeave={handleDateLeave}
         >
-            <label className="text-lg text-[var(--primary)] items-center justify-center">{label}</label>
+            <label className="text-lg text-[var(--primary)] items-center justify-center">
+                {label}
+            </label>
 
             <div className="grid grid-cols-7 gap-1 text-center text-xs text-gray-500">
-                <div>Sun</div> <div>Mon</div> <div>Tue</div> <div>Wed</div> <div>Thu</div> <div>Fri</div> <div>Sat</div>
+                <div>Sun</div> <div>Mon</div> <div>Tue</div> <div>Wed</div> <div>Thu</div>{' '}
+                <div>Fri</div> <div>Sat</div>
             </div>
 
             <div className="grid grid-cols-7 gap-1">
@@ -100,11 +103,18 @@ export function DateRange({ className, label, selectedDates, setDateSelect }: Pr
                     week.map((day, dayIndex) => {
                         const dayDate = day ? new Date(currentYear, currentMonth, day) : null;
 
-                        const isSelectedDept = dayDate && selectedDates.selectedDeptDate && dayDate.getTime() === selectedDates.selectedDeptDate.getTime();
-                        const isSelectedRet = dayDate && selectedDates.selectedRetDate && dayDate.getTime() === selectedDates.selectedRetDate.getTime();
+                        const isSelectedDept =
+                            dayDate &&
+                            selectedDates.selectedDeptDate &&
+                            dayDate.getTime() === selectedDates.selectedDeptDate.getTime();
+                        const isSelectedRet =
+                            dayDate &&
+                            selectedDates.selectedRetDate &&
+                            dayDate.getTime() === selectedDates.selectedRetDate.getTime();
                         const isSelected = isSelectedDept || isSelectedRet;
 
-                        const isCurrentlyHovered = dayDate && hoveredDate && dayDate.getTime() === hoveredDate.getTime();
+                        const isCurrentlyHovered =
+                            dayDate && hoveredDate && dayDate.getTime() === hoveredDate.getTime();
                         const isInBetween = isBetween(dayDate);
                         const isClickable = day !== null;
 
@@ -118,7 +128,12 @@ export function DateRange({ className, label, selectedDates, setDateSelect }: Pr
                                 dayClassName += ` bg-[var(--calendarSelected)] text-white`;
                             } else if (isInBetween) {
                                 dayClassName += ` bg-[var(--calendarBetween)]`;
-                            } else if (isCurrentlyHovered && selectedDates.selectedDeptDate && !selectedDates.selectedRetDate && dayDate.getTime() !== selectedDates.selectedDeptDate.getTime()) {
+                            } else if (
+                                isCurrentlyHovered &&
+                                selectedDates.selectedDeptDate &&
+                                !selectedDates.selectedRetDate &&
+                                dayDate.getTime() !== selectedDates.selectedDeptDate.getTime()
+                            ) {
                                 dayClassName += ` bg-[var(--calendarBetween)]`;
                             } else {
                                 dayClassName += ` bg-[var(--calendarUnselected)] hover:bg-[var(--calendarBetween)]`;
@@ -132,7 +147,9 @@ export function DateRange({ className, label, selectedDates, setDateSelect }: Pr
                                 key={`week-${weekIndex}-day-${dayIndex}`}
                                 className={dayClassName.trim()}
                                 onClick={() => isClickable && dayDate && setDateSelect(dayDate)}
-                                onMouseEnter={() => isClickable && dayDate && handleDateHover(dayDate)}
+                                onMouseEnter={() =>
+                                    isClickable && dayDate && handleDateHover(dayDate)
+                                }
                             >
                                 {day}
                             </div>

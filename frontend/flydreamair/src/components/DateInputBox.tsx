@@ -1,9 +1,9 @@
 interface Props {
-	className?: string;
-	svg: React.ReactNode;
-	label: string;
-	value: string;
-	onClick?: () => void;
+    className?: string;
+    svg: React.ReactNode;
+    label: string;
+    value: string;
+    onClick?: () => void;
 }
 export function DateInputBox({ className, svg, label, value, onClick }: Props) {
 	return (

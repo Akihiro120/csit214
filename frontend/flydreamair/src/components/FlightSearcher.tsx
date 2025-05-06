@@ -1,15 +1,14 @@
-import { JSX, useState } from "react";
+import { JSX, useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
-import { AxiosError } from "axios";
+import { AxiosError } from 'axios';
 import apiClient from '../utils/axios';
-
 
 // using lots of useStates so less re-renders
 export function FlightSearcher(): JSX.Element {
-    const locations = ["ADL", "BNE", "DRW", "HBA", "MEL", "PER", "SYD", "WOL"];
-    const [date, setDate] = useState<string>("");
-    const [toLocation, setTo] = useState<string>("");
-    const [fromLocation, setFrom] = useState<string>("");
+    const locations = ['ADL', 'BNE', 'DRW', 'HBA', 'MEL', 'PER', 'SYD', 'WOL'];
+    const [date, setDate] = useState<string>('');
+    const [toLocation, setTo] = useState<string>('');
+    const [fromLocation, setFrom] = useState<string>('');
     const [numPassengers, setNumPassengers] = useState<number>(1);
     const [isRoundTrip, setIsRoundTrip] = useState<boolean>(false);
     const navigate = useNavigate();
@@ -22,27 +21,27 @@ export function FlightSearcher(): JSX.Element {
 
         const sessionData = {
             numPassengers,
-            isRoundTrip
-
+            isRoundTrip,
         };
         const searchParams = {
             from: fromLocation,
             to: toLocation,
-            date: date
+            date: date,
         };
 
-
         try {
-            const response = await apiClient.post("/api/flights", sessionData);
+            const response = await apiClient.post('/api/flights', sessionData);
             if (response.status >= 200 && response.status < 300) {
-                console.log("Session data saved successfully:", response.data);
-                navigate({ to: "/booking/search", search: searchParams });
+                console.log('Session data saved successfully:', response.data);
+                navigate({ to: '/booking/search', search: searchParams });
             } else {
-                alert(`Failed to save search details. Server responded with status: ${response.status}`);
+                alert(
+                    `Failed to save search details. Server responded with status: ${response.status}`
+                );
             }
         } catch (error) {
-            console.error("Error saving session data via POST:", error);
-            let errorMessage = "An error occurred while saving search details.";
+            console.error('Error saving session data via POST:', error);
+            let errorMessage = 'An error occurred while saving search details.';
             if (error instanceof AxiosError && error.response?.data?.error) {
                 errorMessage = `Error: ${error.response.data.error}`;
             } else if (error instanceof Error) {
@@ -55,7 +54,12 @@ export function FlightSearcher(): JSX.Element {
     return (
         <div>
             <h1>Flight Search</h1>
-            <form onSubmit={(e) => { e.preventDefault(); handleSearch(); }}>
+            <form
+                onSubmit={(e) => {
+                    e.preventDefault();
+                    handleSearch();
+                }}
+            >
                 <label>
                     From:
                     <select value={fromLocation} onChange={(e) => setFrom(e.target.value)}>
@@ -80,11 +84,7 @@ export function FlightSearcher(): JSX.Element {
                 </label>
                 <label>
                     Date:
-                    <input
-                        type="date"
-                        value={date}
-                        onChange={(e) => setDate(e.target.value)}
-                    />
+                    <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
                 </label>
                 <label>
                     Number of Passengers:
