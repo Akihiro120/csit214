@@ -15,7 +15,7 @@ export const Route = createFileRoute("/booking/search/")({
 });
 
 function RouteComponent() {
-    const { from = "", to = "", date= "" } = Route.useSearch();
+    const { from = "", to = "", date = "" } = Route.useSearch();
     const navigate = useNavigate();
 
     const { data, isLoading, error } = useQuery({
@@ -26,7 +26,6 @@ function RouteComponent() {
             if (from) apiUrl.searchParams.append("from", from);
             if (to) apiUrl.searchParams.append("to", to);
             if (date) apiUrl.searchParams.append("date", date);
-            apiUrl.searchParams.append("flex", "true");
 
             const response = await fetch(apiUrl.toString());
             if (!response.ok) {
@@ -35,7 +34,7 @@ function RouteComponent() {
             return response.json();
         },
         enabled: !!from && !!to && !!date,
-        
+
         // No Refetching required
         refetchOnWindowFocus: false,
     });
@@ -46,15 +45,15 @@ function RouteComponent() {
     if (data && data.code === "ECONNREFUSED") return <div>Connection refused. Please try again.</div>;
     if (data.flights.length === 0) return <div>No flights found.</div>;
 
-    
+
     const submitRequest = async (flightId: string) => {
         try {
-            const postResponse = await apiClient.post("/api/booking/search", 
-                { flight_id: flightId } 
+            const postResponse = await apiClient.post("/api/booking/search",
+                { flight_id: flightId }
             );
-            
+
             if (postResponse.status >= 200 && postResponse.status < 300) {
-                navigate({ to: "/booking/seats"}); 
+                navigate({ to: "/booking/seats" });
             } else {
                 alert(`Failed to save search details. Server responded with status: ${postResponse.status}`);
             }
@@ -67,7 +66,7 @@ function RouteComponent() {
             } else if (error instanceof Error) {
                 errorMessage = `Error: ${error.message}`;
             }
-            console.log(errorMessage); 
+            console.log(errorMessage);
         }
     }
 
@@ -75,13 +74,13 @@ function RouteComponent() {
     return (
         <div className="flex flex-col gap-4" id="result">
             <h1>Flight Search Results</h1>
-                {data.flights.map((flight: FlightSearchResult) => (
-                    <SearchResult
-                        key={flight.flight_id}
-                        flight={flight}
-                        onclick={() => submitRequest(flight.flight_id) }
-                    />
-                ))}
+            {data.flights.map((flight: FlightSearchResult) => (
+                <SearchResult
+                    key={flight.flight_id}
+                    flight={flight}
+                    onclick={() => submitRequest(flight.flight_id)}
+                />
+            ))}
         </div>
     );
 }
