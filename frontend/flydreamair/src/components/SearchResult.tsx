@@ -48,7 +48,7 @@ export function SearchResult({ className, onclick, flight, lite }: Props): JSX.E
 					</div>
 				</div>
 				{/* price */}
-				{!lite && <div className="self-center">{flight.base_fare}</div>}
+				{!lite && <div className="self-center">${flight.base_fare}</div>}
 			</div>
 			<FlightLocation
 				city={flight.arr_city}
