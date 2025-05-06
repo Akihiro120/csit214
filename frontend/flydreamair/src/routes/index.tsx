@@ -1,36 +1,36 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { motion } from "motion/react";
-import React, { useState } from "react";
-import { ActionButton } from "../components/ActionButton";
-import { DateInputBox } from "../components/DateInputBox";
-import { DropdownButton } from "../components/DropdownButton";
-import { DropdownInputBox } from "../components/DropdownInputBox";
-import { DropdownProvider } from "../components/DropdownProvider";
-import { PassengersInputBox } from "../components/PassengerInputBox";
-import { useDropdownContext } from "../context/dropdownContext";
-import Calendar from "../resource/Calendar.svg?react";
-import Landing from "../resource/Landing.svg?react";
-import Passenger from "../resource/Passenger.svg?react";
-import Takeoff from "../resource/Takeoff.svg?react";
+import { createFileRoute } from '@tanstack/react-router';
+import { motion } from 'motion/react';
+import React, { useState } from 'react';
+import { ActionButton } from '../components/ActionButton';
+import { DateInputBox } from '../components/DateInputBox';
+import { DropdownButton } from '../components/DropdownButton';
+import { DropdownInputBox } from '../components/DropdownInputBox';
+import { DropdownProvider } from '../components/DropdownProvider';
+import { PassengersInputBox } from '../components/PassengerInputBox';
+import { useDropdownContext } from '../context/dropdownContext';
+import Calendar from '../resource/Calendar.svg?react';
+import Landing from '../resource/Landing.svg?react';
+import Passenger from '../resource/Passenger.svg?react';
+import Takeoff from '../resource/Takeoff.svg?react';
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute('/')({
     component: Home,
 });
 
 function Home() {
     const destinations = [
-        "Sydney (SYD)",
-        "Melbourne (MEL)",
-        "Adelaide (ADL)",
-        "Darwin (DRW)",
-        "Hobart (HBA)",
-        "Perth (PER)",
-        "Brisbane (BNE)",
+        'Sydney (SYD)',
+        'Melbourne (MEL)',
+        'Adelaide (ADL)',
+        'Darwin (DRW)',
+        'Hobart (HBA)',
+        'Perth (PER)',
+        'Brisbane (BNE)',
     ];
     const menuClass =
-        "flex flex-col w-[10rem] border border-white rounded-sm bg-(--primary) rounded-md shadow-md overflow-hidden";
-    const [fromLocation, setFromLocation] = useState("Sydney (SYD)");
-    const [toLocation, setToLocation] = useState("Brisbane (BNE)");
+        'flex flex-col w-[10rem] border border-white rounded-sm bg-(--primary) rounded-md shadow-md overflow-hidden';
+    const [fromLocation, setFromLocation] = useState('Sydney (SYD)');
+    const [toLocation, setToLocation] = useState('Brisbane (BNE)');
 
     return (
         <DropdownProvider>
@@ -57,7 +57,13 @@ function Home() {
                     hoverOverlayTheme="light"
                     itemList={destinations.map((destination) => {
                         if (toLocation !== destination) {
-                            return <MenuItem key={destination} setState={setFromLocation} destination={destination} />;
+                            return (
+                                <MenuItem
+                                    key={destination}
+                                    setState={setFromLocation}
+                                    destination={destination}
+                                />
+                            );
                         }
                     })}
                     menuClass={menuClass}
@@ -65,12 +71,24 @@ function Home() {
                 <DropdownButton
                     id="fly-to"
                     buttonContent={
-                        <DropdownInputBox svg={<Landing />} id="fly-to" label="Fly to" name="to" value={toLocation} />
+                        <DropdownInputBox
+                            svg={<Landing />}
+                            id="fly-to"
+                            label="Fly to"
+                            name="to"
+                            value={toLocation}
+                        />
                     }
                     hoverOverlayTheme="light"
                     itemList={destinations.map((destination) => {
                         if (fromLocation !== destination) {
-                            return <MenuItem key={destination} setState={setToLocation} destination={destination} />;
+                            return (
+                                <MenuItem
+                                    key={destination}
+                                    setState={setToLocation}
+                                    destination={destination}
+                                />
+                            );
                         }
                     })}
                     menuClass={menuClass}
@@ -82,7 +100,7 @@ function Home() {
                     label="Date"
                     value="dd-mm-yyyy"
                     onClick={() => {
-                        alert("calendar popup");
+                        alert('calendar popup');
                     }}
                 />
                 {/* third row */}
@@ -148,11 +166,11 @@ function ToggleButton({ className }: { className?: string }) {
                         transition={{
                             duration: 0.2,
                         }}
-                        className={`w-6 h-6 rounded-[2px] bg-[#B1B2C3] ${isReturn ? "col-start-2" : "col-start-1"}`}
+                        className={`w-6 h-6 rounded-[2px] bg-[#B1B2C3] ${isReturn ? 'col-start-2' : 'col-start-1'}`}
                     ></motion.div>
                 </div>
             </div>
-            <div className="text-2xl min-w-[8rem]">{isReturn ? "Return" : "One way"}</div>
+            <div className="text-2xl min-w-[8rem]">{isReturn ? 'Return' : 'One way'}</div>
         </label>
     );
 }

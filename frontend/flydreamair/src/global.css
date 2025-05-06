@@ -1,27 +1,27 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 :root {
-	--primary: #232554;
-	--accent: #4c3eac;
-	--light-accent: #9747ff;
-	--calendarUnselected: #f4f4f4;
-	--calendarSelected: #4c3eac;
-	--calendarBetween: #DBD5FF;
+    --primary: #232554;
+    --accent: #4c3eac;
+    --light-accent: #9747ff;
+    --calendarUnselected: #f4f4f4;
+    --calendarSelected: #4c3eac;
+    --calendarBetween: #dbd5ff;
 }
 
 body {
-	@apply overscroll-none;
+    @apply overscroll-none;
 }
 /* disable arrows on input */
-input[type="number"] {
-	-webkit-appearance: textfield;
-	-moz-appearance: textfield;
-	appearance: textfield;
+input[type='number'] {
+    -webkit-appearance: textfield;
+    -moz-appearance: textfield;
+    appearance: textfield;
 }
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
-	-webkit-appearance: none;
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
 }
 input {
-	min-width: 0;
-	outline: none;
+    min-width: 0;
+    outline: none;
 }
