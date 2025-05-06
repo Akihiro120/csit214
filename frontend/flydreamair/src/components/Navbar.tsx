@@ -1,4 +1,3 @@
-import { useNavigate } from "@tanstack/react-router";
 import { JSX } from "react";
 import Burger from "../resource/Burger.svg?react";
 import { ActionButton } from "./ActionButton";
@@ -8,8 +7,6 @@ interface Props {
 }
 
 export function Navbar({ children }: Props): JSX.Element {
-	const navigate = useNavigate();
-
 	return (
 		<div className="w-full h-full bg-(--primary) text-white flex items-center p-4 gap-4 rounded-b-xl shadow-md/25 ">
 			<div>
@@ -17,7 +14,7 @@ export function Navbar({ children }: Props): JSX.Element {
 			</div>
 			<button
 				onClick={() => {
-					navigate({ to: "/" });
+					window.location.replace("/");
 				}}
 				className="cursor-pointer"
 			>

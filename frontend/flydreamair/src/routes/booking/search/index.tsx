@@ -25,7 +25,6 @@ function Search() {
 			if (from) apiUrl.searchParams.append("from", from);
 			if (to) apiUrl.searchParams.append("to", to);
 			if (date) apiUrl.searchParams.append("date", date);
-			apiUrl.searchParams.append("flex", "true");
 
 			const response = await fetch(apiUrl.toString());
 			if (!response.ok) {

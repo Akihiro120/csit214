@@ -45,9 +45,9 @@ class Plane {
 
     animate(time) {
         shaders.shaded.uniforms.time.value = time;
-        const pitchAmplitude = 0.05; // maximum pitch oscillation in radians
-        const rollAmplitude = 0.05; // maximum roll oscillation in radians
-        const speed = 0.3;
+        const pitchAmplitude = 0.1; // maximum pitch oscillation in radians
+        const rollAmplitude = 0.1; // maximum roll oscillation in radians
+        const speed = 3;
         this.plane_object.rotation.x = pitchAmplitude * Math.sin(speed * time);
         this.plane_object.rotation.z = rollAmplitude * Math.sin(speed * time + Math.PI / 2); // phase offset for variation
     }
