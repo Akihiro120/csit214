@@ -6,16 +6,16 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 // load shaders
 async function load_shaders(vert_file, frag_file, uniforms = {}) {
     const [vertex_src, fragment_src] = await Promise.all([
-        fetch(vert_file).then(res => res.text()),
-        fetch(frag_file).then(res => res.text())
+        fetch(vert_file).then((res) => res.text()),
+        fetch(frag_file).then((res) => res.text()),
     ]);
 
     // create material
     const material = new THREE.ShaderMaterial({
         vertexShader: vertex_src,
         fragmentShader: fragment_src,
-        uniforms
-    })
+        uniforms,
+    });
 
     // return material
     return material;
@@ -35,5 +35,5 @@ export const resources = {
     texture_loader,
     obj_loader,
     fbx_loader,
-    gltf_loader
-}
+    gltf_loader,
+};

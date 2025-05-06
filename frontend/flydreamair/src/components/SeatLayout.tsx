@@ -1,4 +1,4 @@
-import { JSX } from "react";
+import { JSX } from 'react';
 
 interface Seat {
     id: string;
@@ -19,7 +19,7 @@ export function SeatLayout({ seatMap }: SeatLayoutProps): JSX.Element {
                         <div
                             key={seat.id}
                             className={`w-8 h-8 border border-black ${
-                                seat.booked ? "bg-gray-400" : "bg-blue-300"
+                                seat.booked ? 'bg-gray-400' : 'bg-blue-300'
                             }`}
                             title={seat.id}
                         >
@@ -35,7 +35,7 @@ export function SeatLayout({ seatMap }: SeatLayoutProps): JSX.Element {
                         <div
                             key={seat.id}
                             className={`w-8 h-8 border border-black ${
-                                seat.booked ? "bg-gray-400" : "bg-blue-300"
+                                seat.booked ? 'bg-gray-400' : 'bg-blue-300'
                             }`}
                             title={seat.id}
                         >

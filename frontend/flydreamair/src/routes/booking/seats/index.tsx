@@ -1,83 +1,80 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { SeatLayout } from '../../../components/SeatLayout'
-import apiClient from '../../../utils/axios'
+import { createFileRoute } from '@tanstack/react-router';
+import { SeatLayout } from '../../../components/SeatLayout';
+import apiClient from '../../../utils/axios';
 import { useState, useEffect } from 'react';
 
 // Define the structure of a single seat from the API
 interface ApiSeat {
-  seat_number: string;
-  status: boolean; // Assuming true means booked, false means available
+    seat_number: string;
+    status: boolean; // Assuming true means booked, false means available
 }
 
 // Define the structure expected by SeatLayout component
 interface SeatLayoutSeat {
-  id: string;
-  booked: boolean;
+    id: string;
+    booked: boolean;
 }
 
 export const Route = createFileRoute('/booking/seats/')({
-  component: RouteComponent,
-})
+    component: RouteComponent,
+});
 
 function RouteComponent() {
-  const [seatMapData, setSeatMapData] = useState<SeatLayoutSeat[] | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+    const [seatMapData, setSeatMapData] = useState<SeatLayoutSeat[] | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    let isMounted = true; // Flag to prevent state updates on unmounted component
+    useEffect(() => {
+        let isMounted = true; // Flag to prevent state updates on unmounted component
 
-    const fetchSeatData = async () => {
-      setIsLoading(true);
+        const fetchSeatData = async () => {
+            setIsLoading(true);
 
-      try {
-        const seatsResponse = await apiClient.get<{ seats: ApiSeat[] }>('/api/booking/seats');
-        if (seatsResponse.status !== 200) {
-          throw new Error(`Error fetching seat data: ${seatsResponse.status}`);
-        }
+            try {
+                const seatsResponse = await apiClient.get<{ seats: ApiSeat[] }>(
+                    '/api/booking/seats'
+                );
+                if (seatsResponse.status !== 200) {
+                    throw new Error(`Error fetching seat data: ${seatsResponse.status}`);
+                }
 
+                if (!isMounted) return;
+                console.log('Seat data fetched successfully:', seatsResponse.data);
+                const transformedSeats = seatsResponse.data.seats.map((seat) => ({
+                    id: seat.seat_number,
+                    booked: seat.status, // Assuming status=true means booked
+                }));
 
-        if (!isMounted) return;
-        console.log("Seat data fetched successfully:", seatsResponse.data);
-        const transformedSeats = seatsResponse.data.seats.map(seat => ({
-          id: seat.seat_number,
-          booked: seat.status // Assuming status=true means booked
-        }));
+                setSeatMapData(transformedSeats);
+            } catch (seatError) {
+                if (!isMounted) return;
+                console.error('Error fetching seat data:', seatError);
+            }
 
-        setSeatMapData(transformedSeats);
+            if (isMounted) {
+                setIsLoading(false);
+            }
+        };
 
-      } catch (seatError) {
-        if (!isMounted) return;
-        console.error("Error fetching seat data:", seatError);
-      }
+        fetchSeatData();
 
-      if (isMounted) {
-        setIsLoading(false);
-      }
-    };
+        return () => {
+            isMounted = false;
+        };
+    }, []); // Empty dependency array ensures this runs once on mount
 
-    fetchSeatData();
+    if (isLoading) {
+        return <div>Loading seat map...</div>;
+    }
 
-    return () => {
-      isMounted = false;
-    };
-  }, []); // Empty dependency array ensures this runs once on mount
-
-
-  
-  if (isLoading) {
-    return <div>Loading seat map...</div>;
-  }
-
-
-  // Render seat map if data is available
-  return (
-    <div>
-      <h1>Select Your Seats</h1>
-      {seatMapData ? (
-        <SeatLayout seatMap={seatMapData} />
-      ) : (
-        <div>No seat data available.</div> // Fallback if data is null after loading
-      )}
-    </div>
-  );
+    // Render seat map if data is available
+    return (
+        <div>
+            <h1>Select Your Seats</h1>
+            {seatMapData ? (
+                <SeatLayout seatMap={seatMapData} />
+            ) : (
+                <div>No seat data available.</div> // Fallback if data is null after loading
+            )}
+        </div>
+    );
 }

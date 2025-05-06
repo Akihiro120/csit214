@@ -1,10 +1,10 @@
 import * as THREE from 'three';
-import {Camera} from './camera.js';
-import {Skybox, capture_skybox, capture_irradiance, capture_prefilter} from './skybox.js';
-import {shaders} from './shaders.js';
-import {Plane} from './plane.js';
-import {ShadowPass} from './shadows.js'
-import {PostProcessPass} from './postprocess.js'
+import { Camera } from './camera.js';
+import { Skybox, capture_skybox, capture_irradiance, capture_prefilter } from './skybox.js';
+import { shaders } from './shaders.js';
+import { Plane } from './plane.js';
+import { ShadowPass } from './shadows.js';
+import { PostProcessPass } from './postprocess.js';
 
 // prepare renderer
 const renderer = new THREE.WebGLRenderer();
@@ -34,51 +34,51 @@ const irradiance_capture = capture_irradiance(renderer, skybox_capture);
 
 // update uniforms
 function update_uniforms() {
-	// update skybox uniforms
+    // update skybox uniforms
 
-	// update shaded uniforms
-	shaders.shaded.uniforms.camera_position.value.copy(camera.camera.position);
-	shaders.shaded.uniforms.light_direction.value.copy(skybox.light_direction);
-	shaders.shaded.uniforms.cube_map.value = skybox_capture;
-	shaders.shaded.uniforms.shadow_map.value = shadow_pass.render_target.depthTexture;
-	shaders.shaded.uniforms.light_matrix.value.copy(shadow_pass.light_matrix);
-	shaders.shaded.uniforms.irradiance_map.value = irradiance_capture;
+    // update shaded uniforms
+    shaders.shaded.uniforms.camera_position.value.copy(camera.camera.position);
+    shaders.shaded.uniforms.light_direction.value.copy(skybox.light_direction);
+    shaders.shaded.uniforms.cube_map.value = skybox_capture;
+    shaders.shaded.uniforms.shadow_map.value = shadow_pass.render_target.depthTexture;
+    shaders.shaded.uniforms.light_matrix.value.copy(shadow_pass.light_matrix);
+    shaders.shaded.uniforms.irradiance_map.value = irradiance_capture;
 
-	// update skybox display
-	shaders.cubemap.uniforms.cube_map.value = skybox_capture;//irradiance_capture;
-	shaders.cubemap.side = THREE.BackSide;
-	shaders.cubemap.depthWrite = false;
+    // update skybox display
+    shaders.cubemap.uniforms.cube_map.value = skybox_capture; //irradiance_capture;
+    shaders.cubemap.side = THREE.BackSide;
+    shaders.cubemap.depthWrite = false;
 
-	// scene texture
-	shaders.bright_filter.uniforms.scene_texture.value = final_pass.scene_texture_plane.texture;
-	shaders.postprocess.uniforms.scene_texture.value = final_pass.scene_texture_plane.texture;
-	shaders.postprocess.uniforms.bloom_texture.value = final_pass.vblur_texture.texture;
-	//shaders.postprocess.uniforms.scene_texture.value = shadow_pass.render_target.depthTexture;
+    // scene texture
+    shaders.bright_filter.uniforms.scene_texture.value = final_pass.scene_texture_plane.texture;
+    shaders.postprocess.uniforms.scene_texture.value = final_pass.scene_texture_plane.texture;
+    shaders.postprocess.uniforms.bloom_texture.value = final_pass.vblur_texture.texture;
+    //shaders.postprocess.uniforms.scene_texture.value = shadow_pass.render_target.depthTexture;
 
-	// update
-	//shaders.skybox.needsUpdate = true;
-	//shaders.shaded.needsUpdate = true;
-	//shaders.cubemap.needsUpdate = true;
-	//shaders.postprocess.needsUpdate = true;
+    // update
+    //shaders.skybox.needsUpdate = true;
+    //shaders.shaded.needsUpdate = true;
+    //shaders.cubemap.needsUpdate = true;
+    //shaders.postprocess.needsUpdate = true;
 }
 
 // render
-	final_pass.render_final_pass(renderer, scene, camera.camera);
-function render_loop() { 
-	// provide skybox data
-	update_uniforms();
-	plane.animate(clock.getElapsedTime());
-	shadow_plane.animate(clock.getElapsedTime());
+final_pass.render_final_pass(renderer, scene, camera.camera);
+function render_loop() {
+    // provide skybox data
+    update_uniforms();
+    plane.animate(clock.getElapsedTime());
+    shadow_plane.animate(clock.getElapsedTime());
 
-	// shadow pass
-	shadow_pass.capture_shadow_map(renderer, shadow_scene, skybox.light_direction);
+    // shadow pass
+    shadow_pass.capture_shadow_map(renderer, shadow_scene, skybox.light_direction);
 
-	// render scene to display
-	renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
-	final_pass.render_bloom_pass(renderer, scene, camera.camera);
-	final_pass.render_final_pass(renderer, scene, camera.camera);
+    // render scene to display
+    renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
+    final_pass.render_bloom_pass(renderer, scene, camera.camera);
+    final_pass.render_final_pass(renderer, scene, camera.camera);
 
-	// display the final render texture
-	renderer.render(screen_scene, camera.camera);
+    // display the final render texture
+    renderer.render(screen_scene, camera.camera);
 }
 renderer.setAnimationLoop(render_loop);
