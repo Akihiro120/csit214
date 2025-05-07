@@ -34,7 +34,7 @@ export function PassengersInputBox({ className, svg, label }: Props) {
                     min={1}
                     max={9}
                     className="w-4 pointer-events-none"
-                    name="passengers"
+                    name="numPassengers"
                     value={passengers}
                     onChange={handleOnChange}
                 />
