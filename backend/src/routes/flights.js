@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { GlobalDatabaseService } = require("../services/database_service");
 
+
 // constants for the price calculation
 const YEAR_DAYS = 365.0;
 const MONTH_DAYS = 31.0;
@@ -91,10 +92,12 @@ router.get("/api/flights", async (req, res) => {
 });
 
 router.post("/api/flights", async (req, res) => {
-  console.log(req.body);
+  console.log("Flight selection request received:", req.body);
   try {
-    const { isReturn, numPassengers, deptDate, retDate } = req.body;
+    const { to, from, isReturn, numPassengers, deptDate, retDate } = req.body;
     // Validate input
+
+    
 
     if (!deptDate) {
       return res.status(400).json({ error: "Departure date is required" });
