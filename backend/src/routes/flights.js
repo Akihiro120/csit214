@@ -55,7 +55,7 @@ function calculate_total_fare(base_fare, date, available_seats, distance) {
 router.get("/api/flights", async (req, res) => {
   try {
     // flight params
-    const { from, to, date } = req.query;
+    const { from, to, date, numPassengers, isReturn } = req.query;
 
     // return the response
     const response = await GlobalDatabaseService.query_flights(from, to, date);
@@ -91,13 +91,22 @@ router.get("/api/flights", async (req, res) => {
 });
 
 router.post("/api/flights", async (req, res) => {
+  console.log(req.body);
   try {
-    const { isRoundTrip, numPassengers } = req.body;
+    const { isReturn, numPassengers, deptDate, retDate } = req.body;
     // Validate input
-    if (typeof isRoundTrip !== "boolean") {
-      return res.status(400).json({ error: "Invalid value for isRoundTrip" });
+
+    if (!deptDate) {
+      return res.status(400).json({ error: "Departure date is required" });
     }
-    if (typeof numPassengers !== "number" || numPassengers <= 0) {
+    
+    if (isReturn == "true" && !retDate) {
+      return res.status(400).json({ error: "Return date is required" });
+    }
+    if (isReturn !== "true" && isReturn !== "false") {
+      return res.status(400).json({ error: "Invalid value for isReturn" });
+    }
+    if (!numPassengers || parseInt(numPassengers) == NaN || parseInt(numPassengers) < 1) {
       return res.status(400).json({ error: "Invalid value for numPassengers" });
     }
     if (numPassengers > 6) {
@@ -109,11 +118,14 @@ router.post("/api/flights", async (req, res) => {
       req.session.currentBooking = {};
     }
 
+    isReturn = isReturn === "true"; // convert to boolean
+
+
     req.session.currentBooking = {
       // this means not overwriting the old data object, just appending
       ...req.session.currentBooking,
       numPassengers: numPassengers,
-      isRoundTrip: isRoundTrip,
+      isReturn: isReturn,
       timestamp: Date.now(),
     };
 
