@@ -1,23 +1,25 @@
-import { SelectedDate, SelectedDates } from "../type";
+import { SelectedDate, SelectedDates } from '../type';
 
-export const handleDateSelect = (clickedDate: Date | null, setSelectedDate: React.Dispatch<React.SetStateAction<SelectedDate>>) => {
-
+export const handleDateSelect = (
+    clickedDate: Date | null,
+    setSelectedDate: React.Dispatch<React.SetStateAction<SelectedDate>>
+) => {
     if (!clickedDate) return;
     setSelectedDate((prevDates) => {
         const { selectedDeptDate } = prevDates;
 
         // Case 1: No dates selected yet
-        if ((!selectedDeptDate)) {
+        if (!selectedDeptDate) {
             return { selectedDeptDate: clickedDate };
         }
         return { selectedDeptDate: clickedDate };
     });
 };
 
-
-
-export const handleDatesSelect = (clickedDate: Date | null, setSelectedDates: React.Dispatch<React.SetStateAction<SelectedDates>>) => {
-
+export const handleDatesSelect = (
+    clickedDate: Date | null,
+    setSelectedDates: React.Dispatch<React.SetStateAction<SelectedDates>>
+) => {
     if (!clickedDate) return; // Guard against null clickedDate if a non-clickable day was somehow processed
     setSelectedDates((prevDates) => {
         const { selectedDeptDate, selectedRetDate } = prevDates;

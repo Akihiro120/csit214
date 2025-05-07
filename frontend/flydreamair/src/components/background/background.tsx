@@ -37,12 +37,10 @@ export function PlaneBackground() {
         window.addEventListener('resize', onWindowResize, false);
 
         function onWindowResize() {
-
             camera.camera.aspect = window.innerWidth / window.innerHeight;
             camera.camera.updateProjectionMatrix();
 
             renderer.setSize(window.innerWidth, window.innerHeight);
-
         }
 
         // passes

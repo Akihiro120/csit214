@@ -8,14 +8,12 @@ export const Route = createFileRoute('/dates/')({
     component: RouteComponent,
 });
 
-
 function RouteComponent() {
     const [selectedDates, setSelectedDates] = useState<SelectedDates>({
         selectedDeptDate: null,
         selectedRetDate: null,
     });
 
-    
     return (
         <div>
             <DateRange

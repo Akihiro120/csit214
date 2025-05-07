@@ -83,7 +83,10 @@ export function DatePicker({ className, selectedDate, setDateSelect }: Props) {
             const monthName = newDate.toLocaleString('default', { month: 'long' });
             const year = newDate.getFullYear();
             options.push(
-                <option key={`${year}-${newDate.getMonth()}`} value={`${year}-${newDate.getMonth()}`}>
+                <option
+                    key={`${year}-${newDate.getMonth()}`}
+                    value={`${year}-${newDate.getMonth()}`}
+                >
                     {monthName} {year}
                 </option>
             );
@@ -114,7 +117,9 @@ export function DatePicker({ className, selectedDate, setDateSelect }: Props) {
             <div className="grid grid-cols-7 gap-1">
                 {calendarGrid.map((week, weekIndex) =>
                     week.map((day, dayIndex) => {
-                        const dayDate = day ? new Date(currentDisplayYear, currentDisplayMonth, day) : null;
+                        const dayDate = day
+                            ? new Date(currentDisplayYear, currentDisplayMonth, day)
+                            : null;
 
                         const isSelectedDept =
                             dayDate &&
