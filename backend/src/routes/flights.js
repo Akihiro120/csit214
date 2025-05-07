@@ -97,7 +97,7 @@ router.post("/api/flights", async (req, res) => {
     const { to, from, isReturn, numPassengers, deptDate, retDate } = req.body;
     // Validate input
 
-    
+
 
     if (!deptDate) {
       return res.status(400).json({ error: "Departure date is required" });
@@ -121,15 +121,19 @@ router.post("/api/flights", async (req, res) => {
       req.session.currentBooking = {};
     }
 
-    isReturn = isReturn === "true"; // convert to boolean
+    let isReturnBool = isReturn === "true"; // convert to boolean
 
 
     req.session.currentBooking = {
       // this means not overwriting the old data object, just appending
       ...req.session.currentBooking,
+      to: to,
+      from: from,
+      deptDate: deptDate,
+      retDate: isReturnBool ? retDate : null,
       numPassengers: numPassengers,
-      isReturn: isReturn,
-      timestamp: Date.now(),
+      isReturn: isReturnBool,
+      searchTimeStamp: Date.now(),
     };
 
     req.session.save((err) => {
