@@ -18,6 +18,7 @@ function RouteComponent() {
             <DatePicker
                 selectedDate={selectedDate}
                 setDateSelect={(day) => handleDateSelect(day, setSelectedDate)}
+                setVisability={() => {}}
             />
             <div className="mt-4 p-4 border rounded-md">
                 <p>
