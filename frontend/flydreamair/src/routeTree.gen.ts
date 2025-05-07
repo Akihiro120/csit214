@@ -13,6 +13,7 @@
 import { Route as rootRoute } from './routes/__root';
 import { Route as BookingRouteImport } from './routes/booking/route';
 import { Route as IndexImport } from './routes/index';
+import { Route as DatesIndexImport } from './routes/dates/index';
 import { Route as DateIndexImport } from './routes/date/index';
 import { Route as BookingIndexImport } from './routes/booking/index';
 import { Route as BookingSeatsIndexImport } from './routes/booking/seats/index';
@@ -29,6 +30,12 @@ const BookingRouteRoute = BookingRouteImport.update({
 const IndexRoute = IndexImport.update({
     id: '/',
     path: '/',
+    getParentRoute: () => rootRoute,
+} as any);
+
+const DatesIndexRoute = DatesIndexImport.update({
+    id: '/dates/',
+    path: '/dates/',
     getParentRoute: () => rootRoute,
 } as any);
 
@@ -88,6 +95,13 @@ declare module '@tanstack/react-router' {
             preLoaderRoute: typeof DateIndexImport;
             parentRoute: typeof rootRoute;
         };
+        '/dates/': {
+            id: '/dates/';
+            path: '/dates';
+            fullPath: '/dates';
+            preLoaderRoute: typeof DatesIndexImport;
+            parentRoute: typeof rootRoute;
+        };
         '/booking/search/': {
             id: '/booking/search/';
             path: '/search';
@@ -126,6 +140,7 @@ export interface FileRoutesByFullPath {
     '/booking': typeof BookingRouteRouteWithChildren;
     '/booking/': typeof BookingIndexRoute;
     '/date': typeof DateIndexRoute;
+    '/dates': typeof DatesIndexRoute;
     '/booking/search': typeof BookingSearchIndexRoute;
     '/booking/seats': typeof BookingSeatsIndexRoute;
 }
@@ -134,6 +149,7 @@ export interface FileRoutesByTo {
     '/': typeof IndexRoute;
     '/booking': typeof BookingIndexRoute;
     '/date': typeof DateIndexRoute;
+    '/dates': typeof DatesIndexRoute;
     '/booking/search': typeof BookingSearchIndexRoute;
     '/booking/seats': typeof BookingSeatsIndexRoute;
 }
@@ -144,21 +160,30 @@ export interface FileRoutesById {
     '/booking': typeof BookingRouteRouteWithChildren;
     '/booking/': typeof BookingIndexRoute;
     '/date/': typeof DateIndexRoute;
+    '/dates/': typeof DatesIndexRoute;
     '/booking/search/': typeof BookingSearchIndexRoute;
     '/booking/seats/': typeof BookingSeatsIndexRoute;
 }
 
 export interface FileRouteTypes {
     fileRoutesByFullPath: FileRoutesByFullPath;
-    fullPaths: '/' | '/booking' | '/booking/' | '/date' | '/booking/search' | '/booking/seats';
+    fullPaths:
+        | '/'
+        | '/booking'
+        | '/booking/'
+        | '/date'
+        | '/dates'
+        | '/booking/search'
+        | '/booking/seats';
     fileRoutesByTo: FileRoutesByTo;
-    to: '/' | '/booking' | '/date' | '/booking/search' | '/booking/seats';
+    to: '/' | '/booking' | '/date' | '/dates' | '/booking/search' | '/booking/seats';
     id:
         | '__root__'
         | '/'
         | '/booking'
         | '/booking/'
         | '/date/'
+        | '/dates/'
         | '/booking/search/'
         | '/booking/seats/';
     fileRoutesById: FileRoutesById;
@@ -168,12 +193,14 @@ export interface RootRouteChildren {
     IndexRoute: typeof IndexRoute;
     BookingRouteRoute: typeof BookingRouteRouteWithChildren;
     DateIndexRoute: typeof DateIndexRoute;
+    DatesIndexRoute: typeof DatesIndexRoute;
 }
 
 const rootRouteChildren: RootRouteChildren = {
     IndexRoute: IndexRoute,
     BookingRouteRoute: BookingRouteRouteWithChildren,
     DateIndexRoute: DateIndexRoute,
+    DatesIndexRoute: DatesIndexRoute,
 };
 
 export const routeTree = rootRoute
@@ -188,7 +215,8 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/booking",
-        "/date/"
+        "/date/",
+        "/dates/"
       ]
     },
     "/": {
@@ -208,6 +236,9 @@ export const routeTree = rootRoute
     },
     "/date/": {
       "filePath": "date/index.tsx"
+    },
+    "/dates/": {
+      "filePath": "dates/index.tsx"
     },
     "/booking/search/": {
       "filePath": "booking/search/index.tsx",

@@ -4,8 +4,9 @@ interface Props {
     label: string;
     value: string;
     onClick?: () => void;
+    name: string;
 }
-export function DateInputBox({ className, svg, label, value, onClick }: Props) {
+export function DateInputBox({ className, svg, label, value, onClick, name }: Props) {
     return (
         <label
             className={`${className} cursor-text grid grid-cols-[3rem_1fr] grid-rows-[auto_auto] justify-items-start rounded-sm border border-white p-1 gap-x-1 text-white`}
@@ -18,7 +19,7 @@ export function DateInputBox({ className, svg, label, value, onClick }: Props) {
                 onClick={onClick}
                 readOnly
                 className="w-full text-xl row-start-2"
-                name="date"
+                name={name}
                 value={value}
             ></input>
         </label>
