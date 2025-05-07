@@ -8,14 +8,11 @@ export const Route = createFileRoute('/date/')({
     component: RouteComponent,
 });
 
-
 function RouteComponent() {
     const [selectedDate, setSelectedDate] = useState<SelectedDate>({
         selectedDeptDate: null,
     });
 
-    
-    
     return (
         <div>
             <DatePicker

@@ -3,7 +3,7 @@ export interface SelectedDates {
     selectedRetDate: Date | null;
 }
 
-export interface SelectedDate  {
+export interface SelectedDate {
     selectedDeptDate: Date | null;
 }
 
