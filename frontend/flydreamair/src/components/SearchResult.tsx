@@ -1,15 +1,9 @@
-import { JSX } from "react";
+import { JSX } from "react"
 import Landing from "../resource/Landing.svg?react";
 import Takeoff from "../resource/Takeoff.svg?react";
+import { FlightSearchResult } from "../type";
 
-export interface FlightSearchResult {
-    flight_id: string;
-    dept_city: string;
-    arr_city: string;
-    base_fare: string;
-    dept_time: string;
-    arr_time: string;
-}
+
 
 interface Props {
 	className?: string;
