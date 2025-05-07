@@ -3,25 +3,23 @@ import { motion } from 'motion/react';
 import React, { useEffect, useState } from 'react';
 import { ActionButton } from '../components/ActionButton';
 import { DateInputBox } from '../components/DateInputBox';
+import { DatePicker } from '../components/DatePicker';
+import { DateRange } from '../components/DateRange';
 import { DropdownButton } from '../components/DropdownButton';
 import { DropdownInputBox } from '../components/DropdownInputBox';
 import { DropdownMenuItem } from '../components/DropdownMenuItem';
 import { DropdownProvider } from '../components/DropdownProvider';
 import { PassengersInputBox } from '../components/PassengerInputBox';
-import { DatePicker } from '../components/DatePicker';
-import { DateRange } from '../components/DateRange';
-import { handleDateSelect, handleDatesSelect } from '../utils/DateHandler';
-import { SelectedDate, SelectedDates } from '../type';
 import CalendarSvg from '../resource/Calendar.svg?react';
 import Landing from '../resource/Landing.svg?react';
 import Passenger from '../resource/Passenger.svg?react';
 import Takeoff from '../resource/Takeoff.svg?react';
+import { SelectedDate, SelectedDates } from '../type';
+import { handleDateSelect, handleDatesSelect } from '../utils/DateHandler';
 
 export const Route = createFileRoute('/')({
     component: Home,
 });
-
-
 
 function Home() {
     const destinations = [
@@ -45,7 +43,7 @@ function Home() {
         'Perth (PER)': 'PER',
         'Brisbane (BNE)': 'BNE',
     };
-    
+
     const menuClass =
         'flex flex-col w-[10rem] border border-white rounded-sm bg-(--primary) rounded-md shadow-md overflow-hidden';
 
@@ -83,8 +81,8 @@ function Home() {
 
     return (
         <DropdownProvider>
-            {isCalendarOpen && (
-                isReturn? (
+            {isCalendarOpen &&
+                (isReturn ? (
                     <DateRange
                         selectedDates={selectedDates}
                         setDateSelect={(day) => handleDatesSelect(day, setSelectedDates)}
@@ -92,18 +90,17 @@ function Home() {
                         className="absolute z-10 shadow-md"
                     />
                 ) : (
-                <DatePicker
-                    selectedDate={selectedDate}
-                    setDateSelect={(day) => handleDateSelect(day, setSelectedDate)}
-                    setVisability={setIsCalendarOpen}
-                    className="absolute z-10 shadow-md"
-                />
-            ))}
-
+                    <DatePicker
+                        selectedDate={selectedDate}
+                        setDateSelect={(day) => handleDateSelect(day, setSelectedDate)}
+                        setVisability={setIsCalendarOpen}
+                        className="absolute z-10 shadow-md"
+                    />
+                ))}
 
             <form
-            method='post'
-            action='/api/flights'
+                method="post"
+                action="/api/flights"
                 className="grid grid-cols-2 grid-rows-3 gap-6 text-white bg-(--primary) w-[70%] p-6 rounded-3xl shadow-md/25"
             >
                 {/* first row */}
@@ -116,6 +113,7 @@ function Home() {
                             label="Fly From"
                             name="from"
                             value={fromLocation}
+                            destDictionary={destDictionary}
                         />
                     }
                     hoverOverlayTheme="light"
@@ -143,6 +141,7 @@ function Home() {
                             label="Fly to"
                             name="to"
                             value={toLocation}
+                            destDictionary={destDictionary}
                         />
                     }
                     hoverOverlayTheme="light"
@@ -164,24 +163,24 @@ function Home() {
 
                 <DateInputBox
                     className={!isReturn ? 'col-span-2' : ''}
+                    name="deptDate"
                     svg={<CalendarSvg />}
                     label="Departure Date"
                     value={
                         isReturn
-                            ? selectedDates.selectedDeptDate?.toLocaleDateString() || ''
-                            : selectedDate.selectedDeptDate?.toLocaleDateString() || ''
+                            ? selectedDates.selectedDeptDate?.toISOString().substring(0, 10) || ''
+                            : selectedDate.selectedDeptDate?.toISOString().substring(0, 10) || ''
                     }
                     onClick={() => {
-                            setIsCalendarOpen(true);
-                        }
-                    }
+                        setIsCalendarOpen(true);
+                    }}
                 />
                 {isReturn && (
                     <DateInputBox
-                        className=""
                         svg={<CalendarSvg />}
+                        name="retDate"
                         label="Return Date"
-                        value={selectedDates.selectedRetDate?.toLocaleDateString() || ''}
+                        value={selectedDates.selectedRetDate?.toISOString().substring(0, 10) || ''}
                         onClick={() => {
                             setIsCalendarOpen(true);
                         }}
@@ -201,10 +200,7 @@ function Home() {
                         setIsReturn={setIsReturn}
                     />
 
-                    <ActionButton
-                        className="self-center flex-1"
-                        hoverOverlayTheme="light"
-                    >
+                    <ActionButton className="self-center flex-1" hoverOverlayTheme="light">
                         Search
                     </ActionButton>
                 </div>
@@ -223,15 +219,13 @@ function ToggleButton({
     className?: string;
 }) {
     return (
-        <label className={`flex items-center justify-center gap-2 ${className}`}
-                               >
-            
+        <label className={`flex items-center justify-center gap-2 ${className}`}>
             <div className={`border p-1 self-center rounded-sm`}>
                 <div className={`grid grid-cols-2 bg-[#3D3F69] rounded-[2px]`}>
                     <input
                         type="text"
                         name="isReturn"
-                        className="hidden"                       
+                        className="hidden"
                         onClick={() => {
                             setIsReturn((isReturn) => !isReturn);
                         }}
