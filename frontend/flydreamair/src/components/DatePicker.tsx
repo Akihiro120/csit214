@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { ActionButton } from './ActionButton';
 
 interface Props {
     className?: string;
@@ -6,6 +7,7 @@ interface Props {
         selectedDeptDate: Date | null;
     };
     setDateSelect: (day: Date | null) => void;
+    setVisability: (isVisible: boolean) => void;
 }
 
 function generateDaysInMonth(year: number, month: number): (number | null)[][] {
@@ -48,7 +50,7 @@ function generateDaysInMonth(year: number, month: number): (number | null)[][] {
     return calendarGrid;
 }
 
-export function DatePicker({ className, selectedDate, setDateSelect }: Props) {
+export function DatePicker({ className, selectedDate, setDateSelect, setVisability }: Props) {
     const today = new Date();
     const [currentDisplayYear, setCurrentDisplayYear] = useState(today.getFullYear());
     const [currentDisplayMonth, setCurrentDisplayMonth] = useState(today.getMonth());
@@ -166,6 +168,17 @@ export function DatePicker({ className, selectedDate, setDateSelect }: Props) {
                         );
                     })
                 )}
+            </div>
+            <div className="flex justify-end">
+                <ActionButton
+                    className="justify-right"
+                    hoverOverlayTheme="light"
+                    onClick={() => {
+                        setVisability(false);
+                    }}
+                >
+                    Continue
+                </ActionButton>
             </div>
         </label>
     );

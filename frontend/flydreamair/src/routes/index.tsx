@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { motion } from 'motion/react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ActionButton } from '../components/ActionButton';
 import { DateInputBox } from '../components/DateInputBox';
 import { DropdownButton } from '../components/DropdownButton';
@@ -34,9 +34,12 @@ function Home() {
     ];
     const menuClass =
         'flex flex-col w-[10rem] border border-white rounded-sm bg-(--primary) rounded-md shadow-md overflow-hidden';
+
+    // location state for searching
     const [fromLocation, setFromLocation] = useState('Sydney (SYD)');
     const [toLocation, setToLocation] = useState('Brisbane (BNE)');
     const [isReturn, setIsReturn] = useState(false);
+
     const [selectedDate, setSelectedDate] = useState<SelectedDate>({
         selectedDeptDate: null,
     });
@@ -46,21 +49,47 @@ function Home() {
     });
     const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
     const [isDateRangeOpen, setIsDateRangeOpen] = useState(false);
+
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                if (isDatePickerOpen) {
+                    setIsDatePickerOpen(false);
+                }
+                if (isDateRangeOpen) {
+                    setIsDateRangeOpen(false);
+                }
+            }
+        };
+
+        if (isDatePickerOpen || isDateRangeOpen) {
+            document.addEventListener('keydown', handleKeyDown);
+        }
+
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [isDatePickerOpen, setIsDatePickerOpen, isDateRangeOpen, setIsDateRangeOpen]);
+
     return (
         <DropdownProvider>
-            {isDatePickerOpen &&
-            <DatePicker
-            selectedDate={selectedDate}
-            setDateSelect={(day) => handleDateSelect(day, setSelectedDate)}
-            className="absolute z-10 shadow-md"
-            />}
+            {isDatePickerOpen && (
+                <DatePicker
+                    selectedDate={selectedDate}
+                    setDateSelect={(day) => handleDateSelect(day, setSelectedDate)}
+                    setVisability={setIsDatePickerOpen}
+                    className="absolute z-10 shadow-md"
+                />
+            )}
 
-            {isDateRangeOpen &&
-            <DateRange
-            selectedDates={selectedDates}
-            setDateSelect={(day) => handleDatesSelect(day, setSelectedDates)}
-            className="absolute z-10 shadow-md"
-            />}
+            {isDateRangeOpen && (
+                <DateRange
+                    selectedDates={selectedDates}
+                    setDateSelect={(day) => handleDatesSelect(day, setSelectedDates)}
+                    setVisability={setIsDateRangeOpen}
+                    className="absolute z-10 shadow-md"
+                />
+            )}
 
             <form
                 onSubmit={(e) => {
@@ -138,14 +167,12 @@ function Home() {
                     onClick={() => {
                         if (isReturn) {
                             setIsDateRangeOpen(true);
-                        }
-                        else {
+                        } else {
                             setIsDatePickerOpen(true);
                         }
                     }}
                 />
                 {isReturn && (
-                    
                     <DateInputBox
                         className=""
                         svg={<CalendarSvg />}
@@ -170,7 +197,13 @@ function Home() {
                         setIsReturn={setIsReturn}
                     />
 
-                    <ActionButton className="self-center flex-1" hoverOverlayTheme="light">
+                    <ActionButton
+                        className="self-center flex-1"
+                        hoverOverlayTheme="light"
+                        onClick={() => {
+                            console.log('Search');
+                        }}
+                    >
                         Search
                     </ActionButton>
                 </div>
