@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { motion } from 'motion/react';
 import React, { useEffect, useState } from 'react';
 import { ActionButton } from '../components/ActionButton';
@@ -16,12 +16,14 @@ import Passenger from '../resource/Passenger.svg?react';
 import Takeoff from '../resource/Takeoff.svg?react';
 import { SelectedDate, SelectedDates } from '../type';
 import { handleDateSelect, handleDatesSelect } from '../utils/DateHandler';
+import apiClient from '../utils/axios';
 
 export const Route = createFileRoute('/')({
     component: Home,
 });
 
 function Home() {
+    const navigate = useNavigate();
     const destinations = [
         'Wollongong (WOL)',
         'Sydney (SYD)',
@@ -99,6 +101,19 @@ function Home() {
                 ))}
 
             <form
+                onSubmit={async (e) => {
+                    e.preventDefault();
+                    const formData = Object.fromEntries(new FormData(e.currentTarget).entries());
+                    const response = await apiClient.post('/api/flights', formData);
+                    const searchParams = {
+                        from: formData.from.toString(),
+                        to: formData.to.toString(),
+                        date: formData.deptDate.toString(),
+                    };
+                    if (response.status === 200) {
+                        navigate({ to: '/booking/search', search: searchParams });
+                    }
+                }}
                 method="post"
                 action="/api/flights"
                 className="grid grid-cols-2 grid-rows-3 gap-6 text-white bg-(--primary) w-[70%] p-6 rounded-3xl shadow-md/25"
@@ -223,6 +238,7 @@ function ToggleButton({
             <div className={`border p-1 self-center rounded-sm`}>
                 <div className={`grid grid-cols-2 bg-[#3D3F69] rounded-[2px]`}>
                     <input
+                        readOnly
                         type="text"
                         name="isReturn"
                         className="hidden"
