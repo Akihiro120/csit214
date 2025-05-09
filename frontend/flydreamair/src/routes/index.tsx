@@ -237,16 +237,19 @@ function ToggleButton({
 }) {
     return (
         <label className={`flex items-center justify-center gap-2 ${className}`}>
-            <div className={`border p-1 self-center rounded-sm`}>
+            <button
+                type="button"
+                onClick={() => {
+                    setIsReturn((isReturn) => !isReturn);
+                }}
+                className={`border p-1 self-center rounded-sm`}
+            >
                 <div className={`grid grid-cols-2 bg-[#3D3F69] rounded-[2px]`}>
                     <input
                         readOnly
                         type="text"
                         name="isReturn"
                         className="hidden"
-                        onClick={() => {
-                            setIsReturn((isReturn) => !isReturn);
-                        }}
                         value={isReturn.toString()}
                     />
                     <motion.div
@@ -257,7 +260,7 @@ function ToggleButton({
                         className={`w-6 h-6 rounded-[2px] bg-[#B1B2C3] ${isReturn ? 'col-start-2' : 'col-start-1'}`}
                     ></motion.div>
                 </div>
-            </div>
+            </button>
             <div className="text-2xl min-w-[8rem]">{isReturn ? 'Return' : 'One way'}</div>
         </label>
     );
