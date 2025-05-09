@@ -9,7 +9,7 @@ import { DropdownButton } from '../components/DropdownButton';
 import { DropdownInputBox } from '../components/DropdownInputBox';
 import { DropdownMenuItem } from '../components/DropdownMenuItem';
 import { DropdownProvider } from '../components/DropdownProvider';
-import { PassengersInputBox } from '../components/PassengerInputBox';
+import { PassengersInputBox } from '../components/PassengersInputBox';
 import CalendarSvg from '../resource/Calendar.svg?react';
 import Landing from '../resource/Landing.svg?react';
 import Passenger from '../resource/Passenger.svg?react';
@@ -262,7 +262,7 @@ function ToggleButton({
                 onClick={() => {
                     setIsReturn((isReturn) => !isReturn);
                 }}
-                className={`border p-1 self-center rounded-sm`}
+                className={`border p-1 self-center rounded-sm cursor-pointer`}
             >
                 <div className={`grid grid-cols-2 bg-[#3D3F69] rounded-[2px]`}>
                     <input

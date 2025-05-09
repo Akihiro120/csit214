@@ -9,7 +9,7 @@ interface Props {
 export function Navbar({ children }: Props): JSX.Element {
     return (
         <div className="w-full h-full bg-(--primary) text-white flex items-center p-4 gap-4 rounded-b-xl shadow-md/25 ">
-            <div>
+            <div className="cursor-pointer" onClick={() => alert('Menu will be implemented soon!')}>
                 <Burger className="w-6 h-6" />
             </div>
             <button
