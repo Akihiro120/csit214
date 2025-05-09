@@ -117,6 +117,13 @@ function Home() {
                 onSubmit={async (e) => {
                     e.preventDefault();
                     const formData = Object.fromEntries(new FormData(e.currentTarget).entries());
+                    if (!isReturn && !formData.deptDate) {
+                        alert('Please select a departure date');
+                        return;
+                    } else if (isReturn && (!formData.deptDate || !formData.retDate)) {
+                        alert('Please select a departure date and a return date');
+                        return;
+                    }
                     const response = await apiClient.post('/api/flights', formData);
                     const searchParams = {
                         from: formData.from.toString(),
