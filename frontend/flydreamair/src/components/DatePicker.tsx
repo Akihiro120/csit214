@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { ActionButton } from './ActionButton';
 
 interface Props {
@@ -97,21 +97,21 @@ export function DatePicker({ className, selectedDate, setDateSelect, setVisabili
     };
 
     return (
-        <label
+        <div
             className={`${className} flex flex-col gap-2 p-4 rounded-md text-black bg-white`}
             onMouseLeave={handleDateLeave}
         >
-            <div className="flex justify-center items-center">
+            <div className="flex justify-center items-center ">
                 <select
                     value={`${currentDisplayYear}-${currentDisplayMonth}`}
                     onChange={handleMonthChange}
-                    className="text-[24px] justify-center items-center text-(--primary) font-bold"
+                    className="text-[24px] text-center text-(--primary) font-bold cursor-pointer outline-none"
                 >
                     {getMonthOptions()}
                 </select>
             </div>
 
-            <div className="grid grid-cols-7 gap-1 text-center text-xs text-gray-500">
+            <div className="m-4 grid grid-cols-7 gap-1 text-center text-xs text-gray-500">
                 <div>Sun</div> <div>Mon</div> <div>Tue</div> <div>Wed</div> <div>Thu</div>{' '}
                 <div>Fri</div> <div>Sat</div>
             </div>
@@ -119,6 +119,12 @@ export function DatePicker({ className, selectedDate, setDateSelect, setVisabili
             <div className="grid grid-cols-7 gap-1">
                 {calendarGrid.map((week, weekIndex) =>
                     week.map((day, dayIndex) => {
+                        let dayClassName = `
+                            flex text-right p-2 w-[120px] h-[75px] rounded-[4px] transition-colors duration-100 ease-in-out box-border 
+                        `;
+                        if (!day) {
+                            return <div className={dayClassName}></div>;
+                        }
                         const dayDate = day
                             ? new Date(currentDisplayYear, currentDisplayMonth, day)
                             : null;
@@ -132,10 +138,6 @@ export function DatePicker({ className, selectedDate, setDateSelect, setVisabili
                         const isCurrentlyHovered =
                             dayDate && hoveredDate && dayDate.getTime() === hoveredDate.getTime();
                         const isClickable = day !== null;
-
-                        let dayClassName = `
-                            flex text-right p-2 w-[120px] h-[75px] rounded-[4px] transition-colors duration-100 ease-in-out box-border
-                        `;
 
                         if (isClickable && dayDate) {
                             dayClassName += ` cursor-pointer text-black`;
@@ -157,7 +159,7 @@ export function DatePicker({ className, selectedDate, setDateSelect, setVisabili
                         return (
                             <div
                                 key={`week-${weekIndex}-day-${dayIndex}`}
-                                className={dayClassName.trim()}
+                                className={dayClassName.trim() + ' shadow-sm/25'}
                                 onClick={() => isClickable && dayDate && setDateSelect(dayDate)}
                                 onMouseEnter={() =>
                                     isClickable && dayDate && handleDateHover(dayDate)
@@ -180,6 +182,6 @@ export function DatePicker({ className, selectedDate, setDateSelect, setVisabili
                     Continue
                 </ActionButton>
             </div>
-        </label>
+        </div>
     );
 }
