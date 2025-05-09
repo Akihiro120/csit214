@@ -1,5 +1,6 @@
 import { Outlet, createRootRoute, useLocation } from '@tanstack/react-router';
 import { Navbar } from '../components/Navbar';
+import { PlaneBackground } from '../components/background/background';
 
 export const Route = createRootRoute({
     component: RootComponent,
@@ -11,7 +12,7 @@ function RootComponent() {
         <>
             <div className="h-full grid grid-rows-[auto_1fr]">
                 <Navbar />
-                {/*                 {location.pathname === '/' && <PlaneBackground />} */}
+                {location.pathname === '/' && <PlaneBackground />}
                 <div className="flex justify-center items-center">
                     <Outlet />
                 </div>
