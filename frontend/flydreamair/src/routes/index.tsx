@@ -136,6 +136,7 @@ function Home() {
                         if (toLocation !== destination) {
                             return (
                                 <DropdownMenuItem
+                                    className="hover:bg-[#464870]"
                                     key={destination}
                                     onClick={() => {
                                         setFromLocation(destination);
@@ -164,6 +165,7 @@ function Home() {
                         if (fromLocation !== destination) {
                             return (
                                 <DropdownMenuItem
+                                    className="hover:bg-[#464870]"
                                     key={destination}
                                     onClick={() => {
                                         setToLocation(destination);
