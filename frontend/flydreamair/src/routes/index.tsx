@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { motion } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
 import React, { useEffect, useState } from 'react';
 import { ActionButton } from '../components/ActionButton';
 import { DateInputBox } from '../components/DateInputBox';
@@ -83,30 +83,35 @@ function Home() {
 
     return (
         <DropdownProvider>
-            {isCalendarOpen && (
-                <div
-                    onClick={() => {
-                        setIsCalendarOpen(false);
-                    }}
-                    className="fixed inset-0 z-10 bg-black/50 flex items-center justify-center"
-                >
-                    {isReturn ? (
-                        <DateRange
-                            selectedDates={selectedDates}
-                            setDateSelect={(day) => handleDatesSelect(day, setSelectedDates)}
-                            setVisability={setIsCalendarOpen}
-                            className="absolute z-100 shadow-lg/25"
-                        />
-                    ) : (
-                        <DatePicker
-                            selectedDate={selectedDate}
-                            setDateSelect={(day) => handleDateSelect(day, setSelectedDate)}
-                            setVisability={setIsCalendarOpen}
-                            className="absolute z-100 shadow-lg/25"
-                        />
-                    )}
-                </div>
-            )}
+            <AnimatePresence>
+                {isCalendarOpen && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={() => {
+                            setIsCalendarOpen(false);
+                        }}
+                        className="fixed inset-0 z-10 bg-black/50 flex items-center justify-center"
+                    >
+                        {isReturn ? (
+                            <DateRange
+                                selectedDates={selectedDates}
+                                setDateSelect={(day) => handleDatesSelect(day, setSelectedDates)}
+                                setVisability={setIsCalendarOpen}
+                                className="absolute z-100 shadow-lg/25"
+                            />
+                        ) : (
+                            <DatePicker
+                                selectedDate={selectedDate}
+                                setDateSelect={(day) => handleDateSelect(day, setSelectedDate)}
+                                setVisability={setIsCalendarOpen}
+                                className="absolute z-100 shadow-lg/25"
+                            />
+                        )}
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             <form
                 onSubmit={async (e) => {
