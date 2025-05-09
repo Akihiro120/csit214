@@ -119,18 +119,21 @@ export function DateRange({ className, selectedDates, setDateSelect, setVisabili
         <div
             className={`${className} flex flex-col gap-2 p-4 rounded-md text-black bg-white`}
             onMouseLeave={handleDateLeave}
+            onClick={(e) => {
+                e.stopPropagation();
+            }}
         >
             <div className="flex justify-center items-center">
                 <select
                     value={`${currentDisplayYear}-${currentDisplayMonth}`}
                     onChange={handleMonthChange}
-                    className="text-[24px] text-center text-(--primary) font-bold"
+                    className="text-[24px] text-center text-(--primary) font-bold cursor-pointer outline-none"
                 >
                     {getMonthOptions()}
                 </select>
             </div>
 
-            <div className="m-4 grid grid-cols-7 gap-1 text-center text-xs text-gray-500">
+            <div className="my-4 grid grid-cols-7 gap-1 text-center text-xs text-gray-500">
                 <div>Sun</div> <div>Mon</div> <div>Tue</div> <div>Wed</div> <div>Thu</div>{' '}
                 <div>Fri</div> <div>Sat</div>
             </div>

@@ -83,22 +83,30 @@ function Home() {
 
     return (
         <DropdownProvider>
-            {isCalendarOpen &&
-                (isReturn ? (
-                    <DateRange
-                        selectedDates={selectedDates}
-                        setDateSelect={(day) => handleDatesSelect(day, setSelectedDates)}
-                        setVisability={setIsCalendarOpen}
-                        className="absolute z-10 shadow-lg/25"
-                    />
-                ) : (
-                    <DatePicker
-                        selectedDate={selectedDate}
-                        setDateSelect={(day) => handleDateSelect(day, setSelectedDate)}
-                        setVisability={setIsCalendarOpen}
-                        className="absolute z-10 shadow-lg/25"
-                    />
-                ))}
+            {isCalendarOpen && (
+                <div
+                    onClick={() => {
+                        setIsCalendarOpen(false);
+                    }}
+                    className="fixed inset-0 z-10 bg-black/50 flex items-center justify-center"
+                >
+                    {isReturn ? (
+                        <DateRange
+                            selectedDates={selectedDates}
+                            setDateSelect={(day) => handleDatesSelect(day, setSelectedDates)}
+                            setVisability={setIsCalendarOpen}
+                            className="absolute z-100 shadow-lg/25"
+                        />
+                    ) : (
+                        <DatePicker
+                            selectedDate={selectedDate}
+                            setDateSelect={(day) => handleDateSelect(day, setSelectedDate)}
+                            setVisability={setIsCalendarOpen}
+                            className="absolute z-100 shadow-lg/25"
+                        />
+                    )}
+                </div>
+            )}
 
             <form
                 onSubmit={async (e) => {
@@ -116,7 +124,7 @@ function Home() {
                 }}
                 method="post"
                 action="/api/flights"
-                className="grid grid-cols-2 grid-rows-3 gap-6 text-white bg-(--primary) w-[70%] p-6 rounded-3xl shadow-md/25"
+                className={`${isCalendarOpen ? 'pointer-events-none' : ''} grid grid-cols-2 grid-rows-3 gap-6 text-white bg-(--primary) w-[70%] p-6 min-w-[860px] rounded-3xl shadow-md/25`}
             >
                 {/* first row */}
                 <DropdownButton
