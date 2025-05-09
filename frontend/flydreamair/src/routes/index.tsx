@@ -22,6 +22,18 @@ export const Route = createFileRoute('/')({
     component: Home,
 });
 
+
+function formatDateForSearch(date: Date | null | undefined): string {
+    if (!date) {
+        return '';
+    }
+    // getMonth() is 0-indexed, so add 1
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    const year = date.getFullYear();
+    return `${year}-${month}-${day}`;
+}
+
 function Home() {
     const navigate = useNavigate();
     const destinations = [
@@ -205,8 +217,8 @@ function Home() {
                     label="Departure Date"
                     value={
                         isReturn
-                            ? selectedDates.selectedDeptDate?.toISOString().substring(0, 10) || ''
-                            : selectedDate.selectedDeptDate?.toISOString().substring(0, 10) || ''
+                            ? formatDateForSearch(selectedDates.selectedDeptDate) || ''
+                            : formatDateForSearch(selectedDate.selectedDeptDate) || ''
                     }
                     onClick={() => {
                         setIsCalendarOpen(true);
@@ -217,7 +229,7 @@ function Home() {
                         svg={<CalendarSvg />}
                         name="retDate"
                         label="Return Date"
-                        value={selectedDates.selectedRetDate?.toISOString().substring(0, 10) || ''}
+                        value={formatDateForSearch(selectedDates.selectedRetDate) || ''}
                         onClick={() => {
                             setIsCalendarOpen(true);
                         }}
