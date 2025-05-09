@@ -39,7 +39,7 @@ export function ActionButton({ className, children, hoverOverlayTheme, onClick }
                 setIsActive(false);
             }}
             onClick={onClick}
-            className={`relative bg-(--accent) text-white shadow-md/25 p-2 rounded-md ${className}`}
+            className={`cursor-pointer relative bg-(--accent) text-white shadow-md/25 p-2 rounded-md ${className}`}
         >
             {/* darken background overlay */}
             {hoverOverlayTheme ? (
