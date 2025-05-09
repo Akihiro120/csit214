@@ -281,7 +281,9 @@ function ToggleButton({
                     ></motion.div>
                 </div>
             </button>
-            <div className="text-2xl min-w-[8rem]">{isReturn ? 'Return' : 'One way'}</div>
+            <div className="text-2xl min-w-[8rem] select-none">
+                {isReturn ? 'Return' : 'One way'}
+            </div>
         </label>
     );
 }
