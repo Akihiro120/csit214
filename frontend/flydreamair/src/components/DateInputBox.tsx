@@ -10,7 +10,7 @@ export function DateInputBox({ className, svg, label, value, onClick, name }: Pr
     return (
         <button type="button" onClick={onClick} className={`${className}`}>
             <label
-                className={`${className} cursor-text grid grid-cols-[3rem_1fr] grid-rows-[auto_auto] justify-items-start rounded-sm border border-white p-1 gap-x-1 text-white`}
+                className={`cursor-text grid grid-cols-[3rem_1fr] grid-rows-[auto_auto] justify-items-start rounded-sm border border-white p-1 gap-x-1 text-white`}
             >
                 <div className="w-[2.5rem] h-[2.5rem] col-start-1 row-start-1 row-span-2 self-center justify-self-center">
                     {svg}
