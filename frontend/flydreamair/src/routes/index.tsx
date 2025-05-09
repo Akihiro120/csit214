@@ -89,14 +89,14 @@ function Home() {
                         selectedDates={selectedDates}
                         setDateSelect={(day) => handleDatesSelect(day, setSelectedDates)}
                         setVisability={setIsCalendarOpen}
-                        className="absolute z-10 shadow-md"
+                        className="absolute z-10 shadow-lg/25"
                     />
                 ) : (
                     <DatePicker
                         selectedDate={selectedDate}
                         setDateSelect={(day) => handleDateSelect(day, setSelectedDate)}
                         setVisability={setIsCalendarOpen}
-                        className="absolute z-10 shadow-md"
+                        className="absolute z-10 shadow-lg/25"
                     />
                 ))}
 
