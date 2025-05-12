@@ -22,7 +22,6 @@ export const Route = createFileRoute('/')({
     component: Home,
 });
 
-
 function formatDateForSearch(date: Date | null | undefined): string {
     if (!date) {
         return '';
