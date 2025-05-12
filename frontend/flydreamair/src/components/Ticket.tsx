@@ -1,6 +1,7 @@
 import { JSX } from 'react';
 import Barcode from '../resource/Barcode.svg?react';
-import { FlightSearchResult, SearchResult } from './SearchResult';
+import { SearchResult } from './SearchResult';
+import { FlightSearchResult } from '../type';
 
 interface Props {
     className?: string;
