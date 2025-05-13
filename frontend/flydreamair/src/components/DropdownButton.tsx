@@ -57,7 +57,7 @@ export function DropdownButton({
                         setActiveButtonId(null);
                     }
                 }}
-                className={`relative ${buttonClass}`}
+                className={`relative cursor-pointer ${buttonClass}`}
             >
                 {buttonContent}
                 {/* darken background overlay */}

@@ -9,8 +9,17 @@ interface Props {
     label: string;
     name: string;
     value: string;
+    destDictionary: Record<string, string>;
 }
-export function DropdownInputBox({ className, id, svg, label, name, value }: Props) {
+export function DropdownInputBox({
+    className,
+    id,
+    svg,
+    label,
+    name,
+    value,
+    destDictionary,
+}: Props) {
     const { activeButtonId } = useDropdownContext();
 
     return (
@@ -21,7 +30,8 @@ export function DropdownInputBox({ className, id, svg, label, name, value }: Pro
                 {svg}
             </div>
             <div className="text-sm text-[#ffffff99]">{label}</div>
-            <input readOnly className="text-xl row-start-2" name={name} value={value} />
+            <div className="text-xl row-start-2">{value}</div>
+            <input readOnly className="hidden" name={name} value={destDictionary[value]} />
             {/* dropdown arrow */}
             <motion.div
                 variants={{

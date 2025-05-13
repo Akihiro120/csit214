@@ -24,6 +24,9 @@ class ExpressService {
         // json
         this.express_application.use(Express.json());
         
+        // urlencoded
+        this.express_application.use(Express.urlencoded({ extended: true }));
+
         // cors
         const is_production = process.env.NODE_ENV === 'production';
         this.express_application.use(CORS({
@@ -55,6 +58,7 @@ class ExpressService {
 
         // router
         this.express_application.use(routing_service); 
+    
 
         // begin express entry point???
         // perchance i move this to the main
