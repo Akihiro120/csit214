@@ -3,7 +3,9 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'; // Import
 import { SearchResult } from '../../../components/SearchResult';
 import { FlightSearchResult } from '../../../type';
 // import { Navigate } from "@tanstack/react-router";
+import Slider from '@mui/material/Slider';
 import { AxiosError } from 'axios';
+import { useState } from 'react';
 import apiClient from '../../../utils/axios';
 
 export const Route = createFileRoute('/booking/search/')({
@@ -18,6 +20,8 @@ export const Route = createFileRoute('/booking/search/')({
 function Search() {
     const { from = '', to = '', date = '' } = Route.useSearch();
     const navigate = useNavigate();
+    const [priceRange, setPriceRange] = useState<number[]>([200, 800]);
+    const [deptTime, setDeptTime] = useState<number[]>([6, 22]);
 
     const { data, isLoading, error } = useQuery({
         queryKey: ['flights', { from, to, date }],
@@ -71,15 +75,124 @@ function Search() {
     };
 
     return (
-        <div className="flex flex-col gap-4 bg-white" id="result">
-            <h1>Flight Search Results</h1>
-            {data.flights.map((flight: FlightSearchResult) => (
-                <SearchResult
-                    key={flight.flight_id}
-                    flight={flight}
-                    onclick={() => submitRequest(flight.flight_id)}
+        <div className="flex gap-4 items-start">
+            <div className="flex flex-col gap-12 p-6 w-[300px] bg-(--pale-accent) rounded-sm">
+                <RangeSlider
+                    value={priceRange}
+                    setValue={setPriceRange}
+                    label="Price"
+                    min={0}
+                    max={1000}
                 />
-            ))}
+                <RangeSlider
+                    value={deptTime}
+                    setValue={setDeptTime}
+                    label="Departure time"
+                    min={0}
+                    max={23}
+                />
+                <div className="flex flex-col gap-2">
+                    <div className="text-xl">Number of stops</div>
+                    <label htmlFor="0" className="flex gap-2 items-center cursor-pointer">
+                        <input
+                            className="cursor-pointer"
+                            type="radio"
+                            id="0"
+                            name="stops"
+                            value="0"
+                        />
+                        <div className="cursor-pointer">0 stop</div>
+                    </label>
+                    <label htmlFor="1" className="flex gap-2 items-center cursor-pointer">
+                        <input
+                            className="cursor-pointer"
+                            type="radio"
+                            id="1"
+                            name="stops"
+                            value="1"
+                        />
+                        <div className="cursor-pointer">1 stop</div>
+                    </label>
+                    <label htmlFor="2" className="flex gap-2 items-center cursor-pointer">
+                        <input
+                            className="cursor-pointer"
+                            type="radio"
+                            id="2"
+                            name="stops"
+                            value="2"
+                        />
+                        <div className="cursor-pointer">2 or more stop</div>
+                    </label>
+                </div>
+            </div>
+            <div className="grow-1 flex flex-col gap-4 bg-white" id="result">
+                {data.flights.map((flight: FlightSearchResult) => (
+                    <SearchResult
+                        key={flight.flight_id}
+                        flight={flight}
+                        onclick={() => submitRequest(flight.flight_id)}
+                    />
+                ))}
+            </div>
+        </div>
+    );
+}
+
+function RangeSlider({
+    label,
+    value,
+    setValue,
+    min,
+    max,
+}: {
+    label: string;
+    value: number[];
+    setValue: (value: number[]) => void;
+    min: number;
+    max: number;
+}) {
+    const handleChange = (_: Event, newValue: number[]) => {
+        setValue(newValue);
+    };
+
+    return (
+        <div className="flex flex-col gap-2">
+            <div className="text-xl">{label}</div>
+            <div className="flex gap-2 items-center">
+                <div className="text-sm w-10 text-center">
+                    {label === 'Price' ? '$' + min : min + ':00'}
+                </div>
+                <Slider
+                    value={value}
+                    onChange={handleChange}
+                    valueLabelDisplay="auto"
+                    valueLabelFormat={(value) => {
+                        if (label === 'Price') {
+                            return '$' + value;
+                        } else {
+                            return value + ':00';
+                        }
+                    }}
+                    min={min}
+                    max={max}
+                    sx={{
+                        '& .MuiSlider-rail': {
+                            backgroundColor: '#DBD5FF',
+                            opacity: 1, // Ensure rail color is visible
+                        },
+                        '& .MuiSlider-track': {
+                            backgroundColor: '#4c3eac',
+                            borderColor: '#4c3eac', // Ensure border matches track color
+                        },
+                        '& .MuiSlider-thumb': {
+                            backgroundColor: '#4c3eac',
+                        },
+                    }}
+                />
+                <div className="text-sm w-10 text-center">
+                    {label === 'Price' ? '$' + max : max + ':00'}
+                </div>
+            </div>
         </div>
     );
 }
