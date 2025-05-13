@@ -3,9 +3,8 @@ import { ActionButton } from './ActionButton';
 
 interface Props {
     className?: string;
-    selectedDates: {
+    selectedDate: {
         selectedDeptDate: Date | null;
-        selectedRetDate: Date | null;
     };
     setDateSelect: (day: Date | null) => void;
     setVisability: (isVisible: boolean) => void;
@@ -51,7 +50,7 @@ function generateDaysInMonth(year: number, month: number): (number | null)[][] {
     return calendarGrid;
 }
 
-export function DateRange({ className, selectedDates, setDateSelect, setVisability }: Props) {
+export function DatePicker({ className, selectedDate, setDateSelect, setVisability }: Props) {
     const today = new Date();
     const [currentDisplayYear, setCurrentDisplayYear] = useState(today.getFullYear());
     const [currentDisplayMonth, setCurrentDisplayMonth] = useState(today.getMonth());
@@ -70,24 +69,6 @@ export function DateRange({ className, selectedDates, setDateSelect, setVisabili
 
     const handleDateLeave = () => {
         setHoveredDate(null);
-    };
-
-    const isBetween = (currentDayDate: Date | null): boolean => {
-        if (!currentDayDate) return false;
-
-        const { selectedDeptDate, selectedRetDate } = selectedDates;
-
-        if (selectedDeptDate && selectedRetDate) {
-            const start = Math.min(selectedDeptDate.getTime(), selectedRetDate.getTime());
-            const end = Math.max(selectedDeptDate.getTime(), selectedRetDate.getTime());
-            return currentDayDate.getTime() > start && currentDayDate.getTime() < end;
-        } else if (selectedDeptDate && hoveredDate) {
-            if (hoveredDate.getTime() === selectedDeptDate.getTime()) return false;
-            const start = Math.min(selectedDeptDate.getTime(), hoveredDate.getTime());
-            const end = Math.max(selectedDeptDate.getTime(), hoveredDate.getTime());
-            return currentDayDate.getTime() > start && currentDayDate.getTime() < end;
-        }
-        return false;
     };
 
     const handleMonthChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -123,7 +104,7 @@ export function DateRange({ className, selectedDates, setDateSelect, setVisabili
                 e.stopPropagation();
             }}
         >
-            <div className="flex justify-center items-center">
+            <div className="flex justify-center items-center ">
                 <select
                     value={`${currentDisplayYear}-${currentDisplayMonth}`}
                     onChange={handleMonthChange}
@@ -153,30 +134,22 @@ export function DateRange({ className, selectedDates, setDateSelect, setVisabili
 
                         const isSelectedDept =
                             dayDate &&
-                            selectedDates.selectedDeptDate &&
-                            dayDate.getTime() === selectedDates.selectedDeptDate.getTime();
-                        const isSelectedRet =
-                            dayDate &&
-                            selectedDates.selectedRetDate &&
-                            dayDate.getTime() === selectedDates.selectedRetDate.getTime();
-                        const isSelected = isSelectedDept || isSelectedRet;
+                            selectedDate.selectedDeptDate &&
+                            dayDate.getTime() === selectedDate.selectedDeptDate.getTime();
+                        const isSelected = isSelectedDept;
 
                         const isCurrentlyHovered =
                             dayDate && hoveredDate && dayDate.getTime() === hoveredDate.getTime();
-                        const isInBetween = isBetween(dayDate);
                         const isClickable = day !== null;
 
                         if (isClickable && dayDate) {
                             dayClassName += ` cursor-pointer text-black`;
                             if (isSelected) {
                                 dayClassName += ` bg-[var(--calendarSelected)] text-white`;
-                            } else if (isInBetween) {
-                                dayClassName += ` bg-[var(--calendarBetween)]`;
                             } else if (
                                 isCurrentlyHovered &&
-                                selectedDates.selectedDeptDate &&
-                                !selectedDates.selectedRetDate &&
-                                dayDate.getTime() !== selectedDates.selectedDeptDate.getTime()
+                                selectedDate.selectedDeptDate &&
+                                dayDate.getTime() !== selectedDate.selectedDeptDate.getTime()
                             ) {
                                 dayClassName += ` bg-[var(--calendarBetween)]`;
                             } else {
