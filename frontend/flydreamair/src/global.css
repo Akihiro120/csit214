@@ -2,6 +2,7 @@
 :root {
     --primary: #232554;
     --accent: #4c3eac;
+    --pale-accent: #ebecfd;
     --light-accent: #9747ff;
     --calendarUnselected: #f4f4f4;
     --calendarSelected: #4c3eac;
@@ -24,4 +25,7 @@ input[type='number']::-webkit-outer-spin-button {
 input {
     min-width: 0;
     outline: none;
+}
+input[type='radio'] {
+    accent-color: var(--accent);
 }
