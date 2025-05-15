@@ -1,6 +1,6 @@
-// { flight_id: flightId }
 const express = require('express');
 const router = express.Router();
+const { GlobalDatabaseService } = require('../../services/database_service');
 
 
 // post route for api
@@ -26,28 +26,31 @@ router.post('/api/booking/search', async (req, res) => {
         }
         
 
-        const flightDataExtras = await GlobalDatabaseService.query_flight_info(req.session.currentBooking.flight_id);
+        const flightDataExtras = await GlobalDatabaseService.query_flight_info(data.flight_id)[0];
+        console.log("Flight data extras is a type of :", typeof flightDataExtras);
+//   :48 {
+// 2025-05-15 18:44:48   flight_id: 'c2b83dd6-6aef-49a3-9ec3-c6d081366fcb',
+// 2025-05-15 18:44:48   dept_city: 'Sydney Airport',
+// 2025-05-15 18:44:48   arr_city: 'Brisbane Airport',
+// 2025-05-15 18:44:48   dept_time: '10:55:00',
+// 2025-05-15 18:44:48   flight_time: PostgresInterval { hours: 1, minutes: 8 },
+// 2025-05-15 18:44:48   arr_time: '12:03:00'
+// 2025-05-15 18:44:48 }
 
         if (flightDataExtras.length === 0) {
             return res.status(404).json({ error: "Flight not found" });
         }
-        const flightData = flightDataExtras[0];
-        const departure_time = flightData.dept_time;
-        const arrival_time = flightData.arr_time;
-        const departure_city = flightData.dept_city;
-        const arrival_city = flightData.arr_city;
-
-
+        console.log(flightDataExtras.dept_city);
         req.session.currentBooking = {
-            // this means not overwriting the old data object, just appending
+
             ...req.session.currentBooking,
             flight_id: data.flight_id,
-            deptTime: departure_time,
-            arrTime: arrival_time,
-            toCity: arrival_city,
-            fromCity: departure_city,
-            flightTime: flightData.flight_time,
+            fromCity: flightDataExtras[dept_city],
+            toCity: flightDataExtras[arr_city],
+            deptTime: flightDataExtras[dept_time],
+            arrTime: flightDataExtras[arr_time],
         };
+        
 
         req.session.save((err) => {
             if (err) {

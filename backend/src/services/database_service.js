@@ -101,9 +101,11 @@ class DatabaseService {
         }
     }
     async query_flight_info(flight_id) {
+        console.log("Flight ID:", flight_id);
+        console.log(" going to try to get flight info");
         try {
             const flight_info = await this.database.raw(`
-                SELECT UNIQUE
+                SELECT DISTINCT
                     f.flight_id,
                     o_airport.name AS dept_city,
                     d_airport.name AS arr_city,
@@ -115,6 +117,7 @@ class DatabaseService {
                 INNER JOIN airport d_airport ON r.destination_airport_code = d_airport.airport_code
                 WHERE f.flight_id = '${flight_id}'
             `);
+            console.log(flight_info.rows[0]);
 
             return flight_info.rows[0];
         } catch (query_err) {
