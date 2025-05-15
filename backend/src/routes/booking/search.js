@@ -25,11 +25,28 @@ router.post('/api/booking/search', async (req, res) => {
             return res.status(400).json({message: "no flight attached in post"});
         }
         
-        console.log(req.session.currentBooking)
+
+        const flightDataExtras = await GlobalDatabaseService.query_flight_info(req.session.currentBooking.flight_id);
+
+        if (flightDataExtras.length === 0) {
+            return res.status(404).json({ error: "Flight not found" });
+        }
+        const flightData = flightDataExtras[0];
+        const departure_time = flightData.dept_time;
+        const arrival_time = flightData.arr_time;
+        const departure_city = flightData.dept_city;
+        const arrival_city = flightData.arr_city;
+
+
         req.session.currentBooking = {
             // this means not overwriting the old data object, just appending
             ...req.session.currentBooking,
-            flight_id: data.flight_id
+            flight_id: data.flight_id,
+            deptTime: departure_time,
+            arrTime: arrival_time,
+            toCity: arrival_city,
+            fromCity: departure_city,
+            flightTime: flightData.flight_time,
         };
 
         req.session.save((err) => {
