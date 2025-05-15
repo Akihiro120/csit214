@@ -107,8 +107,8 @@ class DatabaseService {
             const flight_info = await this.database.raw(`
                 SELECT DISTINCT
                     f.flight_id,
-                    o_airport.name AS dept_city,
-                    d_airport.name AS arr_city,
+                    o_airport.city AS dept_city,
+                    d_airport.city AS arr_city,
                     f.departure_time AS dept_time,
                     (r.flight_time + f.departure_time) AS arr_time
                 FROM flights f
