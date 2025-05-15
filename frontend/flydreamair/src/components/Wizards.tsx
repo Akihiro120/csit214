@@ -14,7 +14,7 @@ export function Wizards({ className }: Props): JSX.Element {
     const progress = location.pathname;
 
     return (
-        <div className={`${className} flex gap-2 items-center`}>
+        <div className={`${className} flex gap-2 items-center min-w-[300px]`}>
             <Clock className="text-(--accent)" />
             <Line highlight={progress !== '/booking/search'} />
             <Seat
