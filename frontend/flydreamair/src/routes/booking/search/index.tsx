@@ -20,8 +20,6 @@ export const Route = createFileRoute('/booking/search/')({
 function Search() {
     const { from = '', to = '', date = '' } = Route.useSearch();
     const navigate = useNavigate();
-    const [priceRange, setPriceRange] = useState<number[]>([200, 800]);
-    const [deptTime, setDeptTime] = useState<number[]>([6, 22]);
 
     const { data, isLoading, error } = useQuery({
         queryKey: ['flights', { from, to, date }],
@@ -42,6 +40,8 @@ function Search() {
         // No Refetching required
         refetchOnWindowFocus: false,
     });
+    const [priceRange, setPriceRange] = useState<number[]>([0, 1000]);
+    const [deptTime, setDeptTime] = useState<number[]>([0, 23]);
 
     if (isLoading) return <div>Loading flights...</div>;
     if (error) return <div>Error fetching flights: {error.message}</div>;
@@ -126,13 +126,24 @@ function Search() {
                 </div>
             </div>
             <div className="grow-1 flex flex-col gap-4 bg-white" id="result">
-                {data.flights.map((flight: FlightSearchResult) => (
-                    <SearchResult
-                        key={flight.flight_id}
-                        flight={flight}
-                        onclick={() => submitRequest(flight.flight_id)}
-                    />
-                ))}
+                {data.flights.map((flight: FlightSearchResult) => {
+                    const departureHour = parseInt(flight.dept_time.split(':')[0], 10);
+                    if (
+                        Number(flight.base_fare) < priceRange[0] ||
+                        Number(flight.base_fare) > priceRange[1] ||
+                        departureHour < deptTime[0] ||
+                        departureHour > deptTime[1]
+                    ) {
+                        return null;
+                    }
+                    return (
+                        <SearchResult
+                            key={flight.flight_id}
+                            flight={flight}
+                            onclick={() => submitRequest(flight.flight_id)}
+                        />
+                    );
+                })}
             </div>
         </div>
     );
@@ -158,7 +169,7 @@ function RangeSlider({
     return (
         <div className="flex flex-col gap-2">
             <div className="text-xl">{label}</div>
-            <div className="flex gap-2 items-center">
+            <div className="flex gap-4 items-center">
                 <div className="text-sm w-10 text-center">
                     {label === 'Price' ? '$' + min : min + ':00'}
                 </div>
