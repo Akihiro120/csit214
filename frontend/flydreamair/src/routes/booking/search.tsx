@@ -1,14 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router'; // Import useNavigate
-import { SearchResult } from '../../../components/SearchResult';
-import { FlightSearchResult } from '../../../type';
+import { SearchResult } from '../../components/SearchResult';
+import { FlightSearchResult } from '../../type';
 // import { Navigate } from "@tanstack/react-router";
 import Slider from '@mui/material/Slider';
 import { AxiosError } from 'axios';
 import { useState } from 'react';
-import apiClient from '../../../utils/axios';
+import apiClient from '../../utils/axios';
 
-export const Route = createFileRoute('/booking/search/')({
+export const Route = createFileRoute('/booking/search')({
     validateSearch: (search) => ({
         from: String(search.from || ''),
         to: String(search.to || ''),
