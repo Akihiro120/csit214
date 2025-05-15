@@ -31,7 +31,7 @@ export const handleDatesSelect = (
 
         // Case 2: Only departure date is selected
         if (selectedDeptDate && !selectedRetDate) {
-            console.log('Selected departure date:', selectedDeptDate);
+            // console.log('Selected departure date:', selectedDeptDate);
             // If clicked date is before departure date, swap em
             if (clickedDate.getTime() < selectedDeptDate.getTime()) {
                 return { selectedDeptDate: clickedDate, selectedRetDate: selectedDeptDate };
@@ -41,7 +41,7 @@ export const handleDatesSelect = (
                 return { selectedDeptDate: clickedDate, selectedRetDate: null };
             }
             // Otherwise, set as return date
-            console.log('Setting return date:', clickedDate);
+            // console.log('Setting return date:', clickedDate);
             return { ...prevDates, selectedRetDate: clickedDate };
         }
 
