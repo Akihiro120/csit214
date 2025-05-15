@@ -117,8 +117,6 @@ class DatabaseService {
                 INNER JOIN airport d_airport ON r.destination_airport_code = d_airport.airport_code
                 WHERE f.flight_id = '${flight_id}'
             `);
-            console.log(flight_info.rows[0]);
-
             return flight_info.rows[0];
         } catch (query_err) {
             throw new Error(`Flight Info Query failed: ${query_err}`);
