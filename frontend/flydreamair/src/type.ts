@@ -34,17 +34,18 @@ export interface Passanger {
 export interface SessionData {
     initialized: number;
     to?: string;
-    toCity?: string;
+    dept_city?: string;
     from?: string;
-    fromCity?: string;
-    deptDate?: string;
-    deptTime?: string;
-    arrTime?: string;
-    flightTime?: string;
-    retDate?: string;
+    arr_city?: string;
+    dept_date?: string;
+    dept_time?: string;
+    arr_time?: string;
+    flight_time?: string;
+    ret_date?: string;
     // add return flight later
     flight_id?: string;
-    numPassengers?: number;
+    num_passengers?: number;
     isReturn?: boolean;
     passengers?: Passanger[];
+    search_time_stamp?: number;
 }

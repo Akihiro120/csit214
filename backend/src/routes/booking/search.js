@@ -47,10 +47,10 @@ router.post('/api/booking/search', async (req, res) => {
         req.session.currentBooking = {
             ...req.session.currentBooking, // Preserves other booking details if any
             flight_id: data.flight_id,
-            fromCity: flightInfo.dept_city,
-            toCity: flightInfo.arr_city,
-            deptTime: flightInfo.dept_time,
-            arrTime: flightInfo.arr_time,
+            dept_city: flightInfo.dept_city,
+            arr_city: flightInfo.arr_city,
+            dep_time: flightInfo.dept_time,
+            arr_time: flightInfo.arr_time,
         }
         
 

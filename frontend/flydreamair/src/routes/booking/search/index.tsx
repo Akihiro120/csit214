@@ -32,7 +32,8 @@ function Search() {
                 // Assuming response.data is an object matching SessionData
                 if (response.data && Object.keys(response.data).length > 0) {
                     console.log('Existing session found via GET:', response.data);
-                    setSession(response.data as SessionData); // Cast if necessary, or ensure backend sends correct type
+                    setSession(response.data.currentBooking as SessionData);
+                    console.log(session); // Cast if necessary, or ensure backend sends correct type
                 } else {
                     console.log('GET /api/booking/session returned empty or invalid data.');
                     navigate({ to: '/' }); // Navigate if session is not found or invalid
