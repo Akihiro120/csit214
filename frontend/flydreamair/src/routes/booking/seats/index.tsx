@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
-import { SeatLayout } from '../../components/SeatLayout';
-import apiClient from '../../utils/axios';
+import { SeatLayout } from '../../../components/SeatLayout';
+import apiClient from '../../../utils/axios';
 
 // Define the structure of a single seat from the API
 interface ApiSeat {
@@ -15,7 +15,7 @@ interface SeatLayoutSeat {
     booked: boolean;
 }
 
-export const Route = createFileRoute('/booking/seats')({
+export const Route = createFileRoute('/booking/seats/')({
     component: RouteComponent,
 });
 

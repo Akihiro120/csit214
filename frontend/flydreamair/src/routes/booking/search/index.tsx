@@ -8,7 +8,7 @@ import { AxiosError } from 'axios';
 import { useState } from 'react';
 import apiClient from '../../utils/axios';
 
-export const Route = createFileRoute('/booking/search')({
+export const Route = createFileRoute('/booking/search/')({
     validateSearch: (search) => ({
         from: String(search.from || ''),
         to: String(search.to || ''),
