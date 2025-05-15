@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router'; // Import useNavigate
 import { SearchResult } from '../../../components/SearchResult';
-import { FlightSearchResult } from '../../../type';
+import { FlightSearchResult, SessionData } from '../../../type';
 // import { Navigate } from "@tanstack/react-router";
 import Slider from '@mui/material/Slider';
 import { AxiosError } from 'axios';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import apiClient from '../../../utils/axios';
 
 export const Route = createFileRoute('/booking/search/')({
@@ -22,7 +22,40 @@ function Search() {
     const navigate = useNavigate();
     const [priceRange, setPriceRange] = useState<number[]>([200, 800]);
     const [deptTime, setDeptTime] = useState<number[]>([6, 22]);
+    const [session, setSession] = useState<SessionData | undefined>();
 
+    useEffect(() => {
+        const fetchSession = async () => {
+            try {
+                const response = await apiClient.get('/api/booking/session');
+
+                // Assuming response.data is an object matching SessionData
+                if (response.data && Object.keys(response.data).length > 0) {
+                    console.log('Existing session found via GET:', response.data);
+                    setSession(response.data as SessionData); // Cast if necessary, or ensure backend sends correct type
+                } else {
+                    console.log('GET /api/booking/session returned empty or invalid data.');
+                    navigate({ to: '/' }); // Navigate if session is not found or invalid
+                }
+            } catch (error: unknown) {
+                if (error instanceof Error) {
+                    console.error('Error checking session via GET:', error.message);
+                } else {
+                    console.error('An unexpected error occurred:', error);
+                }
+                // Consider navigating away on error as well if session is critical
+                // navigate('/'); 
+            }
+        };
+        fetchSession();
+    }, [navigate]); 
+
+
+    console.log(session);
+
+
+
+    // load flights useQuery
     const { data, isLoading, error } = useQuery({
         queryKey: ['flights', { from, to, date }],
         queryFn: async () => {
