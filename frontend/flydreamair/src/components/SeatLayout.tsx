@@ -21,7 +21,7 @@ export function SeatLayout({ seatMap, className }: SeatLayoutProps): JSX.Element
     seatNumbers.splice(16, 0, -2);
     return (
         <div
-            className={`${className} grid grid-cols-[repeat(auto,7)] grid-rows-[min-content_50px_min-content] gap-y-5 gap-x-2`}
+            className={`${className} grid grid-cols-[repeat(7, auto)] grid-rows-[min-content_50px_min-content] gap-y-5 gap-x-2`}
         >
             <div
                 className={`${isPopupOpen ? '' : 'hidden'} fixed inset-0 z-10 bg-black/50 flex items-center justify-center`}
