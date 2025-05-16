@@ -114,12 +114,12 @@ export function DatePicker({ className, selectedDate, setDateSelect, setVisabili
                 </select>
             </div>
 
-            <div className="my-4 grid grid-cols-7 gap-1 text-center text-xs text-gray-500">
+            <div className="my-4 grid grid-cols-7 gap-2 text-center text-xs text-gray-500">
                 <div>Sun</div> <div>Mon</div> <div>Tue</div> <div>Wed</div> <div>Thu</div>{' '}
                 <div>Fri</div> <div>Sat</div>
             </div>
 
-            <div className="grid grid-cols-7 gap-1">
+            <div className="grid grid-cols-7 gap-2">
                 {calendarGrid.map((week, weekIndex) =>
                     week.map((day, dayIndex) => {
                         let dayClassName = `

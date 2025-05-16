@@ -1,11 +1,9 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { SeatLayout } from '../../../components/SeatLayout';
-import apiClient from '../../../utils/axios';
-import { useState, useEffect } from 'react';
-import { SessionData } from '../../../type';
-import { useNavigate} from '@tanstack/react-router';
-import Plane from '../../../resource/plane.svg?react';
-
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { useEffect, useState } from 'react';
+import { SeatLayout } from '../../components/SeatLayout';
+import Plane from '../../resource/plane.svg?react';
+import { SessionData } from '../../type';
+import apiClient from '../../utils/axios';
 
 // Define the structure of a single seat from the API
 interface ApiSeat {
@@ -19,18 +17,16 @@ interface SeatLayoutSeat {
     booked: boolean;
 }
 
-export const Route = createFileRoute('/booking/seats/')({
+export const Route = createFileRoute('/booking/seats')({
     component: Seats,
-}); 
-
-
+});
 
 function Seats() {
     const [seatMapData, setSeatMapData] = useState<SeatLayoutSeat[] | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [session, setSession] = useState<SessionData | undefined>();
     const navigate = useNavigate();
-    
+
     useEffect(() => {
         const fetchSession = async () => {
             try {
@@ -51,12 +47,11 @@ function Seats() {
                     console.error('An unexpected error occurred:', error);
                 }
                 // Consider navigating away on error as well if session is critical
-                // navigate('/'); 
+                // navigate('/');
             }
         };
         fetchSession();
-    }, [navigate]); 
-
+    }, [navigate]);
 
     console.log(session);
 
@@ -103,18 +98,14 @@ function Seats() {
         return <div>Loading seat map...</div>;
     }
 
-    
-
     // Render seat map if data is available
     return (
         <div className="flex flex-col items-center justify-center relative overflow-x-scroll pt-40 pb-30">
-            <h1>Select Your Seats</h1>
-            <div className="w-full flex justify-center"></div>
-                <Plane className=" h-auto transform scale-200 overflow-hidden z-9"/>
+            <Plane className="h-auto transform scale-200 overflow-hidden z-9" />
             {seatMapData ? (
                 <SeatLayout seatMap={seatMapData} className="z-10 absolute" />
             ) : (
-            <div>No seat data available.</div> // Fallback if data is null after loading
+                <div>No seat data available.</div> // Fallback if data is null after loading
             )}
         </div>
     );

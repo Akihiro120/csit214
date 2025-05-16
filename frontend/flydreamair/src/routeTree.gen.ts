@@ -10,149 +10,210 @@
 
 // Import Routes
 
-import { Route as rootRoute } from './routes/__root';
-import { Route as BookingRouteImport } from './routes/booking/route';
-import { Route as IndexImport } from './routes/index';
-import { Route as BookingIndexImport } from './routes/booking/index';
-import { Route as BookingSeatsIndexImport } from './routes/booking/seats/index';
-import { Route as BookingSearchIndexImport } from './routes/booking/search/index';
+import { Route as rootRoute } from './routes/__root'
+import { Route as BookingRouteImport } from './routes/booking/route'
+import { Route as IndexImport } from './routes/index'
+import { Route as BookingIndexImport } from './routes/booking/index'
+import { Route as BookingSeatsImport } from './routes/booking/seats'
+import { Route as BookingSearchImport } from './routes/booking/search'
+import { Route as BookingPaymentImport } from './routes/booking/payment'
+import { Route as BookingExtrasImport } from './routes/booking/extras'
 
 // Create/Update Routes
 
 const BookingRouteRoute = BookingRouteImport.update({
-    id: '/booking',
-    path: '/booking',
-    getParentRoute: () => rootRoute,
-} as any);
+  id: '/booking',
+  path: '/booking',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const IndexRoute = IndexImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => rootRoute,
-} as any);
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const BookingIndexRoute = BookingIndexImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => BookingRouteRoute,
-} as any);
+  id: '/',
+  path: '/',
+  getParentRoute: () => BookingRouteRoute,
+} as any)
 
-const BookingSeatsIndexRoute = BookingSeatsIndexImport.update({
-    id: '/seats/',
-    path: '/seats/',
-    getParentRoute: () => BookingRouteRoute,
-} as any);
+const BookingSeatsRoute = BookingSeatsImport.update({
+  id: '/seats',
+  path: '/seats',
+  getParentRoute: () => BookingRouteRoute,
+} as any)
 
-const BookingSearchIndexRoute = BookingSearchIndexImport.update({
-    id: '/search/',
-    path: '/search/',
-    getParentRoute: () => BookingRouteRoute,
-} as any);
+const BookingSearchRoute = BookingSearchImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => BookingRouteRoute,
+} as any)
+
+const BookingPaymentRoute = BookingPaymentImport.update({
+  id: '/payment',
+  path: '/payment',
+  getParentRoute: () => BookingRouteRoute,
+} as any)
+
+const BookingExtrasRoute = BookingExtrasImport.update({
+  id: '/extras',
+  path: '/extras',
+  getParentRoute: () => BookingRouteRoute,
+} as any)
 
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
-    interface FileRoutesByPath {
-        '/': {
-            id: '/';
-            path: '/';
-            fullPath: '/';
-            preLoaderRoute: typeof IndexImport;
-            parentRoute: typeof rootRoute;
-        };
-        '/booking': {
-            id: '/booking';
-            path: '/booking';
-            fullPath: '/booking';
-            preLoaderRoute: typeof BookingRouteImport;
-            parentRoute: typeof rootRoute;
-        };
-        '/booking/': {
-            id: '/booking/';
-            path: '/';
-            fullPath: '/booking/';
-            preLoaderRoute: typeof BookingIndexImport;
-            parentRoute: typeof BookingRouteImport;
-        };
-        '/booking/search/': {
-            id: '/booking/search/';
-            path: '/search';
-            fullPath: '/booking/search';
-            preLoaderRoute: typeof BookingSearchIndexImport;
-            parentRoute: typeof BookingRouteImport;
-        };
-        '/booking/seats/': {
-            id: '/booking/seats/';
-            path: '/seats';
-            fullPath: '/booking/seats';
-            preLoaderRoute: typeof BookingSeatsIndexImport;
-            parentRoute: typeof BookingRouteImport;
-        };
+  interface FileRoutesByPath {
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
     }
+    '/booking': {
+      id: '/booking'
+      path: '/booking'
+      fullPath: '/booking'
+      preLoaderRoute: typeof BookingRouteImport
+      parentRoute: typeof rootRoute
+    }
+    '/booking/extras': {
+      id: '/booking/extras'
+      path: '/extras'
+      fullPath: '/booking/extras'
+      preLoaderRoute: typeof BookingExtrasImport
+      parentRoute: typeof BookingRouteImport
+    }
+    '/booking/payment': {
+      id: '/booking/payment'
+      path: '/payment'
+      fullPath: '/booking/payment'
+      preLoaderRoute: typeof BookingPaymentImport
+      parentRoute: typeof BookingRouteImport
+    }
+    '/booking/search': {
+      id: '/booking/search'
+      path: '/search'
+      fullPath: '/booking/search'
+      preLoaderRoute: typeof BookingSearchImport
+      parentRoute: typeof BookingRouteImport
+    }
+    '/booking/seats': {
+      id: '/booking/seats'
+      path: '/seats'
+      fullPath: '/booking/seats'
+      preLoaderRoute: typeof BookingSeatsImport
+      parentRoute: typeof BookingRouteImport
+    }
+    '/booking/': {
+      id: '/booking/'
+      path: '/'
+      fullPath: '/booking/'
+      preLoaderRoute: typeof BookingIndexImport
+      parentRoute: typeof BookingRouteImport
+    }
+  }
 }
 
 // Create and export the route tree
 
 interface BookingRouteRouteChildren {
-    BookingIndexRoute: typeof BookingIndexRoute;
-    BookingSearchIndexRoute: typeof BookingSearchIndexRoute;
-    BookingSeatsIndexRoute: typeof BookingSeatsIndexRoute;
+  BookingExtrasRoute: typeof BookingExtrasRoute
+  BookingPaymentRoute: typeof BookingPaymentRoute
+  BookingSearchRoute: typeof BookingSearchRoute
+  BookingSeatsRoute: typeof BookingSeatsRoute
+  BookingIndexRoute: typeof BookingIndexRoute
 }
 
 const BookingRouteRouteChildren: BookingRouteRouteChildren = {
-    BookingIndexRoute: BookingIndexRoute,
-    BookingSearchIndexRoute: BookingSearchIndexRoute,
-    BookingSeatsIndexRoute: BookingSeatsIndexRoute,
-};
+  BookingExtrasRoute: BookingExtrasRoute,
+  BookingPaymentRoute: BookingPaymentRoute,
+  BookingSearchRoute: BookingSearchRoute,
+  BookingSeatsRoute: BookingSeatsRoute,
+  BookingIndexRoute: BookingIndexRoute,
+}
 
-const BookingRouteRouteWithChildren = BookingRouteRoute._addFileChildren(BookingRouteRouteChildren);
+const BookingRouteRouteWithChildren = BookingRouteRoute._addFileChildren(
+  BookingRouteRouteChildren,
+)
 
 export interface FileRoutesByFullPath {
-    '/': typeof IndexRoute;
-    '/booking': typeof BookingRouteRouteWithChildren;
-    '/booking/': typeof BookingIndexRoute;
-    '/booking/search': typeof BookingSearchIndexRoute;
-    '/booking/seats': typeof BookingSeatsIndexRoute;
+  '/': typeof IndexRoute
+  '/booking': typeof BookingRouteRouteWithChildren
+  '/booking/extras': typeof BookingExtrasRoute
+  '/booking/payment': typeof BookingPaymentRoute
+  '/booking/search': typeof BookingSearchRoute
+  '/booking/seats': typeof BookingSeatsRoute
+  '/booking/': typeof BookingIndexRoute
 }
 
 export interface FileRoutesByTo {
-    '/': typeof IndexRoute;
-    '/booking': typeof BookingIndexRoute;
-    '/booking/search': typeof BookingSearchIndexRoute;
-    '/booking/seats': typeof BookingSeatsIndexRoute;
+  '/': typeof IndexRoute
+  '/booking/extras': typeof BookingExtrasRoute
+  '/booking/payment': typeof BookingPaymentRoute
+  '/booking/search': typeof BookingSearchRoute
+  '/booking/seats': typeof BookingSeatsRoute
+  '/booking': typeof BookingIndexRoute
 }
 
 export interface FileRoutesById {
-    __root__: typeof rootRoute;
-    '/': typeof IndexRoute;
-    '/booking': typeof BookingRouteRouteWithChildren;
-    '/booking/': typeof BookingIndexRoute;
-    '/booking/search/': typeof BookingSearchIndexRoute;
-    '/booking/seats/': typeof BookingSeatsIndexRoute;
+  __root__: typeof rootRoute
+  '/': typeof IndexRoute
+  '/booking': typeof BookingRouteRouteWithChildren
+  '/booking/extras': typeof BookingExtrasRoute
+  '/booking/payment': typeof BookingPaymentRoute
+  '/booking/search': typeof BookingSearchRoute
+  '/booking/seats': typeof BookingSeatsRoute
+  '/booking/': typeof BookingIndexRoute
 }
 
 export interface FileRouteTypes {
-    fileRoutesByFullPath: FileRoutesByFullPath;
-    fullPaths: '/' | '/booking' | '/booking/' | '/booking/search' | '/booking/seats';
-    fileRoutesByTo: FileRoutesByTo;
-    to: '/' | '/booking' | '/booking/search' | '/booking/seats';
-    id: '__root__' | '/' | '/booking' | '/booking/' | '/booking/search/' | '/booking/seats/';
-    fileRoutesById: FileRoutesById;
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths:
+    | '/'
+    | '/booking'
+    | '/booking/extras'
+    | '/booking/payment'
+    | '/booking/search'
+    | '/booking/seats'
+    | '/booking/'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | '/'
+    | '/booking/extras'
+    | '/booking/payment'
+    | '/booking/search'
+    | '/booking/seats'
+    | '/booking'
+  id:
+    | '__root__'
+    | '/'
+    | '/booking'
+    | '/booking/extras'
+    | '/booking/payment'
+    | '/booking/search'
+    | '/booking/seats'
+    | '/booking/'
+  fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
-    IndexRoute: typeof IndexRoute;
-    BookingRouteRoute: typeof BookingRouteRouteWithChildren;
+  IndexRoute: typeof IndexRoute
+  BookingRouteRoute: typeof BookingRouteRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
-    IndexRoute: IndexRoute,
-    BookingRouteRoute: BookingRouteRouteWithChildren,
-};
+  IndexRoute: IndexRoute,
+  BookingRouteRoute: BookingRouteRouteWithChildren,
+}
 
 export const routeTree = rootRoute
-    ._addFileChildren(rootRouteChildren)
-    ._addFileTypes<FileRouteTypes>();
+  ._addFileChildren(rootRouteChildren)
+  ._addFileTypes<FileRouteTypes>()
 
 /* ROUTE_MANIFEST_START
 {
@@ -170,21 +231,31 @@ export const routeTree = rootRoute
     "/booking": {
       "filePath": "booking/route.tsx",
       "children": [
-        "/booking/",
-        "/booking/search/",
-        "/booking/seats/"
+        "/booking/extras",
+        "/booking/payment",
+        "/booking/search",
+        "/booking/seats",
+        "/booking/"
       ]
+    },
+    "/booking/extras": {
+      "filePath": "booking/extras.tsx",
+      "parent": "/booking"
+    },
+    "/booking/payment": {
+      "filePath": "booking/payment.tsx",
+      "parent": "/booking"
+    },
+    "/booking/search": {
+      "filePath": "booking/search.tsx",
+      "parent": "/booking"
+    },
+    "/booking/seats": {
+      "filePath": "booking/seats.tsx",
+      "parent": "/booking"
     },
     "/booking/": {
       "filePath": "booking/index.tsx",
-      "parent": "/booking"
-    },
-    "/booking/search/": {
-      "filePath": "booking/search/index.tsx",
-      "parent": "/booking"
-    },
-    "/booking/seats/": {
-      "filePath": "booking/seats/index.tsx",
       "parent": "/booking"
     }
   }
