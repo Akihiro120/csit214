@@ -17,9 +17,7 @@ export function Ticket({ className, sessionData }: Props): JSX.Element {
             {/* passenger name card */}
             <div className="flex justify-center items-center relative h-[100px] overflow-hidden rounded-t-2xl">
                 <BottomCorners shadow="shadow-[0_0_0_200px_var(--accent)]" />
-                <div className="text-2xl text-white">
-                    {passenger && passenger.name ? passenger.name : ''}
-                </div>
+                <div className="text-2xl text-white">{passenger?.name ? passenger.name : ''}</div>
             </div>
             {/* flight details card */}
             {/* top corners cut */}
@@ -30,23 +28,23 @@ export function Ticket({ className, sessionData }: Props): JSX.Element {
             <div className="flex flex-col items-center bg-white gap-6">
                 <SearchResult className="w-full" lite flight={sessionData as FlightSearchResult} />
                 <div className="flex justify-center gap-4 flex-wrap">
-                    {passenger && passenger.seat ? (
+                    {passenger?.seat ? (
                         <TextField label="Seat" value={passenger.seat} className="w-[45%]" />
                     ) : null}
-                    {passenger && passenger.class ? (
+                    {passenger?.class ? (
                         <TextField label="Class" value={passenger.class} className="w-[45%]" />
                     ) : null}
-                    {passenger && passenger.options && passenger.options.meal ? (
+                    {passenger?.options && passenger.options.meal ? (
                         <TextField label="Meal" value={passenger.options.meal} className="flex-1" />
                     ) : null}
-                    {passenger && passenger.options && passenger.options.carry_on ? (
+                    {passenger?.options && passenger.options.carry_on ? (
                         <TextField
                             label="Entertainment"
                             value={passenger && passenger.options.entertainment}
                             className="flex-1"
                         />
                     ) : null}
-                    {passenger && passenger.options && passenger.options.baggage ? (
+                    {passenger?.options && passenger.options.baggage ? (
                         <TextField
                             label="Baggage"
                             value={passenger.options.baggage}
