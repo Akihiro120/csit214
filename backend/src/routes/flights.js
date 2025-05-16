@@ -123,17 +123,16 @@ router.post("/api/flights", async (req, res) => {
 
     let isReturnBool = isReturn === "true"; // convert to boolean
 
-
     req.session.currentBooking = {
       // this means not overwriting the old data object, just appending
       ...req.session.currentBooking,
       to: to,
       from: from,
-      deptDate: deptDate,
-      retDate: isReturnBool ? retDate : null,
-      numPassengers: numPassengers,
+      dept_date: deptDate,
+      ret_date: isReturnBool ? retDate : null,
+      num_passengers: numPassengers,
       isReturn: isReturnBool,
-      searchTimeStamp: Date.now(),
+      search_time_stamp: Date.now(),
     };
 
     req.session.save((err) => {

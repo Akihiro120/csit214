@@ -11,7 +11,7 @@ export interface FlightSearchResult {
     flight_id: string;
     dept_city: string;
     arr_city: string;
-    base_fare: string;
+    base_fare?: string;
     dept_time: string;
     arr_time: string;
 }
@@ -28,17 +28,25 @@ export interface Passanger {
     email: string;
     phone?: string;
     seat?: string;
+    class?: string;
     options?: FlightUpgradeOptions;
 }
 
 export interface SessionData {
     initialized: number;
     to?: string;
+    dept_city?: string;
     from?: string;
+    arr_city?: string;
     dept_date?: string;
+    dept_time?: string;
+    arr_time?: string;
+    flight_time?: string;
     ret_date?: string;
+    // add return flight later
     flight_id?: string;
-    numPassengers?: number;
+    num_passengers?: number;
     isReturn?: boolean;
     passengers?: Passanger[];
+    search_time_stamp?: number;
 }

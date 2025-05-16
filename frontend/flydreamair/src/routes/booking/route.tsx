@@ -1,28 +1,40 @@
-import { createFileRoute, Outlet } from '@tanstack/react-router';
+import { createFileRoute, Outlet, useLocation } from '@tanstack/react-router';
+import { useEffect, useState } from 'react';
 import { Ticket } from '../../components/Ticket';
 import { Wizards } from '../../components/Wizards';
+import { SessionData } from '../../type';
+import apiClient from '../../utils/axios';
 
 export const Route = createFileRoute('/booking')({
     component: RouteComponent,
 });
 
 function RouteComponent() {
-    const testFlight = {
-        flight_id: 'string',
-        dept_city: 'Sydney',
-        arr_city: 'Brisbane',
-        base_fare: '$100',
-        dept_time: '6:00 AM',
-        arr_time: '7:00 AM',
-    };
-    const testTicketInfo = {
-        name: 'Customer Name',
-        seat: '12A',
-        class: 'Economy',
-        meal: 'Steak',
-        entertainment: 'Movies+',
-        baggage: '40kg',
-    };
+    const location = useLocation();
+    const [sessionData, setSessionData] = useState<SessionData | null>(null);
+
+    useEffect(() => {
+        const fetchSession = async () => {
+            try {
+                const response = await apiClient.get('/api/booking/session');
+
+                // Assuming response.data is an object matching SessionData
+                if (response.data && Object.keys(response.data).length > 0) {
+                    console.log('Existing session found via GET:', response.data);
+                    setSessionData(response.data.currentBooking as SessionData);
+                }
+            } catch (error: unknown) {
+                if (error instanceof Error) {
+                    console.error('Error checking session via GET:', error.message);
+                } else {
+                    console.error('An unexpected error occurred:', error);
+                }
+                // Consider navigating away on error as well if session is critical
+                // navigate('/');
+            }
+        };
+        fetchSession();
+    }, [location.pathname]);
 
     return (
         <>
@@ -30,7 +42,9 @@ function RouteComponent() {
                 <Outlet />
                 <div className="justify-self-center flex flex-col gap-4">
                     <Wizards />
-                    <Ticket flight={testFlight} ticketInfo={testTicketInfo} />
+                    {location.pathname !== '/booking/search' && sessionData ? (
+                        <Ticket sessionData={sessionData} />
+                    ) : null}
                 </div>
             </div>
         </>

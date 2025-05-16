@@ -100,7 +100,30 @@ class DatabaseService {
             throw new Error(`Seats Query failed: ${err.message}`);
         }
     }
+    async query_flight_info(flight_id) {
+        console.log("Flight ID:", flight_id);
+        console.log(" going to try to get flight info");
+        try {
+            const flight_info = await this.database.raw(`
+                SELECT DISTINCT
+                    f.flight_id,
+                    o_airport.city AS dept_city,
+                    d_airport.city AS arr_city,
+                    f.departure_time AS dept_time,
+                    (r.flight_time + f.departure_time) AS arr_time
+                FROM flights f
+                INNER JOIN route r ON r.route_id = f.route_id
+                INNER JOIN airport o_airport ON r.origin_airport_code = o_airport.airport_code
+                INNER JOIN airport d_airport ON r.destination_airport_code = d_airport.airport_code
+                WHERE f.flight_id = '${flight_id}'
+            `);
+            return flight_info.rows[0];
+        } catch (query_err) {
+            throw new Error(`Flight Info Query failed: ${query_err}`);
+        }
+    }
 }
+
 
 // create a global scope database
 const global_database_service = new DatabaseService();
