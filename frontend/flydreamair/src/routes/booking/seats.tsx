@@ -38,7 +38,7 @@ function Seats() {
                     setSession(response.data.currentBooking as SessionData); // Cast if necessary, or ensure backend sends correct type
                 } else {
                     console.log('GET /api/booking/session returned empty or invalid data.');
-                    navigate({ to: '/' }); // Navigate if session is not found or invalid
+                    /*                     navigate({ to: '/' }); // Navigate if session is not found or invalid */
                 }
             } catch (error: unknown) {
                 if (error instanceof Error) {
@@ -100,10 +100,10 @@ function Seats() {
 
     // Render seat map if data is available
     return (
-        <div className="flex flex-col items-center justify-center relative overflow-x-scroll pt-40 pb-30">
-            <Plane className="h-auto transform scale-200 overflow-hidden z-9" />
+        <div className="h-full flex justify-center relative overflow-x-auto">
+            <Plane className="relative mt-150 transform scale-300 z-9" />
             {seatMapData ? (
-                <SeatLayout seatMap={seatMapData} className="z-10 absolute" />
+                <SeatLayout seatMap={seatMapData} className="mt-50 shrink-0 z-10 absolute" />
             ) : (
                 <div>No seat data available.</div> // Fallback if data is null after loading
             )}
