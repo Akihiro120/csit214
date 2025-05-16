@@ -63,7 +63,7 @@ function Home() {
     // location state for searching
     const [fromLocation, setFromLocation] = useState('Sydney (SYD)');
     const [toLocation, setToLocation] = useState('Brisbane (BNE)');
-    const [isReturn, setIsReturn] = useState(true);
+    const [isReturn, setIsReturn] = useState(false);
 
     const [selectedDate, setSelectedDate] = useState<SelectedDate>({
         selectedDeptDate: null,

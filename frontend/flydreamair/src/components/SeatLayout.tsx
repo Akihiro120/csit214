@@ -1,4 +1,6 @@
-import { JSX } from 'react';
+import { JSX, useState } from 'react';
+import Seaticon from '../resource/Seaticon.svg?react';
+import { PassengerDetailPopup } from './PassengerDetailPopup';
 
 interface Seat {
     id: string;
@@ -11,5 +13,80 @@ interface SeatLayoutProps {
 }
 
 export function SeatLayout({ seatMap, className }: SeatLayoutProps): JSX.Element {
-    return <div className={`${className}`}>Hello</div>;
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const seatNumbers = Array(29)
+        .fill(0)
+        .map((_, index) => index + 1);
+    seatNumbers.splice(12, 0, -1);
+    seatNumbers.splice(16, 0, -2);
+    return (
+        <div
+            className={`${className} grid grid-cols-[repeat(auto,7)] grid-rows-[min-content_50px_min-content] gap-y-5 gap-x-2`}
+        >
+            <div
+                className={`${isPopupOpen ? '' : 'hidden'} fixed inset-0 z-10 bg-black/50 flex items-center justify-center`}
+            >
+                <PassengerDetailPopup setVisability={setIsPopupOpen} />
+            </div>
+            {/* middle aisle */}
+            <div className="col-start-4 row-start-1 row-span-50 w-full grid grid-rows-[min-content_50px] auto-rows-min gap-y-5">
+                {seatNumbers.map((seatNumber) => (
+                    <div
+                        key={seatNumber}
+                        className="h-10 w-full flex items-center justify-center text-(--accent) font-bold"
+                    >
+                        {seatNumber > 0 ? seatNumber : null}
+                    </div>
+                ))}
+            </div>
+            {/* business class offset */}
+            <div className="col-start-1 row-start-1 row-span-2"></div>
+            <div className="col-start-7 row-start-1 row-span-2"></div>
+            {/* exit rows */}
+            <ExitRow className="row-start-13" />
+            <ExitRow className="row-start-17" />
+            {seatMap.map((seat) => (
+                <Seat
+                    key={seat.id}
+                    id={seat.id}
+                    booked={seat.booked}
+                    setIsPopupOpen={setIsPopupOpen}
+                />
+            ))}
+        </div>
+    );
+}
+function Seat({
+    id,
+    booked,
+    setIsPopupOpen,
+}: {
+    id: string;
+    booked: boolean;
+    setIsPopupOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}): JSX.Element {
+    return (
+        <Seaticon
+            onClick={() => {
+                setIsPopupOpen(true);
+            }}
+            className={`${booked ? 'text-gray-500' : 'text-green-500'} w-8 h-10 rounded`}
+        ></Seaticon>
+    );
+}
+function ExitRow({ className }: { className: string }): JSX.Element {
+    return (
+        <div className={`relative ${className} col-start-1 col-span-7 h-10`}>
+            <div className="absolute -left-4 -right-4 flex justify-between">
+                <div className="flex items-center gap-4 font-bold text-(--accent)">
+                    <div className="h-10 w-1 bg-(--accent) rounded-sm"></div>
+                    <div>Exit</div>
+                </div>
+                <div className="flex items-center gap-4 font-bold text-(--accent)">
+                    <div>Exit</div>
+                    <div className="h-10 w-1 bg-(--accent) rounded-sm"></div>
+                </div>
+            </div>
+        </div>
+    );
 }

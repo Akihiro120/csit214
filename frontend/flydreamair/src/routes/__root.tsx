@@ -10,12 +10,12 @@ function RootComponent() {
     const location = useLocation();
     return (
         <>
-            <div className="min-h-screen grid grid-rows-[auto_1fr]">
+            <div className="h-screen overflow-hidden grid grid-rows-[auto_1fr]">
                 <Navbar />
-                {location.pathname === '/' && <PlaneBackground />}
-                <div className="flex justify-center items-center">
+                <div className="h-full overflow-hidden flex justify-center items-center">
                     <Outlet />
                 </div>
+                {location.pathname === '/' && <PlaneBackground />}
             </div>
         </>
     );
