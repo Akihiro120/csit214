@@ -7,12 +7,13 @@ interface Seat {
 
 interface SeatLayoutProps {
     seatMap: Seat[];
+    className?: string;
 }
 
-export function SeatLayout({ seatMap }: SeatLayoutProps): JSX.Element {
+export function SeatLayout({ seatMap, className }: SeatLayoutProps): JSX.Element {
     const renderRow = (rowSeats: Seat[], isFirstClass: boolean) => {
         return (
-            <div className="flex gap-2 mb-4">
+            <div className="flex gap-2 mb-4 my-2"> 
                 {/* Left side seats */}
                 <div className="flex gap-2">
                     {rowSeats.slice(0, isFirstClass ? 2 : 3).map((seat) => (
@@ -48,7 +49,7 @@ export function SeatLayout({ seatMap }: SeatLayoutProps): JSX.Element {
     };
 
     return (
-        <div className="flex flex-col items-center">
+        <div className={`flex flex-col items-center ${className}`}>
             {/* First Class: 2 rows */}
             {seatMap.slice(0, 8).reduce((rows, _, index, array) => {
                 if (index % 4 === 0) {

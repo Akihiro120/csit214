@@ -1,23 +1,15 @@
 import { JSX } from 'react';
 import Barcode from '../resource/Barcode.svg?react';
+import { FlightSearchResult, SessionData } from '../type';
 import { SearchResult } from './SearchResult';
-import { FlightSearchResult } from '../type';
 
 interface Props {
     className?: string;
-    flight: FlightSearchResult;
-    ticketInfo: TicketInfo;
-}
-export interface TicketInfo {
-    name: string;
-    seat: string;
-    class: string;
-    meal: string;
-    entertainment: string;
-    baggage: string;
+    sessionData: SessionData;
 }
 
-export function Ticket({ className, flight, ticketInfo }: Props): JSX.Element {
+export function Ticket({ className, sessionData }: Props): JSX.Element {
+    const passenger = sessionData.passengers ? sessionData.passengers[0] : null;
     return (
         <div
             className={`${className} flex flex-col drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)] w-[300px]`}
@@ -25,7 +17,9 @@ export function Ticket({ className, flight, ticketInfo }: Props): JSX.Element {
             {/* passenger name card */}
             <div className="flex justify-center items-center relative h-[100px] overflow-hidden rounded-t-2xl">
                 <BottomCorners shadow="shadow-[0_0_0_200px_var(--accent)]" />
-                <div className="text-2xl text-white">{ticketInfo.name}</div>
+                <div className="text-2xl text-white">
+                    {passenger && passenger.name ? passenger.name : ''}
+                </div>
             </div>
             {/* flight details card */}
             {/* top corners cut */}
@@ -34,17 +28,31 @@ export function Ticket({ className, flight, ticketInfo }: Props): JSX.Element {
             </div>
             {/* actual flight details */}
             <div className="flex flex-col items-center bg-white gap-6">
-                <SearchResult className="w-full" lite flight={flight} />
+                <SearchResult className="w-full" lite flight={sessionData as FlightSearchResult} />
                 <div className="flex justify-center gap-4 flex-wrap">
-                    <TextField label="Seat" value={ticketInfo.seat} className="w-[45%]" />
-                    <TextField label="Class" value={ticketInfo.class} className="w-[45%]" />
-                    <TextField label="Meal" value={ticketInfo.meal} className="flex-1" />
-                    <TextField
-                        label="Entertainment"
-                        value={ticketInfo.entertainment}
-                        className="flex-1"
-                    />
-                    <TextField label="Baggage" value={ticketInfo.baggage} className="flex-1" />
+                    {passenger && passenger.seat ? (
+                        <TextField label="Seat" value={passenger.seat} className="w-[45%]" />
+                    ) : null}
+                    {passenger && passenger.class ? (
+                        <TextField label="Class" value={passenger.class} className="w-[45%]" />
+                    ) : null}
+                    {passenger && passenger.options && passenger.options.meal ? (
+                        <TextField label="Meal" value={passenger.options.meal} className="flex-1" />
+                    ) : null}
+                    {passenger && passenger.options && passenger.options.carry_on ? (
+                        <TextField
+                            label="Entertainment"
+                            value={passenger && passenger.options.entertainment}
+                            className="flex-1"
+                        />
+                    ) : null}
+                    {passenger && passenger.options && passenger.options.baggage ? (
+                        <TextField
+                            label="Baggage"
+                            value={passenger.options.baggage}
+                            className="flex-1"
+                        />
+                    ) : null}
                 </div>
             </div>
             {/* bottom corners cut */}

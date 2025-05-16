@@ -2,6 +2,9 @@ import { createFileRoute } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 import { SeatLayout } from '../../../components/SeatLayout';
 import apiClient from '../../../utils/axios';
+import { SessionData } from '../../../type';
+import { useNavigate} from '@tanstack/react-router';
+import Plane from '../../../resource/plane.svg?react';
 
 // Define the structure of a single seat from the API
 interface ApiSeat {
@@ -16,12 +19,45 @@ interface SeatLayoutSeat {
 }
 
 export const Route = createFileRoute('/booking/seats/')({
-    component: RouteComponent,
-});
+    component: Seats,
+}); 
 
-function RouteComponent() {
+
+
+function Seats() {
     const [seatMapData, setSeatMapData] = useState<SeatLayoutSeat[] | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [session, setSession] = useState<SessionData | undefined>();
+    const navigate = useNavigate();
+    
+    useEffect(() => {
+        const fetchSession = async () => {
+            try {
+                const response = await apiClient.get('/api/booking/session');
+
+                // Assuming response.data is an object matching SessionData
+                if (response.data && Object.keys(response.data).length > 0) {
+                    console.log('Existing session found via GET:', response.data);
+                    setSession(response.data.currentBooking as SessionData); // Cast if necessary, or ensure backend sends correct type
+                } else {
+                    console.log('GET /api/booking/session returned empty or invalid data.');
+                    navigate({ to: '/' }); // Navigate if session is not found or invalid
+                }
+            } catch (error: unknown) {
+                if (error instanceof Error) {
+                    console.error('Error checking session via GET:', error.message);
+                } else {
+                    console.error('An unexpected error occurred:', error);
+                }
+                // Consider navigating away on error as well if session is critical
+                // navigate('/'); 
+            }
+        };
+        fetchSession();
+    }, [navigate]); 
+
+
+    console.log(session);
 
     useEffect(() => {
         let isMounted = true; // Flag to prevent state updates on unmounted component
@@ -66,14 +102,18 @@ function RouteComponent() {
         return <div>Loading seat map...</div>;
     }
 
+    
+
     // Render seat map if data is available
     return (
-        <div>
+        <div className="flex flex-col items-center justify-center relative overflow-x-scroll pt-40 pb-30">
             <h1>Select Your Seats</h1>
+            <div className="w-full flex justify-center"></div>
+                <Plane className=" h-auto transform scale-200 overflow-hidden z-9"/>
             {seatMapData ? (
-                <SeatLayout seatMap={seatMapData} />
+                <SeatLayout seatMap={seatMapData} className="z-10 absolute" />
             ) : (
-                <div>No seat data available.</div> // Fallback if data is null after loading
+            <div>No seat data available.</div> // Fallback if data is null after loading
             )}
         </div>
     );
