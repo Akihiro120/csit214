@@ -23,7 +23,7 @@ interface Props {
     className?: string;
     children: React.ReactNode;
     hoverOverlayTheme?: 'light' | 'dark';
-    onClick?: () => void;
+    onClick?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
 export function ActionButton({ className, children, hoverOverlayTheme, onClick }: Props) {

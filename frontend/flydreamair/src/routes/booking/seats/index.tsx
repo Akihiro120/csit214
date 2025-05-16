@@ -1,11 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { useEffect, useState } from 'react';
 import { SeatLayout } from '../../../components/SeatLayout';
 import apiClient from '../../../utils/axios';
-import { useState, useEffect } from 'react';
 import { SessionData } from '../../../type';
 import { useNavigate} from '@tanstack/react-router';
 import Plane from '../../../resource/plane.svg?react';
-
 
 // Define the structure of a single seat from the API
 interface ApiSeat {
