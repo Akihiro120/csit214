@@ -1,0 +1,108 @@
+import { createFileRoute } from '@tanstack/react-router';
+import { useState } from 'react';
+import { ActionButton } from '../../components/ActionButton';
+import Aexpress from '../../resource/Aexpress.png';
+import Mastercard from '../../resource/Mastercard.svg?react';
+import Visa from '../../resource/Visa.svg?react';
+
+export const Route = createFileRoute('/booking/payment')({
+    component: RouteComponent,
+});
+
+function RouteComponent() {
+    const [selectedCard, setSelectedCard] = useState<string>('visa');
+    return (
+        <div className="flex justify-center items-center w-[60%] min-w-[480px] shadow-lg/25 justify-self-center self-center rounded-lg">
+            <form className="flex flex-col gap-6 p-8">
+                <div className="flex gap-2 justify-evenly">
+                    <PaymentCard
+                        id="visa"
+                        selectedCard={selectedCard}
+                        setSelectedCard={setSelectedCard}
+                    >
+                        <Visa />
+                    </PaymentCard>
+                    <PaymentCard
+                        id="mastercard"
+                        selectedCard={selectedCard}
+                        setSelectedCard={setSelectedCard}
+                    >
+                        <Mastercard />
+                    </PaymentCard>
+                    <PaymentCard
+                        id="aexpress"
+                        selectedCard={selectedCard}
+                        setSelectedCard={setSelectedCard}
+                    >
+                        <img src={Aexpress} className="w-[74px] h-[46px]" />
+                    </PaymentCard>
+                </div>
+                <div>
+                    <div className="ml-4">Name on card</div>
+                    <input
+                        type="text"
+                        className="w-full p-3 rounded-lg border border-[#808080] focus:border-(--accent) focus:bg-(--pale-accent)"
+                    />
+                </div>
+                <div>
+                    <div className="ml-4">Card number</div>
+                    <input
+                        type="text"
+                        className="w-full p-3 rounded-lg border border-[#808080] focus:border-(--accent) focus:bg-(--pale-accent)"
+                    />
+                </div>
+                <div>
+                    <div className="flex">
+                        <div className="flex flex-col">
+                            <div className="ml-4">Expiry</div>
+                            <input
+                                type="text"
+                                className="w-full p-3 rounded-l-lg border border-[#808080] focus:border-(--accent) focus:bg-(--pale-accent)"
+                            />
+                        </div>
+                        <div className="flex flex-col">
+                            <div className="mr-4 self-end">Security Code</div>
+                            <input
+                                type="text"
+                                className="w-full p-3 rounded-r-lg border-r border-y border-[#808080] focus:border-(--accent) focus:bg-(--pale-accent)"
+                            />
+                        </div>
+                    </div>
+                </div>
+                <ActionButton
+                    hoverOverlayTheme="light"
+                    className="self-end px-10 py-4"
+                    onClick={(e) => {
+                        e.preventDefault();
+                        alert('Payment will be implemented soon!');
+                    }}
+                >
+                    Confirm
+                </ActionButton>
+            </form>
+        </div>
+    );
+}
+
+function PaymentCard({
+    children,
+    id,
+    selectedCard,
+    setSelectedCard,
+}: {
+    children: React.ReactNode;
+    id: string;
+    selectedCard: string;
+    setSelectedCard: React.Dispatch<React.SetStateAction<string>>;
+}) {
+    return (
+        <div
+            onClick={() => {
+                setSelectedCard(id);
+            }}
+            className={`${selectedCard == id ? 'bg-(--pale-accent) border-(--accent)' : 'border-[#808080] bg-white'} hover:bg-(--pale-accent) hover:border-(--accent) w-[100px] p-3 border rounded-md cursor-pointer`}
+        >
+            {children}
+        </div>
+    );
+}
