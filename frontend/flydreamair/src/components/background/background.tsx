@@ -3,110 +3,149 @@ import * as THREE from 'three';
 import { Camera } from './camera.js';
 import { Plane } from './plane.js';
 import { PostProcessPass } from './postprocess.js';
-import { shaders } from './shaders.js';
+import { Shaders } from './shaders.js';
 import { ShadowPass } from './shadows.js';
-import { Skybox, capture_irradiance, capture_skybox } from './skybox.js';
+import { Skybox, CaptureIrradiance, CaptureSkybox } from './skybox.js';
 
 // react stuff
 import { useEffect, useRef } from 'react';
 
+interface IBackgroundRendererAssets {
+    clock: THREE.Clock;
+    scene: THREE.Scene;
+    screenScene: THREE.Scene;
+    shadowScene: THREE.Scene;
+    camera: Camera;
+    skybox?: Skybox;
+    plane?: Plane;
+    shadowPlane?: Plane;
+}
+
+function CreateBackgroundAssets() {
+    let assets: IBackgroundRendererAssets;
+
+    assets = {
+        clock: new THREE.Clock(),
+        scene: new THREE.Scene(),
+        screenScene: new THREE.Scene(),
+        shadowScene: new THREE.Scene(),
+        camera: new Camera(),
+    };
+    assets.skybox = new Skybox(assets.scene);
+    assets.plane = new Plane(assets.scene, Shaders.ShadedShader);
+    assets.shadowPlane = new Plane(assets.shadowScene, Shaders.DepthShader);
+
+
+    return assets;
+}
+
 export function PlaneBackground() {
-    const mountRef = useRef(null);
-    const requestRef = useRef();
-    const rendererRef = useRef();
+    const mountRef = useRef<HTMLDivElement | null>(null);
+    const requestRef = useRef<number | null>(null);
+    const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
+    const backgroundAssets = useRef<IBackgroundRendererAssets | null>(null);
 
     useEffect(() => {
-        console.log('useeffect ran');
         const container = mountRef.current;
         if (!container) return;
 
-        const renderer = new THREE.WebGLRenderer();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        container.appendChild(renderer.domElement);
-        rendererRef.current = renderer;
+        rendererRef.current = new THREE.WebGLRenderer();
+        rendererRef.current.setSize(window.innerWidth, window.innerHeight);
+        container.appendChild(rendererRef.current.domElement);
 
         // initialize three assets
-        const clock = new THREE.Clock();
-        const scene = new THREE.Scene();
-        const screen_scene = new THREE.Scene();
-        const shadow_scene = new THREE.Scene();
-        const camera = new Camera();
-        const skybox = new Skybox(scene);
-        const plane = new Plane(scene, shaders.shaded);
-        const shadow_plane = new Plane(shadow_scene, shaders.depth);
-
-        window.addEventListener('resize', onWindowResize, false);
-
-        function onWindowResize() {
-            camera.camera.aspect = window.innerWidth / window.innerHeight;
-            camera.camera.updateProjectionMatrix();
-
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        }
+        backgroundAssets.current = CreateBackgroundAssets();
+        const camera = backgroundAssets.current.camera;
+        const scene = backgroundAssets.current.scene;
+        const screenScene = backgroundAssets.current.screenScene;
+        const shadowScene = backgroundAssets.current.shadowScene;
+        const skybox = backgroundAssets.current.skybox!;
+        const plane = backgroundAssets.current.plane!;
+        const shadowPlane = backgroundAssets.current.shadowPlane!;
+        const clock = backgroundAssets.current.clock;
 
         // passes
-        const final_pass = new PostProcessPass(screen_scene);
-        const shadow_pass = new ShadowPass();
+        const finalPass = new PostProcessPass(screenScene);
+        const shadowPass = new ShadowPass();
 
         // capture skybox
-        //skybox.calculateSunDirection(10);
-        skybox.calculateSunDirection(8);
-        const skybox_capture = capture_skybox(renderer, skybox.light_direction);
-        const irradiance_capture = capture_irradiance(renderer, skybox_capture);
-        //const prefilter_capture = capture_prefilter(renderer, skybox_capture);
+        skybox.CalculateSunDirection(8);
+        const skyboxCaptureTexture = CaptureSkybox(rendererRef.current, skybox.GetLightDirection());
+        const irradianceCaptureTexture = CaptureIrradiance(rendererRef.current, skyboxCaptureTexture);
 
+
+        /// METHODS ----------------
+        const onWindowResize = () => {
+            camera.OnWindowResize();
+            rendererRef.current?.setSize(window.innerWidth, window.innerHeight);
+
+            console.log("Resized");
+        }
+
+        window.addEventListener('resize', onWindowResize, false);
         // update uniforms
         const update_uniforms = () => {
-            // update skybox uniforms
-
             // update shaded uniforms
-            shaders.shaded.uniforms.camera_position.value.copy(camera.camera.position);
-            shaders.shaded.uniforms.light_direction.value.copy(skybox.light_direction);
-            shaders.shaded.uniforms.cube_map.value = skybox_capture;
-            shaders.shaded.uniforms.shadow_map.value = shadow_pass.render_target.depthTexture;
-            shaders.shaded.uniforms.light_matrix.value.copy(shadow_pass.light_matrix);
-            shaders.shaded.uniforms.irradiance_map.value = irradiance_capture;
+            //
+            // for the love of god do not touch this code, it works for some reason, im not sure, but the plane will crash into the bermuda if its gone.
+            Shaders.ShadedShader.uniforms.camera_position.value.copy(camera.GetCamera().position);
+            Shaders.ShadedShader.uniforms.light_direction.value.copy(skybox.GetLightDirection());
+            Shaders.ShadedShader.uniforms.cube_map.value = skyboxCaptureTexture;
+            Shaders.ShadedShader.uniforms.shadow_map.value = shadowPass.GetShadowRenderTexture().depthTexture;
+            Shaders.ShadedShader.uniforms.light_matrix.value.copy(shadowPass.GetLightMatrix());
+            Shaders.ShadedShader.uniforms.irradiance_map.value = irradianceCaptureTexture;
 
-            // update skybox display
-            shaders.cubemap.uniforms.cube_map.value = skybox_capture; //irradiance_capture;
-            shaders.cubemap.side = THREE.BackSide;
-            shaders.cubemap.depthWrite = false;
+            // update Skybox display
+            Shaders.CubemapShader.uniforms.cube_map.value = skyboxCaptureTexture;
+            Shaders.CubemapShader.side = THREE.BackSide;
+            Shaders.CubemapShader.depthWrite = false;
 
-            // scene texture
-            shaders.bright_filter.uniforms.scene_texture.value =
-                final_pass.scene_texture_plane.texture;
-            shaders.postprocess.uniforms.scene_texture.value =
-                final_pass.scene_texture_plane.texture;
-            shaders.postprocess.uniforms.bloom_texture.value = final_pass.vblur_texture.texture;
-            //shaders.postprocess.uniforms.scene_texture.value = shadow_pass.render_target.depthTexture;
+            // Scene texture
+            Shaders.BrightFilterShader.uniforms.scene_texture.value = finalPass.GetSceneTexture().texture;
+            Shaders.PostProcessShader.uniforms.scene_texture.value = finalPass.GetSceneTexture().texture;
+            Shaders.PostProcessShader.uniforms.bloom_texture.value = finalPass.GetVerticalBlurTexture().texture;
         };
 
-        final_pass.render_final_pass(renderer, scene, camera.camera);
         const render_loop = () => {
             requestRef.current = requestAnimationFrame(render_loop);
 
             // provide skybox data
             update_uniforms();
             plane.animate(clock.getElapsedTime());
-            shadow_plane.animate(clock.getElapsedTime());
+            shadowPlane.animate(clock.getElapsedTime());
 
             // shadow pass
-            shadow_pass.capture_shadow_map(renderer, shadow_scene, skybox.light_direction);
+            shadowPass.CaptureShadowMap(rendererRef.current!, shadowScene, skybox.GetLightDirection());
 
             // render scene to display
-            renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
-            final_pass.render_bloom_pass(renderer, scene, camera.camera);
-            final_pass.render_final_pass(renderer, scene, camera.camera);
+            rendererRef.current?.setViewport(0, 0, window.innerWidth, window.innerHeight);
+            finalPass.RenderBloomPass(rendererRef.current!, camera.GetCamera());
+            finalPass.RenderFinalPass(rendererRef.current!, scene, camera.GetCamera());
 
             // display the final render texture
-            renderer.render(screen_scene, camera.camera);
+            rendererRef.current?.render(screenScene, camera.GetCamera());
         };
-
         render_loop();
 
         // dispose of it, dont need it no mo'
-        return () => {};
-    });
+        return () => {
+            window.removeEventListener('resize', onWindowResize);
+
+            // Cancel the fucking animations, the bozo that fucking wrote this cant clean up his own shit
+            // animations running in background is bad.
+            if (requestRef.current != null) {
+                cancelAnimationFrame(requestRef.current!);
+            }
+
+            // clean up all memory and assets.
+            // fuck, javascript, where is your garbage collector.
+            backgroundAssets.current?.plane?.Dispose();
+            backgroundAssets.current?.skybox?.Dispose();
+            rendererRef.current?.dispose();
+
+            container.removeChild(rendererRef.current?.domElement!);
+        };
+    }, []);
 
     return (
         <div
