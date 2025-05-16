@@ -38,11 +38,11 @@ function RouteComponent() {
 
     return (
         <>
-            <div className="self-start w-full grid grid-cols-[1fr_300px] pt-12 px-12 gap-12">
+            <div className="self-start min-h-full w-full grid grid-cols-[1fr_300px] p-12 gap-12">
                 <Outlet />
                 <div className="justify-self-center flex flex-col gap-4">
                     <Wizards />
-                    {location.pathname !== '/booking/search' && sessionData ? (
+                    {location.pathname !== '/booking/search' && sessionData?.dept_city ? (
                         <Ticket sessionData={sessionData} />
                     ) : null}
                 </div>
