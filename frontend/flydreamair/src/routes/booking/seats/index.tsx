@@ -4,6 +4,7 @@ import apiClient from '../../../utils/axios';
 import { useState, useEffect } from 'react';
 import { SessionData } from '../../../type';
 import { useNavigate} from '@tanstack/react-router';
+import Plane from '../../../resource/plane.svg?react';
 
 
 // Define the structure of a single seat from the API
@@ -20,7 +21,9 @@ interface SeatLayoutSeat {
 
 export const Route = createFileRoute('/booking/seats/')({
     component: Seats,
-});
+}); 
+
+
 
 function Seats() {
     const [seatMapData, setSeatMapData] = useState<SeatLayoutSeat[] | null>(null);
@@ -104,12 +107,14 @@ function Seats() {
 
     // Render seat map if data is available
     return (
-        <div>
+        <div className="flex flex-col items-center justify-center relative overflow-x-scroll pt-40 pb-30">
             <h1>Select Your Seats</h1>
+            <div className="w-full flex justify-center"></div>
+                <Plane className=" h-auto transform scale-200 overflow-hidden z-9"/>
             {seatMapData ? (
-                <SeatLayout seatMap={seatMapData} />
+                <SeatLayout seatMap={seatMapData} className="z-10 absolute" />
             ) : (
-                <div>No seat data available.</div> // Fallback if data is null after loading
+            <div>No seat data available.</div> // Fallback if data is null after loading
             )}
         </div>
     );

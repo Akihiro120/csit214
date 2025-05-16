@@ -25,7 +25,7 @@ router.post("/api/booking/search", async (req, res) => {
 
 		// query_flight_info should return a single object or null/undefined
 		const flightInfo = await GlobalDatabaseService.query_flight_info(data.flight_id); // Renamed for clarity
-
+        // return just the rows[0] as if we return the whole thing and access [0] here, we are accessing the promise object.
 		// Corrected logging: flightInfo is the object itself
 		console.log("Flight info from DB:", flightInfo);
 
@@ -36,10 +36,8 @@ router.post("/api/booking/search", async (req, res) => {
 			return res.status(404).json({ error: "Flight not found" });
 		}
 
-		// Now you can safely access properties using dot notation
-		// This console.log should work if the object is structured as expected
-		console.log("Dept City from flightInfo:", flightInfo.dept_city);
-
+		// update values of the session token
+		
 		req.session.currentBooking = {
 			...req.session.currentBooking, // Preserves other booking details if any
 			flight_id: data.flight_id,
@@ -63,7 +61,7 @@ router.post("/api/booking/search", async (req, res) => {
 			});
 		});
 	} catch (err) {
-		console.error("An unexpected error occurred:", err);
+		console.error("An unexpected error occurred on search post:", err);
 		return res.status(500).json({ message: "An unexpected error occurred", details: err.message });
 	}
 });
