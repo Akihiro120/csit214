@@ -42,7 +42,7 @@ function RouteComponent() {
                 <Outlet />
                 <div className="justify-self-center flex flex-col gap-4">
                     <Wizards />
-                    {location.pathname !== '/booking/search' && sessionData ? (
+                    {location.pathname !== '/booking/search' && sessionData?.dept_city ? (
                         <Ticket sessionData={sessionData} />
                     ) : null}
                 </div>
