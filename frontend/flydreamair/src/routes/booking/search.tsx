@@ -77,7 +77,7 @@ function Search() {
 
     return (
         <div className="flex gap-4 items-start">
-            <div className="flex flex-col gap-12 p-6 w-[300px] bg-(--pale-accent) rounded-sm">
+            <div className="flex flex-col gap-12 p-6 w-[300px] bg-(--pale-accent) rounded-sm sticky top-10">
                 <RangeSlider
                     value={priceRange}
                     setValue={setPriceRange}

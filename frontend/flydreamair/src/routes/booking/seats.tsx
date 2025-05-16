@@ -100,10 +100,10 @@ function Seats() {
 
     // Render seat map if data is available
     return (
-        <div className="h-full flex justify-center relative overflow-x-auto">
-            <Plane className="relative mt-150 transform scale-300 z-9" />
+        <div className="h-550 flex justify-center relative overflow-hidden">
+            <Plane className="absolute h-800 -z-1 -top-70" />
             {seatMapData ? (
-                <SeatLayout seatMap={seatMapData} className="mt-50 shrink-0 z-10 absolute" />
+                <SeatLayout seatMap={seatMapData} className="mt-40" />
             ) : (
                 <div>No seat data available.</div> // Fallback if data is null after loading
             )}
