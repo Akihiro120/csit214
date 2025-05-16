@@ -1,22 +1,24 @@
-const express = require('express');
+const express = require("express");
 
 class RouterService {
-	constructor() {
-		this.router = express.Router();
+    constructor() {
+        this.router = express.Router();
 
-		// setup the routes
-		this.router.use(require('../routes/routes'));
-		this.router.use(require('../routes/flights'));
-		this.router.use(require('../routes/booking/seats'))
-		this.router.use(require('../routes/booking/session'))
-		this.router.use(require('../routes/booking/search'))
-	}
+        // setup the routes
+        this.router.use(require("../routes/routes"));
+        this.router.use(require("../routes/flights"));
+        this.router.use(require("../routes/booking/seats"));
+        this.router.use(require("../routes/booking/session"));
+        this.router.use(require("../routes/booking/search"));
+        this.router.use(require("../routes/auth/auth"));
+    }
 
-	// returns the router
-	get_router() {
-		return this.router;
-	}
+    // returns the router
+    get_router() {
+        return this.router;
+    }
 }
 
 // export the reouter service
 module.exports = RouterService;
+
