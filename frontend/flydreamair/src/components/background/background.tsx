@@ -1,11 +1,11 @@
 // import the plane renderer bs
 import * as THREE from 'three';
 import { Camera } from './camera.js';
-import { Skybox, capture_skybox, capture_irradiance, capture_prefilter } from './skybox.js';
-import { shaders } from './shaders.js';
 import { Plane } from './plane.js';
-import { ShadowPass } from './shadows.js';
 import { PostProcessPass } from './postprocess.js';
+import { shaders } from './shaders.js';
+import { ShadowPass } from './shadows.js';
+import { Skybox, capture_irradiance, capture_skybox } from './skybox.js';
 
 // react stuff
 import { useEffect, useRef } from 'react';
@@ -16,6 +16,7 @@ export function PlaneBackground() {
     const rendererRef = useRef();
 
     useEffect(() => {
+        console.log('useeffect ran');
         const container = mountRef.current;
         if (!container) return;
 
