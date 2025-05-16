@@ -10,7 +10,9 @@ class RouterService {
         this.router.use(require("../routes/booking/seats"));
         this.router.use(require("../routes/booking/session"));
         this.router.use(require("../routes/booking/search"));
+        this.router.use(require("../routes/booking/extras"));
         this.router.use(require("../routes/auth/auth"));
+        this.router.use(require("../routes/booking/payment"));
     }
 
     // returns the router
@@ -21,4 +23,3 @@ class RouterService {
 
 // export the reouter service
 module.exports = RouterService;
-
