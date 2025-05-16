@@ -4,11 +4,18 @@ const {GlobalDatabaseService} = require('../../services/database_service');
 
 
 
-function determineClass(seat){
+function getSeatClass(seat){
     const first_class_seats = ["1A", "1B", "1E", "1F", "2A", "2B", "2E", "2F"];
-    const business_class_seats =  [];
-
-    return;
+    const business_class_seats =  ["3A", "3B", "3C", "3D", "3E", "3F", "4A", "4B", "4C", "4D", "4E", "4F", "5A", "5B", "5C", "5D", "5E", "5F"];
+    if (first_class_seats.includes(seat)) {
+        return "First";
+    }
+    else if (business_class_seats.includes(seat)) {
+        return "Business";
+    }
+    else {
+        return "Economy";
+    };
 }
 // creates the seats route
 router.get('/api/booking/seats', async (req, res) => {
@@ -56,16 +63,21 @@ router.post('/api/booking/seats ', async (req, res) => {
         }
 
 
-        const passangerArray = data.passangers.map(passanger => {
+        const passengerArray = data.passengers.map(passenger => {
             return {
-                name: passanger.name,
-                email: passanger.email,
-                phone: passanger.phone || null,
-                seat: passanger.seat
+                name: passenger.name,
+                email: passenger.email,
+                phone: passenger.phone || null,
+                seat: passenger.seat,
+                class: getSeatClass(passenger.seat)
             }
 
-
         });
+
+        req.session.currentBooking = {
+            ...req.session.currentBooking,
+            passengers: passengerArray,
+        }
 
 		req.session.save((err) => {
 			if (err) {
