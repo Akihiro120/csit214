@@ -11,7 +11,7 @@ class RouterService {
 		this.router.use(require('../routes/booking/session'))
 		this.router.use(require('../routes/booking/search'))
 		this.router.use(require('../routes/booking/extras'))
-		this.router.use(require('../routes/booking/payment'))
+		// this.router.use(require('../routes/booking/payment'))
 	}
 
 	// returns the router
