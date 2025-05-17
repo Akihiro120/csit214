@@ -2,10 +2,12 @@ const express = require("express");
 const router = express.Router();
 const { GlobalDatabaseService } = require("../services/database_service");
 
+// TODO: add "seasonal" pricing, i.e. summer and winter prices
+// also add maybe weekend pricing?
+// or a "holday" pricing, i.e. christmas and new year
 
 // constants for the price calculation
-const PRICE_PER_KILOMETER = 0.2; // base price per kilometer, based on research at 40c per kilometer
-
+const PRICE_PER_KILOMETER = 0.2; // base price per kilometer, based on research at 20c per kilometer
 //  weights for different multipliers
 const SEAT_SCARCITY_WEIGHT = 2.0;
 const DAYS_UNTIL_FLIGHT_WEIGHT = 1;
