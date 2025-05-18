@@ -8,6 +8,8 @@ const { GlobalDatabaseService } = require("../services/database_service");
 
 // constants for the price calculation
 const PRICE_PER_KILOMETER = 0.2; // base price per kilometer, based on research at 20c per kilometer
+const MAX_TIME_OF_DEPARTURE_MULTIPLIER = 3.0; // max multiplier for time of departure
+
 //  weights for different multipliers
 const SEAT_SCARCITY_WEIGHT = 2.0;
 const DAYS_UNTIL_FLIGHT_WEIGHT = 1;
@@ -39,19 +41,22 @@ function calculate_days_until_flight(day_of_departure){
 } 
 
 
-
-
-// uses some crazy e numbers that pass through 0.1 at 30, and 0.9 at 1
-function calculate_days_until_flight_multiplier(day_of_departure) {
-  days_until_flight = calculate_days_until_flight(day_of_departure);
-  magic_a = 0.970849;
-  magic_b = 0.927025;
+// points chosen for the curve to pass through were: 0.1 at 30, and 0.9 at 1
+// b^29 = 0.1 / 0.9
+// b^29 = 1/9
+// b = (1/9)^(1/29) ≈ 0.927025
+// A ≈ 0.9 / 0.927025 ≈ 0.970849
+// y = 0.970849 * (0.927025)^x (x = days until flight)
+function calculate_days_until_flight_multiplier(date_of_departure) {
+  const days_until_flight = calculate_days_until_flight(date_of_departure);
+  const magic_a = 0.970849;
+  const magic_b = 0.927025;
   const urgency = (magic_a * Math.pow(magic_b, days_until_flight));
   return urgency * DAYS_UNTIL_FLIGHT_WEIGHT;
 }
 
 
-// reused some crazy magic e numbers that pass through 0.1 at 30, and 0.9 at 1
+// reused some exponetial math from the days until flight function
 function calculate_seats_left_multiplier(seats) {
   const seats_left = 170-seats;
   const magic_a = 0.970849;
@@ -62,7 +67,8 @@ function calculate_seats_left_multiplier(seats) {
 
 
 // this is a parabola 24 wide, with a max at 12, and roots at 0 and 24, roots are defined as +1.0
-function calculate_time_based_multiplier(time_of_day, max_multiplier) {
+function calculate_time_based_multiplier(dept_time, max_multiplier) {
+    const time_of_day = convertTimeToFloat(dept_time);
     const midday_hour = 12.0; 
     const multiplier_at_roots = 1.0;
     
@@ -82,12 +88,12 @@ function calculate_price_per_kilometer(distance) {
 
 // all functions called either return a "multiplier" between 0 and 1, multiplied by weights, or just a float.
 // means we can Tune the weights of pricing to look legit
-function calculate_total_fare(base_price, date, available_seats, distance, dept_time) {
+function calculate_total_fare(base_price, date_of_departure, available_seats, distance, dept_time) {
   const base_price_float = parseFloat(base_price);
   const fuel_cost = calculate_price_per_kilometer(distance);
-  const time_of_day_cost = calculate_time_based_multiplier(convertTimeToFloat(dept_time), 3.0);
+  const time_of_day_cost = calculate_time_based_multiplier(dept_time, MAX_TIME_OF_DEPARTURE_MULTIPLIER);
   const seat_scarcity = calculate_seats_left_multiplier(available_seats);
-  const days_until_flight = calculate_days_until_flight_multiplier(date);
+  const days_until_flight = calculate_days_until_flight_multiplier(date_of_departure);
   const final_price = base_price_float + fuel_cost * (1+time_of_day_cost) * (1+seat_scarcity) * (1+days_until_flight);
   return final_price;
 }
