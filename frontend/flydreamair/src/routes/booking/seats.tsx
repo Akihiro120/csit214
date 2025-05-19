@@ -38,7 +38,7 @@ function Seats() {
                     setSession(response.data.currentBooking as SessionData); // Cast if necessary, or ensure backend sends correct type
                 } else {
                     console.log('GET /api/booking/session returned empty or invalid data.');
-                    /*                     navigate({ to: '/' }); // Navigate if session is not found or invalid */
+                    navigate({ to: '/' }); // Navigate if session is not found or invalid
                 }
             } catch (error: unknown) {
                 if (error instanceof Error) {
@@ -47,7 +47,7 @@ function Seats() {
                     console.error('An unexpected error occurred:', error);
                 }
                 // Consider navigating away on error as well if session is critical
-                // navigate('/');
+                navigate({ to: '/' });
             }
         };
         fetchSession();
@@ -103,7 +103,9 @@ function Seats() {
         <div className="h-550 flex justify-center relative overflow-hidden">
             <Plane className="absolute h-800 -z-1 -top-70" />
             {seatMapData ? (
-                <SeatLayout seatMap={seatMapData} className="mt-40" />
+                <form>
+                    <SeatLayout seatMap={seatMapData} className="mt-40" />
+                </form>
             ) : (
                 <div>No seat data available.</div> // Fallback if data is null after loading
             )}
