@@ -2,8 +2,11 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 import { SeatLayout } from '../../components/SeatLayout';
 import Plane from '../../resource/plane.svg?react';
-import { SessionData } from '../../type';
+import { SessionData, Passenger } from '../../type';
 import apiClient from '../../utils/axios';
+import { AxiosError } from 'axios';
+import { ActionButton } from '../../components/ActionButton';
+
 
 // Define the structure of a single seat from the API
 interface ApiSeat {
@@ -21,11 +24,15 @@ export const Route = createFileRoute('/booking/seats')({
     component: Seats,
 });
 
+
+
 function Seats() {
     const [seatMapData, setSeatMapData] = useState<SeatLayoutSeat[] | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [session, setSession] = useState<SessionData | undefined>();
     const navigate = useNavigate();
+    const [passengers, setPassengers] = useState<Passenger[]>([]);
+
 
     useEffect(() => {
         const fetchSession = async () => {
@@ -47,7 +54,7 @@ function Seats() {
                     console.error('An unexpected error occurred:', error);
                 }
                 // Consider navigating away on error as well if session is critical
-                // navigate('/');
+                navigate({ to: '/' });
             }
         };
         fetchSession();
@@ -98,15 +105,58 @@ function Seats() {
         return <div>Loading seat map...</div>;
     }
 
+
+    const submitRequest = async (passengers: Passenger[]) => {
+        try {
+            const postResponse = await apiClient.post('/api/booking/seats', {
+                passengers: passengers
+            });
+
+            if (postResponse.status >= 200 && postResponse.status < 300) {
+                navigate({ to: '/booking/extras' });
+            } else {
+                alert(
+                    `Failed to save search details. Server responded with status: ${postResponse.status}`
+                );
+            }
+        } catch (error) {
+            console.error('Error saving session data via POST:', error);
+            let errorMessage = 'An error occurred while saving search details.';
+            console.log(errorMessage)
+            if (error instanceof AxiosError && error.response?.data?.error) {
+                errorMessage = `Error: ${error.response.data.error}`;
+            } else if (error instanceof Error) {
+                errorMessage = `Error: ${error.message}`;
+            }
+        }
+    }
+
+
     // Render seat map if data is available
     return (
-        <div className="flex flex-col items-center justify-center relative overflow-x-scroll pt-40 pb-30">
-            <Plane className="h-auto transform scale-200 overflow-hidden z-9" />
+        <div>
+        <div className="h-550 flex justify-center relative overflow-hidden">
+            <Plane className="absolute h-800 -z-1 -top-70" />
             {seatMapData ? (
-                <SeatLayout seatMap={seatMapData} className="z-10 absolute" />
+                    <SeatLayout seatMap={seatMapData} className="mt-40" passengers={passengers} setPassengers={setPassengers}/>
             ) : (
                 <div>No seat data available.</div> // Fallback if data is null after loading
             )}
+
         </div>
+        <div className="fixed bottom-12 right-12 z-1">
+                    {passengers.length > 0 && (
+                <ActionButton
+                hoverOverlayTheme='light'
+                className="px-6"
+                onClick={() => {
+                    submitRequest(passengers);
+                }}
+                >Continue
+                </ActionButton>
+            )}
+            </div>
+    </div>
+
     );
 }
