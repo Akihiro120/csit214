@@ -5,7 +5,7 @@ const {GlobalDatabaseService} = require('../../services/database_service');
 
 
 
-router.post('/api/booking/extras ', async (req, res) => {
+router.post('/api/booking/extras', async (req, res) => {
     try {
 		const session = req.session;
 		const data = req.body;
