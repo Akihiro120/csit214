@@ -1,7 +1,7 @@
 import { JSX, useState } from 'react';
 import Seaticon from '../resource/Seaticon.svg?react';
 import { PassengerDetailPopup } from './PassengerDetailPopup';
-import { SessionData } from '../type';
+import { Passenger } from '../type';
 
 interface Seat {
     id: string;
@@ -11,11 +11,11 @@ interface Seat {
 interface SeatLayoutProps {
     seatMap: Seat[];
     className?: string;
-    session: SessionData;
-    setSession: (session: SessionData | null) => void;
+    passengers?: Passenger[];
+    setPassengers?: React.Dispatch<React.SetStateAction<Passenger[]>>;
 }
 
-export function SeatLayout({ seatMap, className, session, setSession }: SeatLayoutProps): JSX.Element {
+export function SeatLayout({ seatMap, className, setPassengers, }: SeatLayoutProps): JSX.Element {
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [selectedSeat, setSelectedSeat] = useState<string | null>(null);
     const seatNumbers = Array(29)
@@ -23,6 +23,7 @@ export function SeatLayout({ seatMap, className, session, setSession }: SeatLayo
         .map((_, index) => index + 1);
     seatNumbers.splice(12, 0, -1);
     seatNumbers.splice(16, 0, -2);
+
     return (
         <div
             className={`${className} grid grid-cols-[repeat(7, auto)] grid-rows-[min-content_50px_min-content] gap-y-5 gap-x-2`}
@@ -33,9 +34,8 @@ export function SeatLayout({ seatMap, className, session, setSession }: SeatLayo
                 <PassengerDetailPopup
                     setVisability={setIsPopupOpen}
                     seatNumber={selectedSeat}
-                    session={session}
-                    setSession={setSession}
-                    className="w-[400px] h-[500px]"
+                    className="w-[600px] h-[500px]"
+                    setPassengers={setPassengers}
                     />
             </div>
             {/* middle aisle */}
