@@ -37,7 +37,8 @@ router.get('/api/booking/seats', async (req, res) => {
 
 });
 
-router.post('/api/booking/seats ', async (req, res) => {
+router.post('/api/booking/seats', async (req, res) => {
+    console.log("Seat booking object recieved:", req.body);
     try {
 		const session = req.session;
 		const data = req.body;
@@ -52,12 +53,12 @@ router.post('/api/booking/seats ', async (req, res) => {
 			return res.status(500).json({ message: "Session not initialized" });
 		}
 
-        if (!data.currentBooking.passengers) {
+        if (!data.passengers) {
             console.log('no passengers in this post');
             return res.status(500).json({ message: 'no passengers in post, which means no seats, dumbass'});
         }
-
-        if (!session.currentBooking.num_passengers  == data.passengers.length()) {
+        
+        if (!session.currentBooking.num_passengers  == data.passengers.length) {
             console.log('not enough passengers in post to match numPassengers selected in homepage');
             return res.status(500).json({ message: `you said there were ${session.currentBooking.num_passengers} and there are only ${data.num_passengers.length()} passenger objects in your post, dumbass`});
         }

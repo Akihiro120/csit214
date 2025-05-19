@@ -12,10 +12,10 @@ function RootComponent() {
         <>
             <div className="min-h-screen grid grid-rows-[auto_1fr]">
                 <Navbar />
-                {location.pathname === '/' && <PlaneBackground />}
-                <div className="flex justify-center items-center">
+                <div className="h-full flex justify-center items-center">
                     <Outlet />
                 </div>
+                {location.pathname === '/' && <PlaneBackground />}
             </div>
         </>
     );
