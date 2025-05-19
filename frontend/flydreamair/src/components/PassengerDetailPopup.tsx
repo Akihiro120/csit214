@@ -1,14 +1,12 @@
 import { ActionButton } from './ActionButton';
-import { SessionData } from '../type';
 import { useState } from 'react';
 import { Passenger } from '../type';
 
 interface Props {
     className?: string;
-    setVisability: (isVisible: boolean) => void;
-    session: SessionData;
-    setSession: (session: SessionData | null) => void;
     seatNumber: string | null;
+    setVisability: (isVisible: boolean) => void;
+    setPassengers?: React.Dispatch<React.SetStateAction<Passenger[]>>;
 }
 
 
@@ -33,19 +31,18 @@ function canSubmit(name: string, email: string, phone: string): boolean {
     );
 }
 
-export function PassengerDetailPopup({ className, setVisability, seatNumber, session, setSession }: Props) {
+export function PassengerDetailPopup({ className, setVisability, setPassengers, seatNumber  }: Props) {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
-    const [phone, setPhone] = useState('');
-    const [passenger, setPassenger] = useState<Passenger | null>(null);
+    const [phone, setPhone] = useState('');    
     
     return (
         <div className={`bg-(--pale-accent) p-4 rounded-md shadow-lg${className}`}>
-            <div className="flex gap-2">
-                <h2 className="text-2xl text-center align-middle">
+            <div className="flex gap-2 justify-around">
+                <h2 className="text-2x1l p-1">
                 Passenger Details for seat
                 </h2>
-                <div className='text-2xl text-bold border-1 p-1 rounded-sm bg-slate-50 text-zinc-800'>{seatNumber}</div>
+                <div className='text-2xl text-bold border-1 p-1 rounded-sm bg-slate-50 text-zinc-800 '>{seatNumber}</div>
             </div>
             <div className="grid grid-cols-1 gap-2">
                 <label>
@@ -77,17 +74,24 @@ export function PassengerDetailPopup({ className, setVisability, seatNumber, ses
                     
                 </label>
                 <ActionButton
-                    className={ canSubmit(name, email, phone) ? "bg-(--accent) text-white hover:bg-(--dark-accent) rounded-md p-2 mt-4" : " bg-amber-700 text-white hover:bg-amber-800 rounded-md p-2 mt-4"}
-                    onClick={() => {
-                        if (canSubmit(name, email, phone)) { 
+                    className={ canSubmit(name, email, phone) ? "bg-(--accent) text-white hover:bg-(--primary) rounded-md p-2 mt-4" : " bg-zinc-400 text-white hover:bg-zinc-400 rounded-md p-2 mt-4"}
+                    onClick={(e) => {
+                        e.preventDefault();
+                        if (canSubmit(name, email, phone)) {
                             const newPassenger: Passenger = {
                                 name,
                                 email,
                                 phone,
                                 seat: seatNumber || '',
                             };
-                            setPassenger(newPassenger);
 
+                            if (setPassengers) {
+                                setPassengers((passengers) => [...passengers, newPassenger]);
+                            }
+
+                            setName('');
+                            setEmail('');
+                            setPhone('');
                             setVisability(false);
                         } else {
                             alert('Please enter valid email and phone number');
