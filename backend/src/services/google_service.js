@@ -16,26 +16,14 @@ class GoogleService {
         if (fs.existsSync(this.tokenPath)) {
             const tokens = JSON.parse(fs.readFileSync(this.tokenPath, "utf8"));
             this.oAuth2Client.setCredentials(tokens);
-            console.log("🔑 Loaded saved OAuth tokens");
+            console.log("🔑 Loaded saved OAuth tokens: ", tokens);
+        } else {
+            console.log(
+                "No valid OAuth Token Available, go authorize yourself at http://localhost/api/auth",
+            );
         }
 
         console.log("Began Google Service");
-    }
-
-    getAuthUrl() {
-        return this.oAuth2Client.generateAuthUrl({
-            access_type: "offline", // so you get a refresh_token
-            scope: ["https://www.googleapis.com/auth/gmail.send"],
-            prompt: "consent",
-        });
-    }
-
-    // After the user consents and you get `?code=…` in your callback:
-    async fetchToken(code) {
-        const { tokens } = await this.oAuth2Client.getToken(code);
-        this.oAuth2Client.setCredentials(tokens);
-        fs.writeFileSync(this.tokenPath, JSON.stringify(tokens, null, 2));
-        console.log("✅ OAuth tokens saved to", this.tokenPath);
     }
 }
 
