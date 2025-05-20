@@ -40,7 +40,7 @@ export function PassengersInputBox({ className, svg, label }: Props) {
                 />
                 <span>Passengers</span>
             </div>
-            <ChangeValueButton onClick={() => setPassengers((prev) => Math.min(prev + 1, 9))}>
+            <ChangeValueButton onClick={() => setPassengers((prev) => Math.min(prev + 1, 6))}>
                 <Plus />
             </ChangeValueButton>
             <ChangeValueButton onClick={() => setPassengers((prev) => Math.max(prev - 1, 1))}>
