@@ -10,12 +10,36 @@ export const Route = createFileRoute('/booking/payment')({
     component: RouteComponent,
 });
 
+function isCreditCard(value: string): boolean {
+    value = value.replace(/\D/g, '');
+    if (value.length < 13 || value.length > 19) {
+        return false;
+    }
+    let sum = 0;
+    let alternate = false;
+    for (let i = value.length - 1; i >= 0; i--) {
+        let n = parseInt(value.charAt(i), 10);
+        if (alternate) {
+            n *= 2;
+            if (n > 9) {
+                n -= 9;
+            }
+        }
+        sum += n;
+        alternate = !alternate;
+    }
+    return sum % 10 === 0;
+}
+
+
 function RouteComponent() {
     const [selectedCard, setSelectedCard] = useState<string>('visa');
     const [nameCard, setNameCard] = useState<string>('');
     const [numberCard, setNumberCard] = useState<string>('');
     const [expiryCard, setExpirtyCard] = useState<string>('');
     const [ccvCard, setCCVCard] = useState<string>('');
+
+    const isCardNumberValid = numberCard.length === 0 || isCreditCard(numberCard.replace(/\s/g, ''));
 
     return (
         <div className="flex justify-center items-center w-[60%] min-w-[480px] shadow-lg/25 justify-self-center self-center rounded-lg">
@@ -56,9 +80,11 @@ function RouteComponent() {
                     <div className="ml-4">Card number</div>
                     <input
                         type="text"
-                        className="w-full p-3 rounded-lg border border-[#808080] focus:border-(--accent) focus:bg-(--pale-accent)"
+                        placeholder="Enter card number"
                         value={numberCard}
                         onChange={(e) => setNumberCard(e.target.value)}
+                        className={`w-full p-3 rounded-lg border ${!isCardNumberValid ? 'border-red-500' : 'border-[#808080]'
+                            } focus:border-(--accent) focus:bg-(--pale-accent)`}
                     />
                 </div>
                 <div>

@@ -23,7 +23,7 @@ export interface FlightUpgradeOptions {
     entertainment: string;
 }
 
-export interface Passanger {
+export interface Passenger {
     name: string;
     email: string;
     phone?: string;
@@ -47,6 +47,6 @@ export interface SessionData {
     flight_id?: string;
     num_passengers?: number;
     isReturn?: boolean;
-    passengers?: Passanger[];
+    passengers?: Passenger[];
     search_time_stamp?: number;
 }
