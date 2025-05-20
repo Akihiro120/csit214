@@ -51,7 +51,7 @@ class ExpressService {
             cookie: {
                 secure: is_production,
                 httpOnly: true,
-                maxAge: parseInt(process.env.SESSION_MAX_AGE, 10) || 120000,
+                maxAge: parseInt(process.env.SESSION_MAX_AGE, 10) || 1200000,
                 sameSite: 'lax'
             }
         }));
