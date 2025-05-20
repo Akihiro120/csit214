@@ -1,7 +1,8 @@
+import { motion } from 'motion/react';
 import { JSX, useState } from 'react';
 import Seaticon from '../resource/Seaticon.svg?react';
-import { PassengerDetailPopup } from './PassengerDetailPopup';
 import { Passenger } from '../type';
+import { PassengerDetailPopup } from './PassengerDetailPopup';
 
 interface Seat {
     id: string;
@@ -15,7 +16,7 @@ interface SeatLayoutProps {
     setPassengers?: React.Dispatch<React.SetStateAction<Passenger[]>>;
 }
 
-export function SeatLayout({ seatMap, className, setPassengers, }: SeatLayoutProps): JSX.Element {
+export function SeatLayout({ seatMap, className, setPassengers }: SeatLayoutProps): JSX.Element {
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [selectedSeat, setSelectedSeat] = useState<string | null>(null);
     const seatNumbers = Array(29)
@@ -28,16 +29,21 @@ export function SeatLayout({ seatMap, className, setPassengers, }: SeatLayoutPro
         <div
             className={`${className} grid grid-cols-[repeat(7, auto)] grid-rows-[min-content_50px_min-content] gap-y-5 gap-x-2`}
         >
-            <div
-                className={`${isPopupOpen ? '' : 'hidden'} fixed inset-0 z-10 bg-black/50 flex items-center justify-center`}
+            <motion.div
+                className={`fixed inset-0 z-10 bg-black/50 flex items-center justify-center`}
+                animate={isPopupOpen ? { opacity: 1 } : { opacity: 0, display: 'none' }}
+                transition={{ duration: 0.2 }}
+                onClick={() => {
+                    setIsPopupOpen(false);
+                }}
             >
                 <PassengerDetailPopup
                     setVisability={setIsPopupOpen}
                     seatNumber={selectedSeat}
                     className="w-[600px] h-[500px]"
                     setPassengers={setPassengers}
-                    />
-            </div>
+                />
+            </motion.div>
             {/* middle aisle */}
             <div className="col-start-4 row-start-1 row-span-50 w-full grid grid-rows-[min-content_50px] auto-rows-min gap-y-5">
                 {seatNumbers.map((seatNumber) => (
@@ -62,6 +68,7 @@ export function SeatLayout({ seatMap, className, setPassengers, }: SeatLayoutPro
                     booked={seat.booked}
                     setIsPopupOpen={setIsPopupOpen}
                     setSelectedSeat={setSelectedSeat}
+                    selectedSeat={selectedSeat}
                 />
             ))}
         </div>
@@ -71,12 +78,14 @@ function Seat({
     id,
     booked,
     setIsPopupOpen,
-    setSelectedSeat
+    setSelectedSeat,
+    selectedSeat,
 }: {
     id: string;
     booked: boolean;
     setIsPopupOpen: React.Dispatch<React.SetStateAction<boolean>>;
     setSelectedSeat: React.Dispatch<React.SetStateAction<string | null>>;
+    selectedSeat: string | null;
 }): JSX.Element {
     return (
         <Seaticon
@@ -84,7 +93,7 @@ function Seat({
                 setSelectedSeat(id);
                 setIsPopupOpen(true);
             }}
-            className={`${booked ? 'text-gray-500 pointer-events-none' : 'text-green-500'} w-8 h-10 rounded`}
+            className={`${selectedSeat === id ? 'text-sky-500' : ''} ${booked ? 'text-gray-400 pointer-events-none' : 'text-green-600'} hover:text-green-500 hover:shadow-green-500 w-8 h-10 rounded cursor-pointer`}
         ></Seaticon>
     );
 }
