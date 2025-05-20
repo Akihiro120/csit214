@@ -74,24 +74,26 @@ function RouteComponent() {
                     ))}
                 </div>
             </div>
-            <ActionButton
-                hoverOverlayTheme="light"
-                className="self-end w-[120px] h-12"
-                onClick={async () => {
-                    const data: FlightUpgradeOptions = {
-                        meal: selectedFood,
-                        entertainment: selectedEntertainment,
-                        baggage: selectedBaggage,
-                        carry_on: selectedCarryOn,
-                    };
-                    const response = await apiClient.post('/api/flights', data);
-                    if (response.status === 200) {
-                        navigate({ to: '/booking/payment' });
-                    }
-                }}
-            >
-                continue
-            </ActionButton>
+            <div className="fixed bottom-12 right-12 z-1">
+                <ActionButton
+                    hoverOverlayTheme="light"
+                    className="w-[120px] h-12"
+                    onClick={async () => {
+                        const data: FlightUpgradeOptions = {
+                            meal: selectedFood,
+                            entertainment: selectedEntertainment,
+                            baggage: selectedBaggage,
+                            carry_on: selectedCarryOn,
+                        };
+                        const response = await apiClient.post('/api/flights', data);
+                        if (response.status === 200) {
+                            navigate({ to: '/booking/payment' });
+                        }
+                    }}
+                >
+                    Continue
+                </ActionButton>
+            </div>
         </div>
     );
 }

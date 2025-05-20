@@ -146,7 +146,7 @@ function Seats() {
                 {passengers.length > 0 && (
                     <ActionButton
                         hoverOverlayTheme="light"
-                        className="px-6"
+                        className="px-6 w-[120px] h-12"
                         onClick={() => {
                             submitRequest(passengers);
                         }}
