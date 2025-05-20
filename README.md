@@ -26,3 +26,5 @@ docker-compose down -v
 docker-compose build seeder
 docker-compose up
 ```
+
+.env fl
