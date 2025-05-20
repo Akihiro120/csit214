@@ -60,7 +60,7 @@ router.post('/api/booking/seats', async (req, res) => {
         
         if (!session.currentBooking.num_passengers  == data.passengers.length) {
             console.log('not enough passengers in post to match numPassengers selected in homepage');
-            return res.status(500).json({ message: `you said there were ${session.currentBooking.num_passengers} and there are only ${data.num_passengers.length()} passenger objects in your post, dumbass`});
+            return res.status(500).json({ message: `you said there were ${session.currentBooking.num_passengers} and there are only ${data.passengers.length} passenger objects in your post, dumbass`});
         }
 
 
