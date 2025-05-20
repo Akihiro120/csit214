@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { GlobalDatabaseService } = require("../../services/database_service");
 
-router.post("/api/booking/payment ", async (req, res) => {
+router.post("/api/booking/payment", async (req, res) => {
     try {
         const session = req.session;
         const data = req.body;
@@ -55,6 +55,10 @@ router.post("/api/booking/payment ", async (req, res) => {
         // flgiht service name
         // services: food, plane name, entertainment
         // flight time
+        const paymentData = req.body;
+        const sessionData = req.session.currentBooking;
+        console.log(paymentData);
+        console.log(sessionData);
     } catch (err) {
         console.error("An unexpected error occurred on seats post:", err);
         return res.status(500).json({

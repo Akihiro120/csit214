@@ -4,6 +4,7 @@ import { ActionButton } from '../../components/ActionButton';
 import Aexpress from '../../resource/Aexpress.png';
 import Mastercard from '../../resource/Mastercard.svg?react';
 import Visa from '../../resource/Visa.svg?react';
+import apiClient from '../../utils/axios';
 
 export const Route = createFileRoute('/booking/payment')({
     component: RouteComponent,
@@ -11,9 +12,14 @@ export const Route = createFileRoute('/booking/payment')({
 
 function RouteComponent() {
     const [selectedCard, setSelectedCard] = useState<string>('visa');
+    const [nameCard, setNameCard] = useState<string>('');
+    const [numberCard, setNumberCard] = useState<string>('');
+    const [expiryCard, setExpirtyCard] = useState<string>('');
+    const [ccvCard, setCCVCard] = useState<string>('');
+
     return (
         <div className="flex justify-center items-center w-[60%] min-w-[480px] shadow-lg/25 justify-self-center self-center rounded-lg">
-            <form className="flex flex-col gap-6 p-8">
+            <div className="flex flex-col gap-6 p-8">
                 <div className="flex gap-2 justify-evenly">
                     <PaymentCard
                         id="visa"
@@ -42,6 +48,8 @@ function RouteComponent() {
                     <input
                         type="text"
                         className="w-full p-3 rounded-lg border border-[#808080] focus:border-(--accent) focus:bg-(--pale-accent)"
+                        value={nameCard}
+                        onChange={(e) => setNameCard(e.target.value)}
                     />
                 </div>
                 <div>
@@ -49,6 +57,8 @@ function RouteComponent() {
                     <input
                         type="text"
                         className="w-full p-3 rounded-lg border border-[#808080] focus:border-(--accent) focus:bg-(--pale-accent)"
+                        value={numberCard}
+                        onChange={(e) => setNumberCard(e.target.value)}
                     />
                 </div>
                 <div>
@@ -58,6 +68,8 @@ function RouteComponent() {
                             <input
                                 type="text"
                                 className="w-full p-3 rounded-l-lg border border-[#808080] focus:border-(--accent) focus:bg-(--pale-accent)"
+                                value={expiryCard}
+                                onChange={(e) => setExpirtyCard(e.target.value)}
                             />
                         </div>
                         <div className="flex flex-col">
@@ -65,6 +77,8 @@ function RouteComponent() {
                             <input
                                 type="text"
                                 className="w-full p-3 rounded-r-lg border-r border-y border-[#808080] focus:border-(--accent) focus:bg-(--pale-accent)"
+                                value={ccvCard}
+                                onChange={(e) => setCCVCard(e.target.value)}
                             />
                         </div>
                     </div>
@@ -72,14 +86,22 @@ function RouteComponent() {
                 <ActionButton
                     hoverOverlayTheme="light"
                     className="self-end px-10 py-4"
-                    onClick={(e) => {
+                    onClick={async (e) => {
                         e.preventDefault();
-                        alert('Payment will be implemented soon!');
+                        const response = await apiClient.post('/api/booking/payment', {
+                            selected_card: selectedCard,
+                            name_card: nameCard,
+                            number_card: numberCard,
+                            expiry_card: expiryCard,
+                            ccv_card: ccvCard
+                        })
+
+                        console.log("Payment Response Status: ", response.status);
                     }}
                 >
                     Confirm
                 </ActionButton>
-            </form>
+            </div>
         </div>
     );
 }
