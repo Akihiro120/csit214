@@ -12,7 +12,7 @@ export function Ticket({ className, sessionData }: Props): JSX.Element {
     const passenger = sessionData.passengers ? sessionData.passengers[0] : null;
     return (
         <div
-            className={`${className} flex flex-col drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)] w-[300px]`}
+            className={`${className} flex flex-col drop-shadow-[0_2px_6px_rgba(0,0,0,0.4)] w-[300px]`}
         >
             {/* passenger name card */}
             <div className="flex justify-center items-center relative h-[100px] overflow-hidden rounded-t-2xl">
@@ -27,30 +27,38 @@ export function Ticket({ className, sessionData }: Props): JSX.Element {
             {/* actual flight details */}
             <div className="flex flex-col items-center bg-white gap-6">
                 <SearchResult className="w-full" lite flight={sessionData as FlightSearchResult} />
-                <div className="flex justify-center gap-4 flex-wrap">
-                    {passenger?.seat ? (
-                        <TextField label="Seat" value={passenger.seat} className="w-[45%]" />
-                    ) : null}
-                    {passenger?.class ? (
-                        <TextField label="Class" value={passenger.class} className="w-[45%]" />
-                    ) : null}
-                    {passenger?.options && passenger.options.meal ? (
-                        <TextField label="Meal" value={passenger.options.meal} className="flex-1" />
-                    ) : null}
-                    {passenger?.options && passenger.options.carry_on ? (
-                        <TextField
-                            label="Entertainment"
-                            value={passenger && passenger.options.entertainment}
-                            className="flex-1"
-                        />
-                    ) : null}
-                    {passenger?.options && passenger.options.baggage ? (
-                        <TextField
-                            label="Baggage"
-                            value={passenger.options.baggage}
-                            className="flex-1"
-                        />
-                    ) : null}
+                <div className="flex flex-col w-full">
+                    <div className="flex justify-around w-full gap-4">
+                        {passenger?.seat ? (
+                            <TextField label="Seat" value={passenger.seat} className="w-[45%]" />
+                        ) : null}
+                        {passenger?.class ? (
+                            <TextField label="Class" value={passenger.class} className="w-[45%]" />
+                        ) : null}
+                    </div>
+                    <div className="flex justify-around w-full gap-2">
+                        {passenger?.options && passenger.options.meal ? (
+                            <TextField
+                                label="Meal"
+                                value={passenger.options.meal}
+                                className="flex-1"
+                            />
+                        ) : null}
+                        {passenger?.options && passenger.options.carry_on ? (
+                            <TextField
+                                label="Entertainment"
+                                value={passenger && passenger.options.entertainment}
+                                className="flex-1"
+                            />
+                        ) : null}
+                        {passenger?.options && passenger.options.baggage ? (
+                            <TextField
+                                label="Baggage"
+                                value={passenger.options.baggage}
+                                className="flex-1"
+                            />
+                        ) : null}
+                    </div>
                 </div>
             </div>
             {/* bottom corners cut */}
