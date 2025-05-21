@@ -107,15 +107,12 @@ function RouteComponent() {
                     className="w-[120px] h-12"
                     onClick={async () => {
                         const options: FlightUpgradeOptions = {
-                            meal: selectedFood,
+                            meal: selectedMeal,
                             entertainment: selectedEntertainment,
                             baggage: selectedBaggage,
                             carry_on: selectedCarryOn,
                         };
-                        const response = await apiClient.post('/api/flights', data);
-                        if (response.status === 200) {
-                            navigate({ to: '/booking/payment' });
-                        }
+                        submitRequest(options);
                     }}
                 >
                     Continue
