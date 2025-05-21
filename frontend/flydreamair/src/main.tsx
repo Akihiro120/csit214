@@ -9,8 +9,7 @@ import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 import { routeTree } from './routeTree.gen';
 import { AuthProvider } from './utils/AuthProvider'; // Import the AuthProvider
 
-const basepath =
-    process.env.NODE_ENV === 'development' ? '/' : 'https://akihiro120.github.io/csit214/';
+const basepath = '/'; // Set the base path for your app
 
 const queryClient = new QueryClient();
 
