@@ -4,6 +4,7 @@ import { ActionButton } from '../../components/ActionButton';
 import Aexpress from '../../resource/Aexpress.png';
 import Mastercard from '../../resource/Mastercard.svg?react';
 import Visa from '../../resource/Visa.svg?react';
+import apiClient from '../../utils/axios';
 
 export const Route = createFileRoute('/booking/payment')({
     component: RouteComponent,
@@ -33,16 +34,16 @@ function isCreditCard(value: string): boolean {
 
 function RouteComponent() {
     const [selectedCard, setSelectedCard] = useState<string>('visa');
-    const [cardNumber, setCardNumber] = useState<string>('');
-    const [nameOnCard, setNameOnCard] = useState<string>('');
-    const [expiry, setExpiry] = useState<string>('');
-    const [securityCode, setSecurityCode] = useState<string>('');
-    
-    const isCardNumberValid = cardNumber.length === 0 || isCreditCard(cardNumber.replace(/\s/g, ''));
-    
+    const [nameCard, setNameCard] = useState<string>('');
+    const [numberCard, setNumberCard] = useState<string>('');
+    const [expiryCard, setExpirtyCard] = useState<string>('');
+    const [ccvCard, setCCVCard] = useState<string>('');
+
+    const isCardNumberValid = numberCard.length === 0 || isCreditCard(numberCard.replace(/\s/g, ''));
+
     return (
         <div className="flex justify-center items-center w-[60%] min-w-[480px] shadow-lg/25 justify-self-center self-center rounded-lg">
-            <form className="flex flex-col gap-6 p-8">
+            <div className="flex flex-col gap-6 p-8">
                 <div className="flex gap-2 justify-evenly">
                     <PaymentCard
                         id="visa"
@@ -70,9 +71,9 @@ function RouteComponent() {
                     <div className="ml-4">Name on card</div>
                     <input
                         type="text"
-                        value={nameOnCard}
-                        onChange={(e) => setNameOnCard(e.target.value)}
                         className="w-full p-3 rounded-lg border border-[#808080] focus:border-(--accent) focus:bg-(--pale-accent)"
+                        value={nameCard}
+                        onChange={(e) => setNameCard(e.target.value)}
                     />
                 </div>
                 <div>
@@ -80,11 +81,10 @@ function RouteComponent() {
                     <input
                         type="text"
                         placeholder="Enter card number"
-                        value={cardNumber}
-                        onChange={(e) => setCardNumber(e.target.value)}
-                        className={`w-full p-3 rounded-lg border ${
-                            !isCardNumberValid ? 'border-red-500' : 'border-[#808080]'
-                        } focus:border-(--accent) focus:bg-(--pale-accent)`}
+                        value={numberCard}
+                        onChange={(e) => setNumberCard(e.target.value)}
+                        className={`w-full p-3 rounded-lg border ${!isCardNumberValid ? 'border-red-500' : 'border-[#808080]'
+                            } focus:border-(--accent) focus:bg-(--pale-accent)`}
                     />
                 </div>
                 <div>
@@ -93,18 +93,18 @@ function RouteComponent() {
                             <div className="ml-4">Expiry</div>
                             <input
                                 type="text"
-                                value={expiry}
-                                onChange={(e) => setExpiry(e.target.value)}
                                 className="w-full p-3 rounded-l-lg border border-[#808080] focus:border-(--accent) focus:bg-(--pale-accent)"
+                                value={expiryCard}
+                                onChange={(e) => setExpirtyCard(e.target.value)}
                             />
                         </div>
                         <div className="flex flex-col">
                             <div className="mr-4 self-end">Security Code</div>
                             <input
                                 type="text"
-                                value={securityCode}
-                                onChange={(e) => setSecurityCode(e.target.value)}
                                 className="w-full p-3 rounded-r-lg border-r border-y border-[#808080] focus:border-(--accent) focus:bg-(--pale-accent)"
+                                value={ccvCard}
+                                onChange={(e) => setCCVCard(e.target.value)}
                             />
                         </div>
                     </div>
@@ -112,14 +112,24 @@ function RouteComponent() {
                 <ActionButton
                     hoverOverlayTheme="light"
                     className="self-end px-10 py-4"
-                    onClick={(e) => {
+                    onClick={async (e) => {
                         e.preventDefault();
-                        alert('Payment will be implemented soon!');
+                        const response = await apiClient.post('/api/booking/payment', {
+                            paymentDetails: {
+                                selected_card: selectedCard,
+                                name_card: nameCard,
+                                number_card: numberCard,
+                                expiry_card: expiryCard,
+                                ccv_card: ccvCard
+                            }
+                        })
+
+                        console.log("Payment Response Status: ", response.status);
                     }}
                 >
                     Confirm
                 </ActionButton>
-            </form>
+            </div>
         </div>
     );
 }

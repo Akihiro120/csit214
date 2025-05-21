@@ -170,7 +170,7 @@ try: # Wrap the rest of the script in a try block for proper cleanup
         fixed_flight_nums_for_slots = details['flight_numbers_by_slot']
         flights_per_day = len(fixed_flight_nums_for_slots)
 
-        for day_offset in range(90):  # Generate flights for Three months
+        for day_offset in range(356):  # Generate flights for A whole year
             flight_date = start_date + timedelta(days=day_offset)
 
             # Generate distinct departure times for the day
