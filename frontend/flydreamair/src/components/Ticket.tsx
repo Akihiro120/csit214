@@ -34,20 +34,20 @@ export function Ticket({ className, sessionData }: Props): JSX.Element {
                     {passenger?.class ? (
                         <TextField label="Class" value={passenger.class} className="w-[45%]" />
                     ) : null}
-                    {passenger?.options && passenger.options.meal ? (
-                        <TextField label="Meal" value={passenger.options.meal} className="flex-1" />
+                    {passenger?.extras && passenger.extras.meal ? (
+                        <TextField label="Meal" value={passenger.extras.meal} className="flex-1" />
                     ) : null}
-                    {passenger?.options && passenger.options.carry_on ? (
+                    {passenger?.extras && passenger.extras.carry_on ? (
                         <TextField
                             label="Entertainment"
-                            value={passenger && passenger.options.entertainment}
+                            value={passenger && passenger.extras.entertainment}
                             className="flex-1"
                         />
                     ) : null}
-                    {passenger?.options && passenger.options.baggage ? (
+                    {passenger?.extras && passenger.extras.baggage ? (
                         <TextField
                             label="Baggage"
-                            value={passenger.options.baggage}
+                            value={passenger.extras.baggage}
                             className="flex-1"
                         />
                     ) : null}
