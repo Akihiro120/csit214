@@ -1,6 +1,6 @@
-import { ActionButton } from './ActionButton';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Passenger } from '../type';
+import { ActionButton } from './ActionButton';
 
 interface Props {
     className?: string;
@@ -8,7 +8,6 @@ interface Props {
     setVisability: (isVisible: boolean) => void;
     setPassengers?: React.Dispatch<React.SetStateAction<Passenger[]>>;
 }
-
 
 function validatePhoneNumber(phone: string): boolean {
     if (!phone) return true;
@@ -24,26 +23,46 @@ function validateEmail(email: string): boolean {
 
 function canSubmit(name: string, email: string, phone: string): boolean {
     return (
-        validateEmail(email) &&
-        validatePhoneNumber(phone) &&
-        name.length > 0 &&
-        email.length > 0
+        validateEmail(email) && validatePhoneNumber(phone) && name.length > 0 && email.length > 0
     );
 }
 
-export function PassengerDetailPopup({ className, setVisability, setPassengers, seatNumber  }: Props) {
+export function PassengerDetailPopup({
+    className,
+    setVisability,
+    setPassengers,
+    seatNumber,
+}: Props) {
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                setVisability(false);
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    });
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
-    const [phone, setPhone] = useState('');    
-    
+    const [phone, setPhone] = useState('');
+
     return (
-        <div className={`bg-(--pale-accent) p-4 rounded-md shadow-lg${className}`}>
-            <div className="flex gap-2 justify-around">
-                <h2 className="text-2x1l p-1">
-                Passenger Details for seat
-                </h2>
-                <div className='text-2xl text-bold border-1 p-1 rounded-sm bg-slate-50 text-zinc-800 '>{seatNumber}</div>
+        <div
+            onClick={(e) => {
+                e.stopPropagation();
+            }}
+            className={`bg-(--pale-accent) p-4 rounded-md shadow-lg${className} h-auto`}
+        >
+            <div className="flex gap-2 items-center justify-between">
+                <h2 className="text-lg p-1 font-extralight">Seat number:</h2>
+                <div className="text-2xl text-bold p-1 rounded-sm text-(--accent) font-bold">
+                    {seatNumber}
+                </div>
             </div>
+            <div className="w-full h-[1px] bg-(--accent) my-4"></div>
+            <div className="text-lg text-center mb-2">Enter passenger details</div>
             <div className="grid grid-cols-1 gap-2">
                 <label>
                     Name:
@@ -54,13 +73,17 @@ export function PassengerDetailPopup({ className, setVisability, setPassengers, 
                         className="border-2 border-(--accent) bg-slate-50 rounded-md p-2 w-full"
                     />
                 </label>
-                                <label>
+                <label>
                     Email:
                     <input
                         type="text"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className={validateEmail(email) ? 'border-2 border-(--accent) bg-slate-50  rounded-md p-2 w-full' : 'border-2 bg-slate-50 border-red-500 rounded-md p-2 w-full'}
+                        className={
+                            validateEmail(email)
+                                ? 'border-2 border-(--accent) bg-slate-50  rounded-md p-2 w-full'
+                                : 'border-2 bg-slate-50 border-red-500 rounded-md p-2 w-full'
+                        }
                     />
                 </label>
                 <label>
@@ -69,12 +92,19 @@ export function PassengerDetailPopup({ className, setVisability, setPassengers, 
                         type="text"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
-                        className={validatePhoneNumber(phone) ? "border-2 border-(--accent) bg-slate-50  rounded-md p-2 w-full" : "border-2 bg-slate-50 border-red-500 rounded-md p-2 w-full"}
+                        className={
+                            validatePhoneNumber(phone)
+                                ? 'border-2 border-(--accent) bg-slate-50  rounded-md p-2 w-full'
+                                : 'border-2 bg-slate-50 border-red-500 rounded-md p-2 w-full'
+                        }
                     />
-                    
                 </label>
                 <ActionButton
-                    className={ canSubmit(name, email, phone) ? "bg-(--accent) text-white hover:bg-(--primary) rounded-md p-2 mt-4" : " bg-zinc-400 text-white hover:bg-zinc-400 rounded-md p-2 mt-4"}
+                    className={
+                        canSubmit(name, email, phone)
+                            ? 'bg-(--accent) text-white hover:bg-(--primary) rounded-md p-2 mt-4'
+                            : ' bg-zinc-400 text-white hover:bg-zinc-400 rounded-md p-2 mt-4'
+                    }
                     onClick={(e) => {
                         e.preventDefault();
                         if (canSubmit(name, email, phone)) {
@@ -100,8 +130,6 @@ export function PassengerDetailPopup({ className, setVisability, setPassengers, 
                 >
                     Save
                 </ActionButton>
-
-
             </div>
         </div>
     );

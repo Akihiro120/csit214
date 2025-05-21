@@ -76,23 +76,12 @@ function FlightLocation({
 }
 
 // helper function to calculate the duration between two times
-function calculateDuration(deptTime: string, arrTime: string) {
-    // Helper function to parse time string (HH:MMam/pm) into minutes since midnight
-    const parseTime = (timeStr: string) => {
-        const lowerTime = timeStr.toLowerCase();
-        const period = lowerTime.includes('am') ? 'am' : 'pm';
-        const [hoursStr, minutesStr] = lowerTime.replace(period, '').split(':');
-
-        let hours = parseInt(hoursStr, 10);
+function calculateDuration(deptTime: string, arrTime: string): string {
+    // Helper function to parse time string (H:MM or HH:MM, 0:00 to 24:00) into minutes since midnight
+    const parseTime = (timeStr: string): number => {
+        const [hoursStr, minutesStr] = timeStr.split(':');
+        const hours = parseInt(hoursStr, 10);
         const minutes = parseInt(minutesStr, 10);
-
-        // Handle 12 AM/PM conversion
-        if (period === 'pm' && hours !== 12) {
-            hours += 12;
-        } else if (period === 'am' && hours === 12) {
-            // Midnight case
-            hours = 0;
-        }
 
         return hours * 60 + minutes; // Total minutes since midnight
     };
@@ -100,12 +89,17 @@ function calculateDuration(deptTime: string, arrTime: string) {
     const startMinutes = parseTime(deptTime);
     let endMinutes = parseTime(arrTime);
 
-    // Handle overnight case
+    // Handle overnight case (or flights that cross midnight)
     if (endMinutes < startMinutes) {
         endMinutes += 24 * 60; // Add minutes in a day
     }
 
     const durationMinutes = endMinutes - startMinutes;
+
+    // Handle zero duration case explicitly
+    if (durationMinutes === 0) {
+        return '0m';
+    }
 
     // Calculate hours and remaining minutes for the output format
     const hours = Math.floor(durationMinutes / 60);
@@ -116,23 +110,14 @@ function calculateDuration(deptTime: string, arrTime: string) {
     if (hours > 0) {
         output += `${hours}h`;
     }
-    // Always include minutes if they exist, or if hours is zero
-    if (minutes > 0 || hours === 0) {
-        // Special case: If duration is 0, make sure to output "0m"
-        if (hours === 0 && minutes === 0 && deptTime === arrTime) {
-            output += '0m';
-        } else if (minutes > 0) {
-            output += `${minutes}m`;
-        } else if (hours > 0 && minutes === 0) {
-            // Ensure "Xh0m" format when minutes are zero but hours exist
-            output += '0m';
-        }
+    if (minutes > 0) {
+        output += `${minutes}m`;
     }
 
-    // Handle the edge case where the calculation results in empty string (should be 0m)
-    if (output === '' && durationMinutes === 0) {
-        return '0m';
-    }
+    // If duration is non-zero but output is empty (e.g. duration was < 1 minute, resulting in 0h 0m),
+    // it should still show 0m if that's the policy, but current logic implies positive minutes or hours.
+    // Given the problem context, if durationMinutes > 0, either hours or minutes (or both) must be > 0.
+    // So, output will not be empty if durationMinutes > 0.
 
     return output;
 }
