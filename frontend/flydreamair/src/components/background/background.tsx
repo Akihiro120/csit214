@@ -22,15 +22,14 @@ interface IBackgroundRendererAssets {
 }
 
 function CreateBackgroundAssets() {
-    let assets: IBackgroundRendererAssets;
-
-    assets = {
+    const assets: IBackgroundRendererAssets = {
         clock: new THREE.Clock(),
         scene: new THREE.Scene(),
         screenScene: new THREE.Scene(),
         shadowScene: new THREE.Scene(),
         camera: new Camera(),
     };
+
     assets.skybox = new Skybox(assets.scene);
     assets.plane = new Plane(assets.scene, Shaders.ShadedShader);
     assets.shadowPlane = new Plane(assets.shadowScene, Shaders.DepthShader);
@@ -143,7 +142,9 @@ export function PlaneBackground() {
             backgroundAssets.current?.skybox?.Dispose();
             rendererRef.current?.dispose();
 
-            container.removeChild(rendererRef.current?.domElement!);
+            if (rendererRef.current?.domElement) {
+                container.removeChild(rendererRef.current.domElement);
+            }
         };
     }, []);
 

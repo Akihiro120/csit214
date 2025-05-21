@@ -79,14 +79,14 @@ class Plane {
         console.log('Sucessfully Disposed Assets');
     }
 
-    animate(time: Number) {
+    animate(time: number) {
         // Set the Time Variable
         Shaders.ShadedShader.uniforms.time.value = time;
 
         // Calculate the Pitch and Roll
-        let pitchAmplitude: Number = 0.1; // maximum pitch oscillation in radians
-        let rollAmplitude: Number = 0.1; // maximum roll oscillation in radians
-        let speed: Number = 3;
+        const pitchAmplitude: number = 0.1; // maximum pitch oscillation in radians
+        const rollAmplitude: number = 0.1; // maximum roll oscillation in radians
+        const speed: number = 3;
 
         this.planeObject.rotation.x =
             Number(pitchAmplitude) * Math.sin(Number(speed) * Number(time));

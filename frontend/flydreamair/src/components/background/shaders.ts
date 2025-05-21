@@ -1,10 +1,11 @@
 import * as THREE from 'three';
 
-export type ShaderUniforms = Record<string, { value: any }>;
+export type ShaderUniformValue = number | boolean | THREE.Vector2 | THREE.Vector3 | THREE.Vector4 | THREE.Matrix3 | THREE.Matrix4 | THREE.Texture;
+export type ShaderUniforms = Record<string, { value: ShaderUniformValue }>;
 export interface Shader {
     material: THREE.ShaderMaterial;
     uniforms: {
-        [key: string]: { value: any };
+        [key: string]: { value: ShaderUniformValue };
     };
 }
 
