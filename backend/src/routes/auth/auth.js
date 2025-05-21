@@ -12,6 +12,11 @@ router.get("/api/oauth2callback", async (req, res) => {
         const { tokens } = await googleService.oAuth2Client.getToken(code);
         googleService.oAuth2Client.setCredentials(tokens);
 
+        googleService.gmail = google.gmail({
+            version: "v1",
+            auth: googleService.oAuth2Client,
+        });
+
         fs.writeFileSync(googleService.tokenPath, JSON.stringify(tokens));
         res.send("Authentication Successful, you can now send emails", tokens);
     } catch (err) {
