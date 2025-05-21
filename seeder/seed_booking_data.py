@@ -77,9 +77,9 @@ try:
 
     # --- Customer Reuse Logic Setup ---
     email_conflict_count = 0 # Initialize conflict counter
-    INITIAL_CONFLICT_THRESHOLD = 20 # Start considering reuse after this many conflicts
-    REUSE_PROBABILITY = 0.80 # Always have an 80% chance to reuse after threshold is met
-    REUSE_SAMPLE_SIZE = 100 # Fetch this many candidates from DB when reusing
+    INITIAL_CONFLICT_THRESHOLD = 30 # Start considering reuse after this many conflicts
+    REUSE_PROBABILITY = 0.75 # Always have an 80% chance to reuse after threshold is met
+    REUSE_SAMPLE_SIZE = 400 # Fetch this many candidates from DB when reusing
     # --------------------------
 
     flight_count = 0
