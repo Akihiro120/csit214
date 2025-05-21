@@ -12,7 +12,7 @@ export function Ticket({ className, sessionData }: Props): JSX.Element {
     const passenger = sessionData.passengers ? sessionData.passengers[0] : null;
     return (
         <div
-            className={`${className} flex flex-col drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)] w-[300px]`}
+            className={`${className} flex flex-col drop-shadow-[0_2px_6px_rgba(0,0,0,0.4)] w-[300px]`}
         >
             {/* passenger name card */}
             <div className="flex justify-center items-center relative h-[100px] overflow-hidden rounded-t-2xl">
@@ -27,6 +27,7 @@ export function Ticket({ className, sessionData }: Props): JSX.Element {
             {/* actual flight details */}
             <div className="flex flex-col items-center bg-white gap-6">
                 <SearchResult className="w-full" lite flight={sessionData as FlightSearchResult} />
+
                 <div className="flex justify-center gap-4 flex-wrap">
                     {passenger?.seat ? (
                         <TextField label="Seat" value={passenger.seat} className="w-[45%]" />
@@ -51,6 +52,7 @@ export function Ticket({ className, sessionData }: Props): JSX.Element {
                             className="flex-1"
                         />
                     ) : null}
+
                 </div>
             </div>
             {/* bottom corners cut */}
