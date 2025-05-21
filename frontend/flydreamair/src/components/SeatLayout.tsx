@@ -32,8 +32,11 @@ export function SeatLayout({ seatMap, className, setPassengers }: SeatLayoutProp
             <motion.div
                 className={`fixed inset-0 z-10 bg-black/50 flex items-center justify-center`}
                 animate={isPopupOpen ? { opacity: 1 } : { opacity: 0, display: 'none' }}
+                initial = {{ opacity: 0 }}
+                exit={{ opacity: 0, display: 'none' }}
                 transition={{ duration: 0.2 }}
-                onClick={() => {
+                onClick={(e) => {
+                    e.stopPropagation();
                     setIsPopupOpen(false);
                 }}
             >
