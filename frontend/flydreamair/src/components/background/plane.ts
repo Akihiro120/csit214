@@ -10,7 +10,7 @@ class Plane {
         this.planeObject = new THREE.Object3D();
 
         // load the model - Fuck this file format, who tf uses glb
-        resources.gltf_loader.load('src/resource/plane/plane.glb', (object) => {
+        resources.gltf_loader.load('/plane/plane.glb', (object) => {
             // Allocate the object the 3D model
             this.planeObject = object.scene;
 
@@ -23,16 +23,16 @@ class Plane {
             });
 
             // Load the assets into the shader
-            resources.texture_loader.load('src/resource/plane/plane_A.png', (texture) => {
+            resources.texture_loader.load('/plane/plane_A.png', (texture) => {
                 Shaders.ShadedShader.uniforms.albedo_texture.value = texture;
             });
-            resources.texture_loader.load('src/resource/plane/plane_N.png', (texture) => {
+            resources.texture_loader.load('/plane/plane_N.png', (texture) => {
                 Shaders.ShadedShader.uniforms.normal_texture.value = texture;
             });
-            resources.texture_loader.load('src/resource/plane/plane_AO.png', (texture) => {
+            resources.texture_loader.load('/plane/plane_AO.png', (texture) => {
                 Shaders.ShadedShader.uniforms.ao_texture.value = texture;
             });
-            resources.texture_loader.load('src/resource/noise.png', (texture) => {
+            resources.texture_loader.load('/noise.png', (texture) => {
                 Shaders.ShadedShader.uniforms.noise_map.value = texture;
             });
 
