@@ -92,6 +92,10 @@ async function HtmlMessage(session) {
                     width: 60%;
                     color: #000; 
                 }
+                .value2 { 
+                    color: #000;
+                    padding: 0
+                }
             </style>
         </head>
         <body>
@@ -151,12 +155,15 @@ async function HtmlMessage(session) {
                         <tr><td class="label">Email:</td><td class="value">${p.email}</td></tr>
                         <tr><td class="label">Phone:</td><td class="value">${p.phone}</td></tr>
                         <tr><td class="label">Seat & Class:</td><td class="value">${p.seat} - ${p.class}</td></tr>
-                        <tr><td class="label">Extras:</td>
-                            <td class="value">${
-                                p.extras && p.extras.length
-                                    ? p.extras.join(", ")
-                                    : "None"
-                            }</td>
+                        <tr>
+                            <td class="label">Extras:</td>
+                            <td class="value2">
+                                <ul class="value2">
+                                    <li>Meal: ${p.extras.meal}</li>
+                                    <li>Entertainment: ${p.extras.entertainment}</li>
+                                    <li>Baggage: ${p.extras.baggage}</li>
+                                </ul>
+                            </td>
                         </tr>
                     </table>
         `,

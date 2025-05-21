@@ -29,7 +29,7 @@ export interface Passenger {
     phone?: string;
     seat?: string;
     class?: string;
-    options?: FlightUpgradeOptions;
+    extras?: FlightUpgradeOptions;
 }
 
 export interface SessionData {
