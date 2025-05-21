@@ -5,7 +5,7 @@ const {GlobalDatabaseService} = require('../../services/database_service');
 
 
 
-router.post('/api/booking/extras ', async (req, res) => {
+router.post('/api/booking/extras', async (req, res) => {
     try {
 		const session = req.session;
 		const data = req.body;
@@ -15,47 +15,40 @@ router.post('/api/booking/extras ', async (req, res) => {
 			return res.status(400).json({ message: "No session data provided" });
 		}
 
-		if (!session) {
-			console.log("no Session Token Attached on flight booking");
+		if (!session.currentBooking) {
+			console.log("Session Token expired, failed flight booking");
 			return res.status(500).json({ message: "Session not initialized" });
 		}
-
-        if (!data.passengers || !Array.isArray(data.passengers)) {
-            console.log('No passengers in this post');
-            return res.status(400).json({ message: 'No passenger information provided' });
+        if (!data.extras) {
+            console.log("No extras data provided");
+            return res.status(400).json({ message: "No extras data provided" });
         }
 
-        if (!session.currentBooking || !session.currentBooking.passengers) {
-            console.log('No existing passengers in session');
-            return res.status(400).json({ message: 'No passenger data found in session' });
+        // Check if currentBooking exists
+        if (!req.session.currentBooking) {
+            console.log("currentBooking not found in session");
+            return res.status(500).json({ message: "Passenger data not found in session (currentBooking missing)" });
         }
 
-
-        const updatedPassengers = session.currentBooking.passengers.map((sessionPassenger, index) => {
-            const matchingPassenger = data.passengers.find(p => 
-                p.email === sessionPassenger.email && p.name === sessionPassenger.name
-            ) || data.passengers[index];
-            
-            if (!matchingPassenger) {
-                return sessionPassenger; // Keep original if no match found
-            }
-
-            // Append options to the existing passenger data
-            return {
-                ...sessionPassenger,
-                options: {
-                    meal: matchingPassenger.options?.meal || 'standard',
-                    baggage: matchingPassenger.options?.baggage || 'none',
-                    carry_on: matchingPassenger.options?.carry_on || 'none',
-                    entertainment: matchingPassenger.options?.entertainment || 'basic'
-                }
-            };
-        });
-
-        req.session.currentBooking = {
-            ...req.session.currentBooking,
-            passengers: updatedPassengers,
+        // Check if passengers array exists and is an array
+        if (!req.session.currentBooking.passengers || !Array.isArray(req.session.currentBooking.passengers)) {
+            console.log("passengers array not found or not an array in currentBooking");
+            return res.status(500).json({ message: "Invalid passenger data structure in session (passengers array missing or not an array)" });
         }
+
+        // Check if the passengers array is empty
+        if (req.session.currentBooking.passengers.length === 0) {
+            console.log("passengers array is empty in currentBooking");
+            return res.status(500).json({ message: "No passengers found in session (passengers array is empty)" });
+        }
+
+        // Check if the first passenger object exists
+        if (!req.session.currentBooking.passengers[0]) {
+            console.log("First passenger object is undefined in passengers array");
+            return res.status(500).json({ message: "Passenger detail missing in session (first passenger undefined)" });
+        }
+
+        req.session.currentBooking.passengers[0].extras = data.extras;
 
 		req.session.save((err) => {
 			if (err) {

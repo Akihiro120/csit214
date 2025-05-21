@@ -6,6 +6,7 @@ import netflixImage from '../../resource/netflix.png';
 import steakImage from '../../resource/steak.png';
 import { FlightUpgradeOptions } from '../../type';
 import apiClient from '../../utils/axios';
+import { AxiosError } from 'axios';
 
 export const Route = createFileRoute('/booking/extras')({
     component: RouteComponent,
@@ -13,10 +14,36 @@ export const Route = createFileRoute('/booking/extras')({
 
 function RouteComponent() {
     const navigate = useNavigate();
-    const [selectedFood, setSelectedFood] = useState<string>('Steak 1');
+    const [selectedMeal, setSelectedMeal] = useState<string>('Steak 1');
     const [selectedEntertainment, setSelectedEntertaiment] = useState<string>('Netflix');
     const [selectedBaggage, setSelectedBaggage] = useState<string>('10kg');
     const [selectedCarryOn, setSelectedCarryOn] = useState<string>('7kg');
+
+
+    const submitRequest = async (extras: FlightUpgradeOptions) => {
+        try {
+            const response = await apiClient.post('/api/booking/extras', {
+                extras,
+            });
+            console.log('POST /api/booking/extras response:', response.data);
+            if (response.data && response.status === 200) {
+                console.log('Session data updated successfully:', response.data);
+                navigate({ to: '/booking/payment' }); // Navigate to the summary page
+            } else {
+                console.error('No session or passenger data available');
+                alert('Unable to add extras: session data is missing');
+            }
+        } catch (error) {
+            console.error('Error saving session data via POST:', error);
+            let errorMessage = 'An error occurred while saving search details.';
+            if (error instanceof AxiosError && error.response?.data?.error) {
+                errorMessage = `Error: ${error.response.data.error}`;
+            } else if (error instanceof Error) {
+                errorMessage = `Error: ${error.message}`;
+            }
+            console.log(errorMessage);
+        }
+    }
 
     return (
         <div className="flex flex-col gap-16">
@@ -28,15 +55,15 @@ function RouteComponent() {
                         <ExtraCard
                             src={steakImage}
                             text={text}
-                            selectedCard={selectedFood}
-                            setSelectedCard={setSelectedFood}
+                            selectedCard={selectedMeal}
+                            setSelectedCard={setSelectedMeal}
                         />
                     ))}
                 </div>
             </div>
             {/* column 2 */}
             <div className="flex flex-col gap-4">
-                <div className="text-3xl">Food</div>
+                <div className="text-3xl">Entertainment</div>
                 <div className="flex gap-4 ml-10">
                     {['Netflix', 'Netflix +', 'Netflix ++'].map((text) => (
                         <ExtraCard
@@ -79,7 +106,7 @@ function RouteComponent() {
                     hoverOverlayTheme="light"
                     className="w-[120px] h-12"
                     onClick={async () => {
-                        const data: FlightUpgradeOptions = {
+                        const options: FlightUpgradeOptions = {
                             meal: selectedFood,
                             entertainment: selectedEntertainment,
                             baggage: selectedBaggage,
@@ -97,3 +124,4 @@ function RouteComponent() {
         </div>
     );
 }
+
