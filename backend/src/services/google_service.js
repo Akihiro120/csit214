@@ -17,6 +17,10 @@ class GoogleService {
             const tokens = JSON.parse(fs.readFileSync(this.tokenPath, "utf8"));
             this.oAuth2Client.setCredentials(tokens);
             console.log("🔑 Loaded saved OAuth tokens: ", tokens);
+            this.gmail = google.gmail({
+                version: "v1",
+                auth: this.oAuth2Client,
+            });
         } else {
             console.log(
                 "No valid OAuth Token Available, go authorize yourself at http://localhost/api/auth",
