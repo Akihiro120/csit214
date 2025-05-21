@@ -115,11 +115,13 @@ function RouteComponent() {
                     onClick={async (e) => {
                         e.preventDefault();
                         const response = await apiClient.post('/api/booking/payment', {
-                            selected_card: selectedCard,
-                            name_card: nameCard,
-                            number_card: numberCard,
-                            expiry_card: expiryCard,
-                            ccv_card: ccvCard
+                            paymentDetails: {
+                                selected_card: selectedCard,
+                                name_card: nameCard,
+                                number_card: numberCard,
+                                expiry_card: expiryCard,
+                                ccv_card: ccvCard
+                            }
                         })
 
                         console.log("Payment Response Status: ", response.status);
