@@ -9,7 +9,9 @@ export default defineConfig({
 	plugins: [svgr(), tailwindcss(), TanStackRouterVite({ target: "react", autoCodeSplitting: true }), react()],
 	base: "/",
 	server: {
-		// Add this server configuration block
 		host: true, // This makes Vite listen on all public IPs, including 127.0.0.1
+	},
+	build: {
+		target: "esnext",
 	},
 });
