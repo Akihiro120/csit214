@@ -1,3 +1,4 @@
+backend/src/services/token.json 
 venv/
 .DS_Store
 backend/node_modules/
@@ -32,3 +33,4 @@ node_modules/vary/LICENSE
 node_modules/vary/package.json
 node_modules/vary/README.md
 package-lock.json
+.envexample
