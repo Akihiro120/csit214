@@ -1,0 +1,11 @@
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=
+POSTGRES_DB=flight_app
+POSTGRES_HOST=postgres # Service name in Docker Compose
+POSTGRES_PORT=5432
+REDIS_HOST=redis # Service name in Docker Compose
+REDIS_PORT=6379
+SESSION_SECRET=
+SESSION_MAX_AGE= 3600000 # 20 minutes
+GOOGLE_CLIENT_ID=   # for emails
+GOOGLE_CLIENT_SECRET=   # for emails
