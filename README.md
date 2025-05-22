@@ -1,6 +1,6 @@
 # CSIT214 Project
 ---
-
+[![Build and Deploy](https://github.com/Akihiro120/csit214/actions/workflows/deploy.yml/badge.svg)](https://github.com/Akihiro120/csit214/actions/workflows/deploy.yml)
 Welcome!
 
 To run this project, a few (less) pieces are required:
