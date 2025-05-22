@@ -1,10 +1,11 @@
 import * as THREE from 'three';
 
-export type ShaderUniforms = Record<string, { value: any }>;
+export type ShaderUniformValue = number | boolean | THREE.Vector2 | THREE.Vector3 | THREE.Vector4 | THREE.Matrix3 | THREE.Matrix4 | THREE.Texture;
+export type ShaderUniforms = Record<string, { value: ShaderUniformValue }>;
 export interface Shader {
     material: THREE.ShaderMaterial;
     uniforms: {
-        [key: string]: { value: any };
+        [key: string]: { value: ShaderUniformValue };
     };
 }
 
@@ -29,8 +30,8 @@ async function loadShaders(vertFile: string, fragFile: string, uniforms = {}) {
 // skybox
 export const Shaders = {
     SkyboxShader: await loadShaders(
-        'src/resource/shaders/skybox/skybox.vert',
-        'src/resource/shaders/skybox/skybox.frag',
+        '/shaders/skybox/skybox.vert',
+        '/shaders/skybox/skybox.frag',
         {
             light_direction: { value: new THREE.Vector3(0, 0, 0) },
             camera_position: { value: new THREE.Vector3(0, 0, 0) },
@@ -39,8 +40,8 @@ export const Shaders = {
 
     // shaded
     ShadedShader: await loadShaders(
-        'src/resource/shaders/default.vert',
-        'src/resource/shaders/default.frag',
+        '/shaders/default.vert',
+        '/shaders/default.frag',
         {
             light_direction: { value: new THREE.Vector3(0, 0, 0) },
             camera_position: { value: new THREE.Vector3(0, 0, 0) },
@@ -58,16 +59,16 @@ export const Shaders = {
 
     // cubemap
     CubemapShader: await loadShaders(
-        'src/resource/shaders/cubemap/cubemap.vert',
-        'src/resource/shaders/cubemap/cubemap.frag',
+        '/shaders/cubemap/cubemap.vert',
+        '/shaders/cubemap/cubemap.frag',
         {
             cube_map: { value: new THREE.Texture() },
         }
     ),
 
     IrradianceShader: await loadShaders(
-        'src/resource/shaders/cubemap/cubemap.vert',
-        'src/resource/shaders/pbr/irradiance.frag',
+        '/shaders/cubemap/cubemap.vert',
+        '/shaders/pbr/irradiance.frag',
         {
             cube_map: { value: new THREE.Texture() },
         }
@@ -75,8 +76,8 @@ export const Shaders = {
 
     // quad texture
     PostProcessShader: await loadShaders(
-        'src/resource/shaders/postprocessing/final.vert',
-        'src/resource/shaders/postprocessing/final.frag',
+        '/shaders/postprocessing/final.vert',
+        '/shaders/postprocessing/final.frag',
         {
             scene_texture: { value: new THREE.Texture() },
             bloom_texture: { value: new THREE.Texture() },
@@ -85,22 +86,22 @@ export const Shaders = {
 
     // depth
     DepthShader: await loadShaders(
-        'src/resource/shaders/shadow/depth.vert',
-        'src/resource/shaders/shadow/depth.frag',
+        '/shaders/shadow/depth.vert',
+        '/shaders/shadow/depth.frag',
         {}
     ),
 
     BrightFilterShader: await loadShaders(
-        'src/resource/shaders/postprocessing/final.vert',
-        'src/resource/shaders/postprocessing/bright_filter.frag',
+        '/shaders/postprocessing/final.vert',
+        '/shaders/postprocessing/bright_filter.frag',
         {
             scene_texture: { value: new THREE.Texture() },
         }
     ),
 
     HorizontalBlurShader: await loadShaders(
-        'src/resource/shaders/postprocessing/hblur.vert',
-        'src/resource/shaders/postprocessing/hblur.frag',
+        '/shaders/postprocessing/hblur.vert',
+        '/shaders/postprocessing/hblur.frag',
         {
             scene_texture: { value: new THREE.Texture() },
             target_height: { value: 0 },
@@ -108,8 +109,8 @@ export const Shaders = {
     ),
 
     VerticalBlurShader: await loadShaders(
-        'src/resource/shaders/postprocessing/vblur.vert',
-        'src/resource/shaders/postprocessing/vblur.frag',
+        '/shaders/postprocessing/vblur.vert',
+        '/shaders/postprocessing/vblur.frag',
         {
             scene_texture: { value: new THREE.Texture() },
             target_height: { value: 0 },
