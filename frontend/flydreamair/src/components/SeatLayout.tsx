@@ -1,6 +1,6 @@
 import { motion } from 'motion/react';
 import { JSX, useState } from 'react';
-import Seaticon from '../resource/Seaticon.svg?react';
+import Seaticon from '../resource/seaticon.svg?react';
 import { Passenger } from '../type';
 import { PassengerDetailPopup } from './PassengerDetailPopup';
 
@@ -32,7 +32,7 @@ export function SeatLayout({ seatMap, className, setPassengers }: SeatLayoutProp
             <motion.div
                 className={`fixed inset-0 z-10 bg-black/50 flex items-center justify-center`}
                 animate={isPopupOpen ? { opacity: 1 } : { opacity: 0, display: 'none' }}
-                initial = {{ opacity: 0 }}
+                initial={{ opacity: 0 }}
                 exit={{ opacity: 0, display: 'none' }}
                 transition={{ duration: 0.2 }}
                 onClick={(e) => {
