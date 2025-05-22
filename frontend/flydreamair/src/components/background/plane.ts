@@ -29,6 +29,7 @@ class Plane {
                     Shaders.ShadedShader.uniforms.albedo_texture.value = texture;
                 }
             );
+
             resources.texture_loader.load(
                 `${import.meta.env.BASE_URL}plane/plane_N.png`,
                 (texture) => {
@@ -41,9 +42,12 @@ class Plane {
                     Shaders.ShadedShader.uniforms.ao_texture.value = texture;
                 }
             );
-            resources.texture_loader.load(`${import.meta.env.BASE_URL}noise.png`, (texture) => {
-                Shaders.ShadedShader.uniforms.noise_map.value = texture;
-            });
+            resources.texture_loader.load(
+                `${import.meta.env.BASE_URL}plane/plane_AO.png`,
+                (texture) => {
+                    Shaders.ShadedShader.uniforms.noise_map.value = texture;
+                }
+            );
 
             // set the position
             this.planeObject.position.copy(new THREE.Vector3(0, 0, 0));

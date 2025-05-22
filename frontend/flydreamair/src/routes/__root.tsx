@@ -15,7 +15,7 @@ function RootComponent() {
                 <div className="h-full flex justify-center items-center">
                     <Outlet />
                 </div>
-                {location.pathname === '/' && <PlaneBackground />}
+                {location.pathname === '/csit214/' && <PlaneBackground />}
             </div>
         </>
     );
