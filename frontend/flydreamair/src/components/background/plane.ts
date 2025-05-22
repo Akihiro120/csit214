@@ -10,7 +10,7 @@ class Plane {
         this.planeObject = new THREE.Object3D();
 
         // load the model - Fuck this file format, who tf uses glb
-        resources.gltf_loader.load(`${import.meta.env.BASE_URL}/plane/plane.glb`, (object) => {
+        resources.gltf_loader.load(`${import.meta.env.BASE_URL}plane/plane.glb`, (object) => {
             // Allocate the object the 3D model
             this.planeObject = object.scene;
 
@@ -24,24 +24,24 @@ class Plane {
 
             // Load the assets into the shader
             resources.texture_loader.load(
-                `${import.meta.env.BASE_URL}/plane/plane_A.png`,
+                `${import.meta.env.BASE_URL}plane/plane_A.png`,
                 (texture) => {
                     Shaders.ShadedShader.uniforms.albedo_texture.value = texture;
                 }
             );
             resources.texture_loader.load(
-                `${import.meta.env.BASE_URL}/plane/plane_N.png`,
+                `${import.meta.env.BASE_URL}plane/plane_N.png`,
                 (texture) => {
                     Shaders.ShadedShader.uniforms.normal_texture.value = texture;
                 }
             );
             resources.texture_loader.load(
-                `${import.meta.env.BASE_URL}/plane/plane_AO.png`,
+                `${import.meta.env.BASE_URL}plane/plane_AO.png`,
                 (texture) => {
                     Shaders.ShadedShader.uniforms.ao_texture.value = texture;
                 }
             );
-            resources.texture_loader.load(`${import.meta.env.BASE_URL}/noise.png`, (texture) => {
+            resources.texture_loader.load(`${import.meta.env.BASE_URL}noise.png`, (texture) => {
                 Shaders.ShadedShader.uniforms.noise_map.value = texture;
             });
 
