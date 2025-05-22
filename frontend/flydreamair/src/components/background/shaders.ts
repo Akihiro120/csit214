@@ -1,6 +1,14 @@
 import * as THREE from 'three';
 
-export type ShaderUniformValue = number | boolean | THREE.Vector2 | THREE.Vector3 | THREE.Vector4 | THREE.Matrix3 | THREE.Matrix4 | THREE.Texture;
+export type ShaderUniformValue =
+    | number
+    | boolean
+    | THREE.Vector2
+    | THREE.Vector3
+    | THREE.Vector4
+    | THREE.Matrix3
+    | THREE.Matrix4
+    | THREE.Texture;
 export type ShaderUniforms = Record<string, { value: ShaderUniformValue }>;
 export interface Shader {
     material: THREE.ShaderMaterial;
@@ -30,18 +38,17 @@ async function loadShaders(vertFile: string, fragFile: string, uniforms = {}) {
 // skybox
 export const Shaders = {
     SkyboxShader: await loadShaders(
-        '/shaders/skybox/skybox.vert',
-        '/shaders/skybox/skybox.frag',
+        `${import.meta.env.BASE_URL}shaders/skybox/skybox.vert`,
+        `${import.meta.env.BASE_URL}shaders/skybox/skybox.frag`,
         {
             light_direction: { value: new THREE.Vector3(0, 0, 0) },
             camera_position: { value: new THREE.Vector3(0, 0, 0) },
         }
     ),
 
-    // shaded
     ShadedShader: await loadShaders(
-        '/shaders/default.vert',
-        '/shaders/default.frag',
+        `${import.meta.env.BASE_URL}shaders/default.vert`,
+        `${import.meta.env.BASE_URL}shaders/default.frag`,
         {
             light_direction: { value: new THREE.Vector3(0, 0, 0) },
             camera_position: { value: new THREE.Vector3(0, 0, 0) },
@@ -57,51 +64,48 @@ export const Shaders = {
         }
     ),
 
-    // cubemap
     CubemapShader: await loadShaders(
-        '/shaders/cubemap/cubemap.vert',
-        '/shaders/cubemap/cubemap.frag',
+        `${import.meta.env.BASE_URL}shaders/cubemap/cubemap.vert`,
+        `${import.meta.env.BASE_URL}shaders/cubemap/cubemap.frag`,
         {
             cube_map: { value: new THREE.Texture() },
         }
     ),
 
     IrradianceShader: await loadShaders(
-        '/shaders/cubemap/cubemap.vert',
-        '/shaders/pbr/irradiance.frag',
+        `${import.meta.env.BASE_URL}shaders/cubemap/cubemap.vert`,
+        `${import.meta.env.BASE_URL}shaders/pbr/irradiance.frag`,
         {
             cube_map: { value: new THREE.Texture() },
         }
     ),
 
-    // quad texture
     PostProcessShader: await loadShaders(
-        '/shaders/postprocessing/final.vert',
-        '/shaders/postprocessing/final.frag',
+        `${import.meta.env.BASE_URL}shaders/postprocessing/final.vert`,
+        `${import.meta.env.BASE_URL}shaders/postprocessing/final.frag`,
         {
             scene_texture: { value: new THREE.Texture() },
             bloom_texture: { value: new THREE.Texture() },
         }
     ),
 
-    // depth
     DepthShader: await loadShaders(
-        '/shaders/shadow/depth.vert',
-        '/shaders/shadow/depth.frag',
+        `${import.meta.env.BASE_URL}shaders/shadow/depth.vert`,
+        `${import.meta.env.BASE_URL}shaders/shadow/depth.frag`,
         {}
     ),
 
     BrightFilterShader: await loadShaders(
-        '/shaders/postprocessing/final.vert',
-        '/shaders/postprocessing/bright_filter.frag',
+        `${import.meta.env.BASE_URL}shaders/postprocessing/final.vert`,
+        `${import.meta.env.BASE_URL}shaders/postprocessing/bright_filter.frag`,
         {
             scene_texture: { value: new THREE.Texture() },
         }
     ),
 
     HorizontalBlurShader: await loadShaders(
-        '/shaders/postprocessing/hblur.vert',
-        '/shaders/postprocessing/hblur.frag',
+        `${import.meta.env.BASE_URL}shaders/postprocessing/hblur.vert`,
+        `${import.meta.env.BASE_URL}shaders/postprocessing/hblur.frag`,
         {
             scene_texture: { value: new THREE.Texture() },
             target_height: { value: 0 },
@@ -109,15 +113,14 @@ export const Shaders = {
     ),
 
     VerticalBlurShader: await loadShaders(
-        '/shaders/postprocessing/vblur.vert',
-        '/shaders/postprocessing/vblur.frag',
+        `${import.meta.env.BASE_URL}shaders/postprocessing/vblur.vert`,
+        `${import.meta.env.BASE_URL}shaders/postprocessing/vblur.frag`,
         {
             scene_texture: { value: new THREE.Texture() },
             target_height: { value: 0 },
         }
     ),
 
-    // Dipose of the mateirals
     Dispose() {
         const allShaders = [
             this.ShadedShader,
