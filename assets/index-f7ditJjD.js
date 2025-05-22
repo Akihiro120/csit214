@@ -1,0 +1,1 @@
+import{j as t,N as o}from"./index-URrVwn5r.js";const a=function(){const e=o;return t.jsxs(t.Fragment,{children:[t.jsx("h1",{className:"text-4xl text-red-500",children:"Ghost Page"}),t.jsx("div",{children:"Should this page redirect to the home page?"}),e({to:"/"}),"n"]})};export{a as component};
