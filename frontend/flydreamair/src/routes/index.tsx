@@ -134,6 +134,12 @@ function Home() {
                     } else if (isReturn && (!formData.deptDate || !formData.retDate)) {
                         alert('Please select a departure date and a return date');
                         return;
+                    } else if (
+                        new Date(formData.deptDate.toString()).setHours(0, 0, 0, 0) < 
+                        new Date().setHours(0, 0, 0, 0)
+                    ) {
+                        alert('Departure date cannot be in the past');
+                        return;
                     }
                     const response = await apiClient.post('/api/flights', formData);
                     const searchParams = {

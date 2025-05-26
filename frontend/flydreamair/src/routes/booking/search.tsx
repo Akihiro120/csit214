@@ -83,7 +83,7 @@ function Search() {
                     setValue={setPriceRange}
                     label="Price"
                     min={0}
-                    max={2000}
+                    max={4000}
                 />
                 <RangeSlider
                     value={deptTime}
