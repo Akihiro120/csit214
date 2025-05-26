@@ -21,7 +21,7 @@ export const Route = createFileRoute('/booking/search')({
 function Search() {
     const { from = '', to = '', date = '' } = Route.useSearch();
     const navigate = useNavigate();
-    const [priceRange, setPriceRange] = useState<number[]>([200, 1800]);
+    const [priceRange, setPriceRange] = useState<number[]>([200, 2800]);
     const [deptTime, setDeptTime] = useState<number[]>([6, 22]);
     // load flights useQuery
     const { data, isLoading, error } = useQuery({
