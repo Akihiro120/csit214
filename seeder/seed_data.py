@@ -163,7 +163,7 @@ try: # Wrap the rest of the script in a try block for proper cleanup
 
 
     # Generate flights based on realistic frequencies
-    start_date = datetime.now().date()
+    start_date = datetime.now().replace(day=1).date() # Start from the 1st of the current month
     for route_key, details in route_details.items():
         route_id = details['id']
         # These are the fixed numbers for the slots (e.g., ['FD100', 'FD101', 'FD102', 'FD103'])
